@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: alumni_api
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://alumni_user:alumni_secret@db:5432/alumni_db
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app
+
+  db:
+    image: postgres:16-alpine
+    container_name: alumni_db
+    restart: always
+    environment:
+      - POSTGRES_USER=alumni_user
+      - POSTGRES_PASSWORD=alumni_secret
+      - POSTGRES_DB=alumni_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alumni_user -d alumni_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
