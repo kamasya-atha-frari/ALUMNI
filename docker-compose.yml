@@ -12,21 +12,22 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=3306
-      - DB_NAME=alumni_db
+      - DB_NAME=iu_mis_alumni
       - DB_USER=alumni_user
       - DB_PASS=alumni_secret
+      - APP_BASE_URL=http://localhost:8080
     depends_on:
       db:
         condition: service_healthy
     volumes:
-      - ./src:/var/www/html
+      - ./:/var/www/html
 
   db:
     image: mysql:8.0
     container_name: alumni_db
     restart: always
     environment:
-      - MYSQL_DATABASE=alumni_db
+      - MYSQL_DATABASE=iu_mis_alumni
       - MYSQL_USER=alumni_user
       - MYSQL_PASSWORD=alumni_secret
       - MYSQL_ROOT_PASSWORD=root_secret

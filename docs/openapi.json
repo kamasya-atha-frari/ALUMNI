@@ -1,0 +1,206 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Istanbul University MIS Alumni Portal API",
+    "description": "Enterprise-ready REST API for managing alumni profiles, directory queries, and accreditation statistics.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Department of Management Information Systems (YBS)",
+      "email": "mis-alumni@istanbul.edu.tr"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local Docker Compose Environment"
+    }
+  ],
+  "paths": {
+    "/alumni": {
+      "get": {
+        "summary": "Retrieve alumni directory records",
+        "description": "Returns verified alumni profiles with optional graduation cohort filtering.",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "description": "Graduation cohort filter (e.g., 2023)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of alumni records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlumniListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "List all users and alumni",
+        "responses": {
+          "200": {
+            "description": "List of user accounts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user or alumni record",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "Get user by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update user by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlumniListResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "total": { "type": "integer" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AlumniProfile" }
+          }
+        }
+      },
+      "AlumniProfile": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "student_id": { "type": "string" },
+          "full_name": { "type": "string" },
+          "email": { "type": "string" },
+          "graduation_year": { "type": "integer" },
+          "company": { "type": "string" },
+          "job_title": { "type": "string" },
+          "is_mentor": { "type": "boolean" }
+        }
+      },
+      "UserListResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "count": { "type": "integer" },
+          "data": { "type": "array", "items": { "type": "object" } }
+        }
+      },
+      "UserCreateInput": {
+        "type": "object",
+        "required": ["first_name", "last_name", "email"],
+        "properties": {
+          "student_id": { "type": "string" },
+          "first_name": { "type": "string" },
+          "last_name": { "type": "string" },
+          "email": { "type": "string" },
+          "role": { "type": "string", "enum": ["alumni", "student", "faculty_admin"] },
+          "graduation_year": { "type": "integer" },
+          "company": { "type": "string" },
+          "job_title": { "type": "string" }
+        }
+      }
+    }
+  }
+}
