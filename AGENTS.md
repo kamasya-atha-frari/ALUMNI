@@ -2,20 +2,20 @@
 
 ## Agent Context & System Directives
 
-This document provides context and operational guidelines for autonomous coding assistants (such as Antigravity) working on the `alumni` repository.
+This document establishes development principles and architecture conventions for autonomous AI assistants (e.g., Antigravity) maintaining the `alumni` repository.
 
-### 1. Architectural Philosophy
-- **Framework**: Python 3.11+ using FastAPI.
-- **Database**: PostgreSQL 16 managed via Docker Compose.
-- **Container Target**: The system must always run cleanly with `docker compose up`.
-- **API Style**: RESTful, type-annotated with Pydantic schemas, and documented via OpenAPI standards.
+### 1. Architectural Stack
+- **Backend Language**: PHP 8.2 (running on Apache with `mod_rewrite`).
+- **Database**: MySQL 8.0 (orchestrated via Docker Compose with PDO driver).
+- **Architecture Pattern**: Lightweight RESTful backend with Front Controller dispatch.
+- **Data Persistence**: Normalized relational tables (`users`, `departments`, `alumni_profiles`).
 
-### 2. Standards & Conventions
-- All routes must declare response models (`response_model=...`).
-- Database credentials must be read from environment variables (e.g., `DATABASE_URL`).
-- Code must adhere to PEP 8 standards with descriptive docstrings.
-- New endpoints must be placed under `app/api/` or tagged by domain logic (e.g., `Alumni`, `Auth`, `Events`).
+### 2. Operational Directives
+- **Single Command Rule**: The system must launch completely using `docker compose up`.
+- **Database Connectivity**: Always use PHP Data Objects (PDO) with prepared statements (`execute([...])`) to prevent SQL injection.
+- **Graceful Fallbacks**: If the MySQL container is initializing or disconnected, API endpoints should provide safe standby responses rather than fatal HTTP 500 crashes.
+- **Code Standards**: Follow PSR-12 coding style guidelines and document query contracts.
 
-### 3. Planned Milestones
-- **Week 01**: Repository initialization, tech stack justification, container setup, and `README.md`.
-- **Week 02**: Routing architecture, `AGENTS.md` specifications, and initial CRUD endpoints for alumni records.
+### 3. Roadmap & Milestones
+- **Week 01**: Repository initialization, tech stack rationale, container setup, and `README.md`.
+- **Week 02**: Advanced routing (`/routes`), `AGENTS.md` refinement, and full CRUD endpoints for profile tracking.

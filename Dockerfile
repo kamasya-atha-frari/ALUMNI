@@ -1,20 +1,18 @@
-FROM python:3.11-slim
+FROM php:8.2-apache
 
-WORKDIR /app
+# Install PDO MySQL extension
+RUN docker-php-ext-install pdo pdo_mysql
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Enable Apache mod_rewrite for front routing
+RUN a2enmod rewrite
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Configure Apache DocumentRoot to point to html
+WORKDIR /var/www/html
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy application source files
+COPY ./src /var/www/html/
 
-COPY . .
+# Ensure proper permissions
+RUN chown -R www-data:www-data /var/www/html
 
-EXPOSE 8000
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+EXPOSE 80
