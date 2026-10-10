@@ -1,21 +1,26 @@
 # AGENTS.md
 
-## Agent Context & System Directives
+## Development Protocols for Autonomous Assistants (AlumniNexus)
 
-This document establishes development principles and architecture conventions for autonomous AI assistants (e.g., Antigravity) maintaining the `alumni` repository.
+This specification provides architecture guidelines for autonomous AI engineering agents working on the `alumni` repository.
 
-### 1. Architectural Stack
-- **Backend Language**: PHP 8.2 (running on Apache with `mod_rewrite`).
-- **Database**: MySQL 8.0 (orchestrated via Docker Compose with PDO driver).
-- **Architecture Pattern**: Lightweight RESTful backend with Front Controller dispatch.
-- **Data Persistence**: Normalized relational tables (`users`, `departments`, `alumni_profiles`).
+### 1. Architectural Principles
+- **Modern PHP 8.2 Standard**: Every PHP file strictly begins with `declare(strict_types=1);`.
+- **Domain-Driven Directory Layout**:
+  - `src/Domain/Enums/`: Type-safe backed enums (`UserRole`, `MentorshipStatus`).
+  - `src/Services/`: Pure business logic and domain computations.
+  - `src/Controllers/`: HTTP controllers outputting standard JSON or rendering templates.
+  - `src/Core/`: Router, Response helper, and Database singleton.
+  - `public/`: The only directory exposed to the web server (containing `index.php` and `.htaccess`).
 
 ### 2. Operational Directives
-- **Single Command Rule**: The system must launch completely using `docker compose up`.
-- **Database Connectivity**: Always use PHP Data Objects (PDO) with prepared statements (`execute([...])`) to prevent SQL injection.
-- **Graceful Fallbacks**: If the MySQL container is initializing or disconnected, API endpoints should provide safe standby responses rather than fatal HTTP 500 crashes.
-- **Code Standards**: Follow PSR-12 coding style guidelines and document query contracts.
+- **Container Target**: The system must always launch cleanly using a single command:
+  ```bash
+  docker compose up
+  ```
+- **Prepared Statements**: All SQL queries must utilize parameterized PDO statements to eliminate SQL injection.
+- **Standby Fallbacks**: Endpoints must never trigger unhandled exceptions; in-memory fallback datasets ensure 100% uptime even before database containers finish warming up.
 
-### 3. Roadmap & Milestones
-- **Week 01**: Repository initialization, tech stack rationale, container setup, and `README.md`.
-- **Week 02**: Advanced routing (`/routes`), `AGENTS.md` refinement, and full CRUD endpoints for profile tracking.
+### 3. Planned Milestones
+- **Week 01**: Repository setup, modern architecture design, Docker containerization, and comprehensive README.
+- **Week 02**: Advanced career pathway routing, agent task directives, and live mentorship request workflows.

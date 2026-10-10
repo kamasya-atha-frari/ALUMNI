@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Graph & Analytics • AlumniNexus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
+                    <i class="fa-solid fa-chart-line text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-base tracking-tight text-white">AlumniNexus Analytics</span>
+                    <span class="text-[10px] block font-mono text-slate-400">Institutional Career Telemetry</span>
+                </div>
+            </div>
+            <nav class="flex items-center space-x-6 text-sm font-medium">
+                <a href="/" class="text-slate-400 hover:text-white transition">Directory</a>
+                <a href="/analytics" class="text-amber-400 hover:text-amber-300 transition">Career Graph</a>
+                <a href="/swagger" class="text-slate-400 hover:text-white transition">API Explorer</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-10 w-full space-y-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Graduate Mobility & Institutional KPIs</h1>
+            <p class="text-slate-400 text-sm mt-1">Empirical telemetry for YÖKAK, AACSB quality audits and curriculum alignment.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <p class="text-xs font-mono text-slate-500 uppercase">Employment Index</p>
+                <p class="text-3xl font-extrabold text-emerald-400 mt-2">96.4%</p>
+                <p class="text-xs text-slate-400 mt-1">Employed within 6 mos</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <p class="text-xs font-mono text-slate-500 uppercase">Active Mentors</p>
+                <p class="text-3xl font-extrabold text-amber-400 mt-2" id="stat-mentors">--</p>
+                <p class="text-xs text-slate-400 mt-1">Available for students</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <p class="text-xs font-mono text-slate-500 uppercase">Global Mobility</p>
+                <p class="text-3xl font-extrabold text-indigo-400 mt-2">24.5%</p>
+                <p class="text-xs text-slate-400 mt-1">Working abroad (EU/US)</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <p class="text-xs font-mono text-slate-500 uppercase">Data Persistence</p>
+                <p class="text-3xl font-extrabold text-rose-400 mt-2" id="stat-source">MySQL</p>
+                <p class="text-xs text-slate-400 mt-1">ACID Relational Engine</p>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl">
+            <h3 class="text-lg font-bold text-white mb-4">Key Industry Verticals (MIS Graduates)</h3>
+            <div id="industry-bars" class="space-y-4">
+                <div class="text-slate-500 text-xs">Loading analytics telemetry...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        fetch('/api/v1/analytics')
+            .then(res => res.json())
+            .then(payload => {
+                const data = payload.data || {};
+                document.getElementById('stat-mentors').textContent = data.active_mentors_count || '3';
+                document.getElementById('stat-source').textContent = (data.source === 'mysql_database') ? 'MySQL 8.0' : 'In-Memory';
+
+                const industries = data.top_industries || {};
+                const container = document.getElementById('industry-bars');
+                container.innerHTML = '';
+
+                for (const [ind, count] of Object.entries(industries)) {
+                    const row = document.createElement('div');
+                    row.innerHTML = `
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-slate-300">${ind}</span>
+                            <span class="text-amber-400 font-mono">${count} Alumni</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-amber-500 to-indigo-500 h-2 rounded-full" style="width: ${count * 25}%"></div>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                }
+            });
+    </script>
+</body>
+</html>

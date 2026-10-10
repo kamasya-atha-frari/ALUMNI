@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Swagger UI • Istanbul University MIS Alumni API</title>
+    <title>Swagger API Explorer • AlumniNexus</title>
     <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
     <style>
-        body { margin: 0; padding: 0; background: #fafafa; font-family: sans-serif; }
-        .topbar { background-color: #003366 !important; }
+        body { margin: 0; padding: 0; background: #0f172a; font-family: sans-serif; }
+        .swagger-ui { filter: invert(88%) hue-rotate(180deg); }
+        .swagger-ui .topbar { display: none; }
     </style>
 </head>
 <body>
@@ -18,9 +19,7 @@
                 url: "/openapi.json",
                 dom_id: '#swagger-ui',
                 deepLinking: true,
-                presets: [
-                    SwaggerUIBundle.presets.apis
-                ],
+                presets: [SwaggerUIBundle.presets.apis],
                 layout: "BaseLayout"
             });
         };

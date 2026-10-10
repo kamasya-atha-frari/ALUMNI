@@ -2,10 +2,8 @@
     RewriteEngine On
     RewriteBase /
 
-    # Allow direct access to existing physical files or directories
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
 
-    # Route all other URLs to the front controller
     RewriteRule ^(.*)$ index.php [L,QSA]
 </IfModule>

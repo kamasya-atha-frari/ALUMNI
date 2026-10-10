@@ -1,21 +1,21 @@
 version: '3.8'
 
 services:
-  web:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: alumni_web
-    restart: always
+    container_name: alumni_nexus_app
+    restart: unless-stopped
     ports:
       - "8080:80"
     environment:
+      - DOCKER_ENV=true
       - DB_HOST=db
       - DB_PORT=3306
-      - DB_NAME=iu_mis_alumni
-      - DB_USER=alumni_user
-      - DB_PASS=alumni_secret
-      - APP_BASE_URL=http://localhost:8080
+      - DB_NAME=alumni_nexus
+      - DB_USER=alumni_admin
+      - DB_PASS=alumni_secure_2026
     depends_on:
       db:
         condition: service_healthy
@@ -24,23 +24,23 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: alumni_db
-    restart: always
+    container_name: alumni_nexus_db
+    restart: unless-stopped
     environment:
-      - MYSQL_DATABASE=iu_mis_alumni
-      - MYSQL_USER=alumni_user
-      - MYSQL_PASSWORD=alumni_secret
-      - MYSQL_ROOT_PASSWORD=root_secret
+      - MYSQL_DATABASE=alumni_nexus
+      - MYSQL_USER=alumni_admin
+      - MYSQL_PASSWORD=alumni_secure_2026
+      - MYSQL_ROOT_PASSWORD=root_secure_2026
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - nexus_mysql_data:/var/lib/mysql
       - ./database/schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "alumni_user", "-palumni_secret"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "alumni_admin", "-palumni_secure_2026"]
       interval: 5s
       timeout: 5s
       retries: 10
 
 volumes:
-  mysql_data:
+  nexus_mysql_data:
