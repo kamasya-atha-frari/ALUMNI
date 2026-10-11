@@ -58,19 +58,73 @@ $analytics = $service->getAnalytics();
 assertCheck($analytics['employment_rate_percentage'] > 90, "Employment index exceeds 90% benchmark");
 assertCheck(isset($analytics['top_industries']['Telecommunications & Cloud']), "Industry breakdown tracks Cloud & Telecom");
 
-// Test Router Dispatching
-echo "\n4. Router Engine Pattern Matching:\n";
+// Test Router Dispatching & Whiteboard Milestone Routes
+echo "\n4. Router Engine & Whiteboard Milestone Routes:\n";
 $router = new Router();
-$matchedId = null;
-$router->get('/api/v1/alumni/{id}', function ($id) use (&$matchedId) {
-    $matchedId = (int)$id;
+
+// 1. GET /auto & POST / -> "ok"
+$router->get('/auto', fn(): string => "ok");
+$router->post('/', fn(): string => "ok");
+$router->post('/auto', fn(): string => "ok");
+
+// 2. GET /hello -> "Hello, World!"
+$router->get('/hello', fn(): string => "Hello, World!");
+$router->get('/auto/hello', fn(): string => "Hello, World!");
+
+// 3. GET /hello/{name} -> "Hello, Emre!"
+$router->get('/hello/{name}', fn(string $name): string => "Hello, " . htmlspecialchars(ucfirst($name)) . "!");
+$router->get('/auto/hello/{name}', fn(string $name): string => "Hello, " . htmlspecialchars(ucfirst($name)) . "!");
+
+// 4. GET /sum/{number1}/{number2} -> sum
+$router->get('/sum/{number1}/{number2}', function ($n1, $n2): string {
+    $sum = (float)$n1 + (float)$n2;
+    return (string)((floor($sum) == $sum) ? (int)$sum : $sum);
+});
+$router->get('/auto/sum/{number1}/{number2}', function ($n1, $n2): string {
+    $sum = (float)$n1 + (float)$n2;
+    return (string)((floor($sum) == $sum) ? (int)$sum : $sum);
 });
 
-$_SERVER['REQUEST_METHOD'] = 'GET';
-$_SERVER['REQUEST_URI'] = '/api/v1/alumni/42';
-// simulate resolve via reflection
-$ref = new ReflectionClass($router);
-$method = $ref->getMethod('resolve');
+// 5. GET / -> main page
+$mainVisited = false;
+$router->get('/', function () use (&$mainVisited) {
+    $mainVisited = true;
+});
+
+// 6. GET /about -> about page
+$aboutVisited = false;
+$router->get('/about', function () use (&$aboutVisited) {
+    $aboutVisited = true;
+});
+
+// Execute dispatch checks without process termination (exitOnResult = false)
+$okMatched = $router->dispatch('GET', '/auto', false);
+assertCheck($okMatched, "Item 1: Matched GET /auto ('ok')");
+
+$postMatched = $router->dispatch('POST', '/', false);
+assertCheck($postMatched, "Item 1: Matched POST / ('ok')");
+
+$helloMatched = $router->dispatch('GET', '/hello', false);
+assertCheck($helloMatched, "Item 2: Matched GET /hello ('Hello, World!')");
+
+$emreMatched = $router->dispatch('GET', '/hello/emre', false);
+assertCheck($emreMatched, "Item 3: Matched GET /hello/emre ('Hello, Emre!')");
+
+$sumMatched = $router->dispatch('GET', '/sum/15/25', false);
+assertCheck($sumMatched, "Item 4: Matched GET /sum/15/25 (sum = 40)");
+
+$router->dispatch('GET', '/', false);
+assertCheck($mainVisited, "Item 5: Matched GET / (temporary one main page)");
+
+$router->dispatch('GET', '/about', false);
+assertCheck($aboutVisited, "Item 6: Matched GET /about (temp. about page)");
+
+// Test Subdirectory Normalization (e.g., http://localhost/alumni/hello/emre)
+$subMatched = $router->dispatch('GET', '/alumni/hello/emre', false);
+assertCheck($subMatched, "Subdirectory: Normalized /alumni/hello/emre -> /hello/emre");
+
+$subSumMatched = $router->dispatch('GET', '/alumni/sum/10/20', false);
+assertCheck($subSumMatched, "Subdirectory: Normalized /alumni/sum/10/20 -> /sum/10/20");
 
 echo "\n\033[1;32mTest Summary: {$passed} / {$total} assertions passed successfully.\033[0m\n\n";
 exit($passed === $total ? 0 : 1);

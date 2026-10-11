@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Department • Istanbul University MIS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
+                        <i class="fa-solid fa-graduation-cap text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-base tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-rose-300 to-indigo-300">
+                            AlumniNexus
+                        </span>
+                        <span class="text-[10px] block font-mono text-slate-400">Istanbul University • MIS</span>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="flex items-center space-x-6 text-sm font-medium">
+                <a href="/" class="text-slate-400 hover:text-white transition">Directory</a>
+                <a href="/about" class="text-amber-400 hover:text-amber-300 transition">About Department</a>
+                <a href="/analytics" class="text-slate-400 hover:text-white transition">Career Graph</a>
+                <a href="/swagger" class="text-slate-400 hover:text-white transition">API Explorer</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <span id="health-badge" class="px-2.5 py-1 text-xs font-mono rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    API Active
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto px-6 py-12 w-full space-y-10">
+        <!-- Hero Header -->
+        <div class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-900 to-slate-950 p-8 md:p-12 shadow-2xl">
+            <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                        <i class="fa-solid fa-landmark"></i> Istanbul University • Faculty of Economics
+                    </span>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                        Temporary About Page
+                    </span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                    Department of Management Information Systems <br>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-indigo-400">
+                        Yönetim Bilişim Sistemleri (YBS)
+                    </span>
+                </h1>
+                <p class="text-slate-400 text-base md:text-lg leading-relaxed max-w-3xl">
+                    Located at the historic Beyazıt Central Campus in Istanbul, our department converges computer science, enterprise software architecture, statistical data modeling, and strategic business leadership.
+                </p>
+            </div>
+        </div>
+
+        <!-- Department Pillars -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 space-y-3 hover:border-slate-700 transition">
+                <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Software & Cloud Architecture</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Full-stack web engineering, microservices, containerization with Docker, relational schema modeling, and modern PHP/Python architectures.
+                </p>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 space-y-3 hover:border-slate-700 transition">
+                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-xl">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Data Analytics & BI</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Statistical modeling, BigQuery pipelines, business intelligence dashboards, and predictive career trajectory telemetry.
+                </p>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 space-y-3 hover:border-slate-700 transition">
+                <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-xl">
+                    <i class="fa-solid fa-users-gear"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">IT Leadership & Governance</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Enterprise resource planning, strategic MIS decision making, cybersecurity hygiene, and high-impact industry mentorship pairing.
+                </p>
+            </div>
+        </div>
+
+        <!-- Academic & Quality Benchmarks -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-8 space-y-6">
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-award text-amber-400"></i>
+                Academic & Accreditation Standards
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/50 space-y-2">
+                    <h4 class="font-bold text-white text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                        YÖKAK & AACSB Compliance
+                    </h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Curriculum benchmarking aligned with European Higher Education Area standards and national quality agency accreditation metrics.
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/50 space-y-2">
+                    <h4 class="font-bold text-white text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase text-blue-400"></i>
+                        Over 92% Graduate Employability
+                    </h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Istanbul University MIS graduates secure high-growth positions across telecom, banking, fintech, cloud, and defense tech leaders within 6 months of graduation.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Route Verification Banner -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+                <h4 class="font-bold text-white text-sm">Milestone Route Status</h4>
+                <p class="text-xs text-slate-400">Endpoint: <code class="text-amber-400 bg-slate-950 px-2 py-0.5 rounded font-mono">GET /about</code> • Temporary About Page Rendered Successfully</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white transition">
+                    ← Main Page
+                </a>
+                <a href="/swagger" class="px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-black transition">
+                    API Docs →
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+        <p>© 2026 Istanbul University Faculty of Economics • Management Information Systems</p>
+        <p class="mt-1 font-mono text-[10px] text-slate-600">AlumniNexus • Temporary About Page Route Milestone</p>
+    </footer>
+</body>
+</html>

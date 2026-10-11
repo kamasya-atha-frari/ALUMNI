@@ -30,6 +30,14 @@ class Response {
         exit;
     }
 
+    public static function text(string $content, int $statusCode = 200): void {
+        http_response_code($statusCode);
+        header('Content-Type: text/plain; charset=utf-8');
+        header('Access-Control-Allow-Origin: *');
+        echo $content;
+        exit;
+    }
+
     public static function redirect(string $url): void {
         header("Location: {$url}");
         exit;

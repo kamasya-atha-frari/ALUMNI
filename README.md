@@ -110,6 +110,7 @@ alumni/
 │
 ├── templates/                  # [Presentation Layer] High-performance client views
 │   ├── dashboard.html          # Modern SaaS-grade directory dashboard (Tailwind CSS)
+│   ├── about.html              # Department overview & temporary about page
 │   ├── analytics.html          # Career Graph mobility & accreditation dashboard
 │   ├── swagger.html            # Dark-themed Swagger UI API Explorer
 │   └── 404.html                # Error fallback template
@@ -138,14 +139,29 @@ docker compose up --build
 - Boots **MySQL 8.0** with health checks, automatically loading `database/schema.sql`.
 - Boots **PHP 8.2 Apache**, routing traffic through `/public/index.php`.
 - The application will be immediately live at: **`http://localhost:8080`**.
+- Subdirectory deployments on local Apache/XAMPP (`http://localhost/alumni`) are automatically supported via dynamic base path normalization.
 
 ---
 
-### Key Application Routes
+### Whiteboard Milestone Routes (`Routes / "auto"`)
+
+| # | HTTP Method | Endpoint Pattern | Example URL | Expected Response / Output |
+| :-: | :--- | :--- | :--- | :--- |
+| **1** | `GET` / `POST` | `/` or `/auto` | `http://localhost:8080/auto` | `"ok"` |
+| **2** | `GET` | `/hello` | `http://localhost:8080/hello` | `"Hello, World!"` |
+| **3** | `GET` | `/hello/{name}` | `http://localhost:8080/hello/emre` | `"Hello, Emre!"` |
+| **4** | `GET` | `/sum/{number1}/{number2}` | `http://localhost:8080/sum/15/25` | `40` (sum of number1 + number2) |
+| **5** | `GET` | `/` | `http://localhost:8080/` | Temporary One Main Page (`templates/dashboard.html`) |
+| **6** | `GET` | `/about` | `http://localhost:8080/about` | Temporary About Page (`templates/about.html`) |
+
+---
+
+### Key Application Routes Summary
 
 | Surface | URL Path | Description |
 | :--- | :--- | :--- |
 | **Directory UI** | [`http://localhost:8080/`](http://localhost:8080/) | Interactive Alumni Directory with live search and cohort filters |
+| **About Page** | [`http://localhost:8080/about`](http://localhost:8080/about) | Istanbul University MIS Department overview and accreditation |
 | **Analytics UI** | [`http://localhost:8080/analytics`](http://localhost:8080/analytics) | Career mobility graph and institutional accreditation KPIs |
 | **API Explorer** | [`http://localhost:8080/swagger`](http://localhost:8080/swagger) | Interactive Swagger UI API documentation |
 | **Health Probe** | [`http://localhost:8080/api/v1/health`](http://localhost:8080/api/v1/health) | System memory telemetry and database connectivity status |
