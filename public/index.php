@@ -29,6 +29,7 @@ use AlumniNexus\Core\Response;
 use AlumniNexus\Controllers\AlumniApiController;
 use AlumniNexus\Controllers\HealthController;
 use AlumniNexus\Controllers\WebController;
+use AlumniNexus\Controllers\UserController;
 
 $router = new Router();
 
@@ -88,6 +89,34 @@ $router->get('/auto/about', [WebController::class, 'about']);
 $router->get('/analytics', [WebController::class, 'analytics']);
 $router->get('/swagger', [WebController::class, 'swagger']);
 $router->get('/docs', [WebController::class, 'swagger']);
+$router->get('/api/swagger', [WebController::class, 'swagger']);
+
+// Week 03 REST API Milestone Routes (Whiteboard items 1, 3, 4, 5, 6, 7)
+// Item 1: Health Probe (GET /api/health -> JSON)
+$router->get('/api/health', [HealthController::class, 'check']);
+$router->get('/auto/api/health', [HealthController::class, 'check']);
+
+// Item 3: POST /api/users (don't use any database yet)
+$router->post('/api/users', [UserController::class, 'store']);
+
+// Item 4: GET /api/users -> list all users
+$router->get('/api/users', [UserController::class, 'index']);
+
+// Item 5: GET / PUT / PATCH /api/users/{id}
+$router->get('/api/users/{id}', [UserController::class, 'show']);
+$router->put('/api/users/{id}', [UserController::class, 'update']);
+$router->patch('/api/users/{id}', [UserController::class, 'patch']);
+
+// Item 6: DELETE /api/users/{id}
+$router->delete('/api/users/{id}', [UserController::class, 'destroy']);
+
+// Slide 4 /api/alumni Aliases for lecture live demo
+$router->get('/api/alumni', [UserController::class, 'index']);
+$router->get('/api/alumni/{id}', [UserController::class, 'show']);
+$router->post('/api/alumni', [UserController::class, 'store']);
+$router->put('/api/alumni/{id}', [UserController::class, 'update']);
+$router->patch('/api/alumni/{id}', [UserController::class, 'patch']);
+$router->delete('/api/alumni/{id}', [UserController::class, 'destroy']);
 
 // REST API v1 Routes
 $router->get('/api/v1/health', [HealthController::class, 'check']);

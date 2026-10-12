@@ -18,6 +18,10 @@ class Router {
         return $this->add('PUT', $path, $handler);
     }
 
+    public function patch(string $path, callable|array $handler): self {
+        return $this->add('PATCH', $path, $handler);
+    }
+
     public function delete(string $path, callable|array $handler): self {
         return $this->add('DELETE', $path, $handler);
     }

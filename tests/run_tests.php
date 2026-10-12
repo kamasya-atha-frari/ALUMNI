@@ -126,5 +126,45 @@ assertCheck($subMatched, "Subdirectory: Normalized /alumni/hello/emre -> /hello/
 $subSumMatched = $router->dispatch('GET', '/alumni/sum/10/20', false);
 assertCheck($subSumMatched, "Subdirectory: Normalized /alumni/sum/10/20 -> /sum/10/20");
 
+// 5. Week 03 REST API Milestone Routes (Assoc. Prof. Dr. Emre Akadal)
+echo "\n5. Week 03 REST API & In-Memory User Service (Whiteboard Items 1-7):\n";
+$userService = new \AlumniNexus\Services\UserService();
+$userService->reset();
+
+$users = $userService->getAll();
+assertCheck(count($users) >= 4, "Initial in-memory user dataset loaded (count: " . count($users) . ")");
+assertCheck($users[0]['name'] === 'Elif Kaya', "Slide B verified: user Elif Kaya exists");
+
+$newUser = $userService->create(['name' => 'Canan Dag', 'graduationYear' => 2025]);
+assertCheck($newUser['name'] === 'Canan Dag' && $newUser['graduationYear'] === 2025, "Item 3: POST /api/users created user in-memory");
+
+$fetched = $userService->getById((int)$newUser['id']);
+assertCheck($fetched !== null && $fetched['id'] === $newUser['id'], "Item 5: GET /api/users/{id} retrieved record");
+
+$patched = $userService->update((int)$newUser['id'], ['graduationYear' => 2026]);
+assertCheck($patched['graduationYear'] === 2026, "Item 5: PATCH /api/users/{id} modified graduationYear");
+
+$deleted = $userService->delete((int)$newUser['id']);
+assertCheck($deleted === true && $userService->getById((int)$newUser['id']) === null, "Item 6: DELETE /api/users/{id} purged record");
+
+// Router dispatch checks for Week 03
+$router->get('/api/health', fn(): string => '{"status":"ok"}');
+$router->post('/api/users', fn(): string => '{"id":1}');
+$router->get('/api/users', fn(): string => '[]');
+$router->get('/api/users/{id}', fn($id): string => '{"id":' . $id . '}');
+$router->put('/api/users/{id}', fn($id): string => '{"id":' . $id . '}');
+$router->patch('/api/users/{id}', fn($id): string => '{"id":' . $id . '}');
+$router->delete('/api/users/{id}', fn($id): string => '{"status":"deleted"}');
+$router->get('/api/swagger', fn(): string => 'swagger');
+
+assertCheck($router->dispatch('GET', '/api/health', false), "Item 1: Matched GET /api/health");
+assertCheck($router->dispatch('POST', '/api/users', false), "Item 3: Matched POST /api/users");
+assertCheck($router->dispatch('GET', '/api/users', false), "Item 4: Matched GET /api/users");
+assertCheck($router->dispatch('GET', '/api/users/42', false), "Item 5: Matched GET /api/users/{id}");
+assertCheck($router->dispatch('PUT', '/api/users/42', false), "Item 5: Matched PUT /api/users/{id}");
+assertCheck($router->dispatch('PATCH', '/api/users/42', false), "Item 5: Matched PATCH /api/users/{id}");
+assertCheck($router->dispatch('DELETE', '/api/users/42', false), "Item 6: Matched DELETE /api/users/{id}");
+assertCheck($router->dispatch('GET', '/api/swagger', false), "Item 7: Matched GET /api/swagger");
+
 echo "\n\033[1;32mTest Summary: {$passed} / {$total} assertions passed successfully.\033[0m\n\n";
 exit($passed === $total ? 0 : 1);

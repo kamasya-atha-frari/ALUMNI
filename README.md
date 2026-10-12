@@ -156,6 +156,29 @@ docker compose up --build
 
 ---
 
+### Week 03 Whiteboard Milestone: RESTful API & In-Memory User Management
+*(Lecture: Assoc. Prof. Dr. Emre Akadal • Web Programming • Week 03)*
+
+| Item # | HTTP Method | Endpoint | Description | Request Body Example | Expected Status |
+| :-: | :--- | :--- | :--- | :--- | :-: |
+| **①** | `GET` | `/api/health` | Health Check Probe (Returns JSON) | *None* | `200 OK` |
+| **②** | *Tooling* | **Postman** | Import collection: `docs/AlumniNexus_Week03_Postman_Collection.json` | - | - |
+| **③** | `POST` | `/api/users` | Create User *(Don't use any database yet)* | `{"name": "Elif Kaya", "graduationYear": 2024}` | `201 Created` |
+| **④** | `GET` | `/api/users` | List All Users (In-Memory Dataset) | *None* | `200 OK` |
+| **⑤** | `GET` | `/api/users/{id}` | Retrieve Single User by ID | *None* | `200 OK` / `404` |
+| **⑤** | `PUT` | `/api/users/{id}` | Replace Entire User Object *(Slide C: replace whole)* | `{"name": "Elif Kaya Akın", "graduationYear": 2025}` | `200 OK` / `404` |
+| **⑤** | `PATCH` | `/api/users/{id}` | Partial Update *(Slide C: change one field)* | `{"graduationYear": 2026}` | `200 OK` / `404` |
+| **⑥** | `DELETE` | `/api/users/{id}` | Remove User Record *(Slide C: remove record)* | *None* | `200 OK` / `404` |
+| **⑦** | `GET` | `/api/swagger` | Interactive Swagger UI API Documentation | *None* | `200 OK` |
+
+> **Slide D Verification**:
+> - Request body sent: `{"name": "Elif Kaya", "graduationYear": 2024}`
+> - Response received: `HTTP/1.1 201 Created` with Content-Type `application/json`
+> - Payload: `{"id": 42, "name": "Elif Kaya", "graduationYear": 2024}`
+> - `/api/alumni` routes are also provided as direct aliases for live lecture testing.
+
+---
+
 ### Key Application Routes Summary
 
 | Surface | URL Path | Description |
@@ -163,9 +186,9 @@ docker compose up --build
 | **Directory UI** | [`http://localhost:8080/`](http://localhost:8080/) | Interactive Alumni Directory with live search and cohort filters |
 | **About Page** | [`http://localhost:8080/about`](http://localhost:8080/about) | Istanbul University MIS Department overview and accreditation |
 | **Analytics UI** | [`http://localhost:8080/analytics`](http://localhost:8080/analytics) | Career mobility graph and institutional accreditation KPIs |
-| **API Explorer** | [`http://localhost:8080/swagger`](http://localhost:8080/swagger) | Interactive Swagger UI API documentation |
-| **Health Probe** | [`http://localhost:8080/api/v1/health`](http://localhost:8080/api/v1/health) | System memory telemetry and database connectivity status |
-| **Alumni API** | [`http://localhost:8080/api/v1/alumni`](http://localhost:8080/api/v1/alumni) | REST API endpoint (supports `?cohort=2023`, `?mentor=true`) |
+| **Swagger Explorer** | [`http://localhost:8080/api/swagger`](http://localhost:8080/api/swagger) | Interactive Swagger UI API documentation (Whiteboard Item 7) |
+| **Health Probe** | [`http://localhost:8080/api/health`](http://localhost:8080/api/health) | System health probe returning JSON (Whiteboard Item 1) |
+| **Users API** | [`http://localhost:8080/api/users`](http://localhost:8080/api/users) | Week 03 In-Memory User CRUD without database |
 | **OpenAPI Spec** | [`http://localhost:8080/openapi.json`](http://localhost:8080/openapi.json) | Raw OpenAPI 3.1.0 JSON contract |
 
 ---

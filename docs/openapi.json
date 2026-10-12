@@ -1,25 +1,259 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "AlumniNexus API",
-    "description": "Next-Gen Alumni Intelligence & Career Trajectory Engine for Istanbul University Management Information Systems (YBS).",
-    "version": "1.2.0",
+    "title": "AlumniNexus API • Web Programming Week 03",
+    "description": "RESTful API Engine for User & Alumni Management without Database (In-Memory Architecture) as specified in Assoc. Prof. Dr. Emre Akadal's Web Programming Week 03 curriculum.",
+    "version": "1.3.0",
     "contact": {
-      "name": "AlumniNexus Engineering Core",
+      "name": "AlumniNexus Core Engineering",
       "email": "nexus-mis@ogr.iu.edu.tr"
     }
   },
   "servers": [
     {
       "url": "http://localhost:8080",
-      "description": "Local Containerized Environment"
+      "description": "Docker Containerized Apache Environment"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local Development Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "System health probe & telemetry"
+    },
+    {
+      "name": "Users (Week 03 Milestone)",
+      "description": "In-memory User CRUD endpoints without database"
+    },
+    {
+      "name": "Alumni V1",
+      "description": "Alumni database directory queries"
     }
   ],
   "paths": {
+    "/api/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health Probe (Whiteboard Item 1)",
+        "description": "Returns system telemetry and health status in JSON format.",
+        "responses": {
+          "200": {
+            "description": "JSON health status",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "healthy",
+                  "service": "AlumniNexus API Core",
+                  "version": "1.3.0",
+                  "timestamp": "2026-10-13T01:30:00+03:00"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": ["Users (Week 03 Milestone)"],
+        "summary": "List All Users (Whiteboard Item 4)",
+        "description": "Returns an array of all user records currently stored in-memory.",
+        "responses": {
+          "200": {
+            "description": "List of all users",
+            "content": {
+              "application/json": {
+                "example": [
+                  { "id": 1, "name": "Elif Kaya", "graduationYear": 2024 },
+                  { "id": 2, "name": "Mert Aydın", "graduationYear": 2021 },
+                  { "id": 3, "name": "Zeynep Arslan", "graduationYear": 2019 },
+                  { "id": 4, "name": "Can Öztürk", "graduationYear": 2023 }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users (Week 03 Milestone)"],
+        "summary": "Create User (Whiteboard Item 3)",
+        "description": "Adds a new user in-memory (no database yet). Assigns an ID and responds with HTTP 201 Created.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string", "example": "Elif Kaya" },
+                  "graduationYear": { "type": "integer", "example": 2024 }
+                }
+              },
+              "example": {
+                "name": "Elif Kaya",
+                "graduationYear": 2024
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 42,
+                  "name": "Elif Kaya",
+                  "graduationYear": 2024
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error (e.g. missing name)"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": ["Users (Week 03 Milestone)"],
+        "summary": "Get User by ID (Whiteboard Item 5)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "name": "Elif Kaya",
+                  "graduationYear": 2024
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users (Week 03 Milestone)"],
+        "summary": "Full Replacement of User (Whiteboard Item 5)",
+        "description": "Replaces the whole user record for the given ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "name": "Elif Kaya Akın",
+                "graduationYear": 2025
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User fully replaced"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Users (Week 03 Milestone)"],
+        "summary": "Partial Update of User (Whiteboard Item 5)",
+        "description": "Updates specific fields of the user record (e.g. graduationYear only).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "graduationYear": 2025
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User partially updated"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users (Week 03 Milestone)"],
+        "summary": "Delete User (Whiteboard Item 6)",
+        "description": "Removes the user with the given ID from memory.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully removed"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/api/swagger": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Swagger Documentation Viewer (Whiteboard Item 7)",
+        "description": "Serves interactive Swagger UI HTML explorer or raw OpenAPI JSON specification.",
+        "responses": {
+          "200": {
+            "description": "Swagger UI HTML page or OpenAPI JSON spec"
+          }
+        }
+      }
+    },
     "/api/v1/health": {
       "get": {
+        "tags": ["Health"],
         "summary": "System Telemetry & Health Probe",
-        "description": "Returns container uptime, MySQL connectivity state, and memory metrics.",
         "responses": {
           "200": { "description": "Healthy telemetry response" }
         }
@@ -27,11 +261,12 @@
     },
     "/api/v1/alumni": {
       "get": {
+        "tags": ["Alumni V1"],
         "summary": "Parametric Alumni Directory Query",
         "parameters": [
-          { "name": "cohort", "in": "query", "description": "Graduation cohort filter (e.g., 2023)", "schema": { "type": "integer" } },
+          { "name": "cohort", "in": "query", "description": "Graduation cohort filter", "schema": { "type": "integer" } },
           { "name": "industry", "in": "query", "description": "Filter by industry sector", "schema": { "type": "string" } },
-          { "name": "mentor", "in": "query", "description": "Filter by active mentor flag (true/false)", "schema": { "type": "boolean" } }
+          { "name": "mentor", "in": "query", "description": "Filter by active mentor flag", "schema": { "type": "boolean" } }
         ],
         "responses": {
           "200": { "description": "List of matched alumni profiles" }
@@ -40,6 +275,7 @@
     },
     "/api/v1/alumni/{id}": {
       "get": {
+        "tags": ["Alumni V1"],
         "summary": "Detailed Alumni Profile by ID",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
@@ -52,6 +288,7 @@
     },
     "/api/v1/analytics": {
       "get": {
+        "tags": ["Alumni V1"],
         "summary": "Career Mobility & Accreditation Analytics",
         "responses": {
           "200": { "description": "Institutional employment rate and industry KPIs" }

@@ -30,6 +30,16 @@ class WebController {
     }
 
     public function swagger(): void {
+        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+        if (str_contains($accept, 'application/json') || isset($_GET['json'])) {
+            $file = __DIR__ . '/../../docs/openapi.json';
+            if (file_exists($file)) {
+                header('Content-Type: application/json; charset=utf-8');
+                header('Access-Control-Allow-Origin: *');
+                echo file_get_contents($file);
+                exit;
+            }
+        }
         Response::html(__DIR__ . '/../../templates/swagger.html');
     }
 }
