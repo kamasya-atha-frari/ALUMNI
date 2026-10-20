@@ -35,6 +35,9 @@
             </nav>
 
             <div class="flex items-center space-x-3">
+                <button onclick="openModal()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-md shadow-amber-500/20">
+                    <i class="fa-solid fa-plus"></i> New Alumni
+                </button>
                 <span id="health-badge" class="px-2.5 py-1 text-xs font-mono rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     API Active
@@ -54,7 +57,7 @@
                     Graduate Intelligence & <br><span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-indigo-400">Career Trajectory Network</span>
                 </h1>
                 <p class="text-slate-400 text-base md:text-lg leading-relaxed">
-                    A modern, containerized API platform connecting Istanbul University MIS graduates, mentors, and industry pioneers. Track career mobility and discover mentorship pairings with zero friction.
+                    A modern, containerized API platform connecting Istanbul University MIS graduates, mentors, and industry pioneers. Full CRUD support backed by persistent database storage.
                 </p>
             </div>
         </div>
@@ -82,6 +85,73 @@
             <div class="col-span-full py-16 text-center text-slate-500 font-mono text-sm">Loading directory profiles...</div>
         </div>
     </main>
+
+    <!-- Modal for Create / Edit Alumni (CRUD) -->
+    <div id="crudModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 id="modalTitle" class="text-lg font-bold text-white">Add New Alumni Record</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="alumniForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
+                <input type="hidden" id="formId" value="">
+                
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Full Name *</label>
+                    <input type="text" id="formFullName" required placeholder="e.g. Ada Lovelace" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Email *</label>
+                        <input type="email" id="formEmail" required placeholder="ada@cv.edu.tr" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Cohort (Year)</label>
+                        <input type="number" id="formCohort" value="2024" min="1990" max="2030" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Company</label>
+                        <input type="text" id="formCompany" placeholder="e.g. Turkcell Tech" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Role / Title</label>
+                        <input type="text" id="formRole" placeholder="e.g. Lead Engineer" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Industry</label>
+                        <input type="text" id="formIndustry" placeholder="e.g. Cloud & Telecom" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Location</label>
+                        <input type="text" id="formLocation" placeholder="Istanbul, Turkey" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Skills (comma-separated)</label>
+                    <input type="text" id="formSkills" placeholder="Python, SQL, Docker, AWS" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                </div>
+
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" id="formIsMentor" class="rounded bg-slate-950 border-slate-800 text-amber-500 focus:ring-amber-500">
+                    <label for="formIsMentor" class="text-xs text-slate-300">Available as an Active Mentor</label>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-4 border-t border-slate-800">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Cancel</button>
+                    <button type="submit" id="saveBtn" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 transition">Save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500 mt-auto">
@@ -121,9 +191,9 @@
         function searchAlumni(q) {
             const query = q.toLowerCase();
             const filtered = allAlumni.filter(a => 
-                a.full_name.toLowerCase().includes(query) ||
-                a.company.toLowerCase().includes(query) ||
-                a.role.toLowerCase().includes(query) ||
+                (a.full_name && a.full_name.toLowerCase().includes(query)) ||
+                (a.company && a.company.toLowerCase().includes(query)) ||
+                (a.role && a.role.toLowerCase().includes(query)) ||
                 (a.skills && a.skills.some(s => s.toLowerCase().includes(query)))
             );
             renderCards(filtered);
@@ -144,34 +214,138 @@
             }
 
             grid.innerHTML = records.map(item => `
-                <div class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 p-6 rounded-2xl transition duration-300 flex flex-col justify-between">
+                <div class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 p-6 rounded-2xl transition duration-300 flex flex-col justify-between relative">
                     <div>
                         <div class="flex items-start justify-between gap-3 mb-4">
                             <div>
-                                <h3 class="font-bold text-white group-hover:text-amber-400 transition">${item.full_name}</h3>
-                                <p class="text-xs text-slate-400">Class of ${item.cohort} • ${item.department}</p>
+                                <h3 class="font-bold text-white group-hover:text-amber-400 transition">${escapeHtml(item.full_name || 'Anonymous')}</h3>
+                                <p class="text-xs text-slate-400">Class of ${item.cohort} • ${escapeHtml(item.department || 'MIS')}</p>
                             </div>
-                            ${item.is_mentor 
-                                ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">MENTOR</span>' 
-                                : ''}
+                            <div class="flex items-center gap-1.5">
+                                ${item.is_mentor 
+                                    ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">MENTOR</span>' 
+                                    : ''}
+                                <button onclick="openEditModal(${item.id})" title="Edit Profile" class="text-slate-400 hover:text-amber-400 p-1 text-xs transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deleteAlumniRecord(${item.id})" title="Delete Profile" class="text-slate-400 hover:text-rose-400 p-1 text-xs transition"><i class="fa-solid fa-trash"></i></button>
+                            </div>
                         </div>
                         <div class="space-y-1 mb-4">
-                            <p class="text-sm font-semibold text-slate-200">${item.role}</p>
-                            <p class="text-xs text-slate-400 flex items-center gap-1.5"><i class="fa-regular fa-building"></i> ${item.company}</p>
-                            <p class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fa-solid fa-location-dot"></i> ${item.location || 'Istanbul, TR'}</p>
+                            <p class="text-sm font-semibold text-slate-200">${escapeHtml(item.role || 'Professional')}</p>
+                            <p class="text-xs text-slate-400 flex items-center gap-1.5"><i class="fa-regular fa-building"></i> ${escapeHtml(item.company || 'Enterprise')}</p>
+                            <p class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(item.location || 'Istanbul, TR')}</p>
                         </div>
                     </div>
                     <div>
                         <div class="flex flex-wrap gap-1.5 pt-4 border-t border-slate-800/80 mb-4">
-                            ${(item.skills || []).map(skill => `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 text-slate-300">${skill}</span>`).join('')}
+                            ${(item.skills || []).map(skill => `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 text-slate-300">${escapeHtml(skill)}</span>`).join('')}
                         </div>
                         <div class="flex items-center justify-between text-xs text-slate-500 pt-2">
-                            <span><i class="fa-regular fa-envelope"></i> ${item.email}</span>
-                            <span class="text-amber-400 font-semibold group-hover:translate-x-1 transition cursor-pointer">Profile →</span>
+                            <span><i class="fa-regular fa-envelope"></i> ${escapeHtml(item.email)}</span>
+                            <span class="text-amber-400 font-semibold cursor-pointer" onclick="openEditModal(${item.id})">Details →</span>
                         </div>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function openModal() {
+            document.getElementById('modalTitle').innerText = 'Add New Alumni Record';
+            document.getElementById('formId').value = '';
+            document.getElementById('formFullName').value = '';
+            document.getElementById('formEmail').value = '';
+            document.getElementById('formCohort').value = '2024';
+            document.getElementById('formCompany').value = '';
+            document.getElementById('formRole').value = '';
+            document.getElementById('formIndustry').value = '';
+            document.getElementById('formLocation').value = 'Istanbul, Turkey';
+            document.getElementById('formSkills').value = '';
+            document.getElementById('formIsMentor').checked = false;
+            document.getElementById('crudModal').classList.remove('hidden');
+        }
+
+        function openEditModal(id) {
+            const item = allAlumni.find(a => a.id === id);
+            if (!item) return;
+
+            document.getElementById('modalTitle').innerText = `Edit Alumni Record #${id}`;
+            document.getElementById('formId').value = item.id;
+            document.getElementById('formFullName').value = item.full_name || '';
+            document.getElementById('formEmail').value = item.email || '';
+            document.getElementById('formCohort').value = item.cohort || 2024;
+            document.getElementById('formCompany').value = item.company || '';
+            document.getElementById('formRole').value = item.role || '';
+            document.getElementById('formIndustry').value = item.industry || '';
+            document.getElementById('formLocation').value = item.location || '';
+            document.getElementById('formSkills').value = Array.isArray(item.skills) ? item.skills.join(', ') : '';
+            document.getElementById('formIsMentor').checked = !!item.is_mentor;
+            document.getElementById('crudModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('crudModal').classList.add('hidden');
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('formId').value;
+            const skillsStr = document.getElementById('formSkills').value;
+            const skills = skillsStr ? skillsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+            const payload = {
+                full_name: document.getElementById('formFullName').value,
+                email: document.getElementById('formEmail').value,
+                cohort: parseInt(document.getElementById('formCohort').value) || 2024,
+                company: document.getElementById('formCompany').value,
+                role: document.getElementById('formRole').value,
+                industry: document.getElementById('formIndustry').value,
+                location: document.getElementById('formLocation').value,
+                skills: skills,
+                is_mentor: document.getElementById('formIsMentor').checked
+            };
+
+            const url = id ? `/api/v1/alumni/${id}` : '/api/v1/alumni';
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    closeModal();
+                    await fetchDirectory();
+                } else {
+                    alert(data.message || 'Error saving record');
+                }
+            } catch (err) {
+                alert('Connection error: ' + err.message);
+            }
+        }
+
+        async function deleteAlumniRecord(id) {
+            if (!confirm(`Are you sure you want to delete alumni record #${id}?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/v1/alumni/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    await fetchDirectory();
+                } else {
+                    const data = await res.json();
+                    alert(data.message || 'Failed to delete record');
+                }
+            } catch (err) {
+                alert('Connection error: ' + err.message);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         fetchDirectory();

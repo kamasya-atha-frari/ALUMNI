@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build:
@@ -8,14 +6,16 @@ services:
     container_name: alumni_nexus_app
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "${APP_PORT:-8080}:80"
+    env_file:
+      - .env
     environment:
       - DOCKER_ENV=true
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_NAME=alumni_nexus
-      - DB_USER=alumni_admin
-      - DB_PASS=alumni_secure_2026
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-alumni_nexus}
+      - DB_USER=${DB_USER:-alumni_admin}
+      - DB_PASS=${DB_PASS:-alumni_secure_2026}
     depends_on:
       db:
         condition: service_healthy
@@ -26,21 +26,26 @@ services:
     image: mysql:8.0
     container_name: alumni_nexus_db
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      - MYSQL_DATABASE=alumni_nexus
-      - MYSQL_USER=alumni_admin
-      - MYSQL_PASSWORD=alumni_secure_2026
-      - MYSQL_ROOT_PASSWORD=root_secure_2026
+      - MYSQL_DATABASE=${DB_NAME:-alumni_nexus}
+      - MYSQL_USER=${DB_USER:-alumni_admin}
+      - MYSQL_PASSWORD=${DB_PASS:-alumni_secure_2026}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root_secure_2026}
     ports:
-      - "3306:3306"
+      - "${DB_PORT:-3306}:3306"
     volumes:
+      # Persistent named volume - vital for passing 'The Forgetting Test'
       - nexus_mysql_data:/var/lib/mysql
+      # Initial database schema setup
       - ./database/schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "alumni_admin", "-palumni_secure_2026"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USER:-alumni_admin}", "-p${DB_PASS:-alumni_secure_2026}"]
       interval: 5s
       timeout: 5s
       retries: 10
 
 volumes:
   nexus_mysql_data:
+    driver: local

@@ -15,11 +15,13 @@ class Database {
             return self::$connection;
         }
 
-        $host = getenv('DB_HOST') ?: '127.0.0.1';
-        $port = getenv('DB_PORT') ?: '3306';
-        $db   = getenv('DB_NAME') ?: 'alumni_nexus';
-        $user = getenv('DB_USER') ?: 'alumni_admin';
-        $pass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'alumni_secure_2026';
+        Env::load();
+
+        $host = Env::get('DB_HOST', '127.0.0.1');
+        $port = Env::get('DB_PORT', '3306');
+        $db   = Env::get('DB_NAME', 'alumni_nexus');
+        $user = Env::get('DB_USER', 'alumni_admin');
+        $pass = Env::get('DB_PASS', 'alumni_secure_2026');
         $charset = 'utf8mb4';
 
         $dsn = "mysql:host={$host};port={$port};dbname={$db};charset={$charset}";
@@ -36,6 +38,11 @@ class Database {
             self::$lastError = $e->getMessage();
             return null;
         }
+    }
+
+    public static function resetConnection(): void {
+        self::$connection = null;
+        self::$lastError = null;
     }
 
     public static function getLastError(): ?string {

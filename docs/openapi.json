@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AlumniNexus API",
-    "description": "Next-Gen Alumni Intelligence & Career Trajectory Engine for Istanbul University Management Information Systems (YBS).",
-    "version": "1.2.0",
+    "description": "Next-Gen Alumni Intelligence & Career Trajectory Engine for Istanbul University Management Information Systems (YBS). Full CRUD enabled with database persistence.",
+    "version": "1.3.0",
     "contact": {
       "name": "AlumniNexus Engineering Core",
       "email": "nexus-mis@ogr.iu.edu.tr"
@@ -27,25 +27,97 @@
     },
     "/api/v1/alumni": {
       "get": {
-        "summary": "Parametric Alumni Directory Query",
+        "summary": "Parametric Alumni Directory Query (READ All)",
         "parameters": [
           { "name": "cohort", "in": "query", "description": "Graduation cohort filter (e.g., 2023)", "schema": { "type": "integer" } },
           { "name": "industry", "in": "query", "description": "Filter by industry sector", "schema": { "type": "string" } },
-          { "name": "mentor", "in": "query", "description": "Filter by active mentor flag (true/false)", "schema": { "type": "boolean" } }
+          { "name": "mentor", "in": "query", "description": "Filter by active mentor flag (true/false)", "schema": { "type": "boolean" } },
+          { "name": "search", "in": "query", "description": "Search keyword in name, company, or role", "schema": { "type": "string" } }
         ],
         "responses": {
           "200": { "description": "List of matched alumni profiles" }
+        }
+      },
+      "post": {
+        "summary": "Create Alumni Profile (CREATE)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["full_name", "email"],
+                "properties": {
+                  "full_name": { "type": "string", "example": "Ada Lovelace" },
+                  "email": { "type": "string", "example": "ada@cv.edu.tr" },
+                  "student_id": { "type": "string", "example": "130240099" },
+                  "cohort": { "type": "integer", "example": 2024 },
+                  "company": { "type": "string", "example": "DeepMind" },
+                  "role": { "type": "string", "example": "AI Systems Engineer" },
+                  "industry": { "type": "string", "example": "Artificial Intelligence" },
+                  "location": { "type": "string", "example": "London, UK" },
+                  "skills": { "type": "array", "items": { "type": "string" }, "example": ["Python", "Algorithms", "C++"] },
+                  "is_mentor": { "type": "boolean", "example": true },
+                  "mentor_capacity": { "type": "integer", "example": 3 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Alumni profile created successfully" },
+          "422": { "description": "Validation error" }
         }
       }
     },
     "/api/v1/alumni/{id}": {
       "get": {
-        "summary": "Detailed Alumni Profile by ID",
+        "summary": "Detailed Alumni Profile by ID (READ Single)",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
         ],
         "responses": {
           "200": { "description": "Profile detail object" },
+          "404": { "description": "Profile not found" }
+        }
+      },
+      "put": {
+        "summary": "Update Alumni Profile (UPDATE)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "full_name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "company": { "type": "string" },
+                  "role": { "type": "string" },
+                  "industry": { "type": "string" },
+                  "skills": { "type": "array", "items": { "type": "string" } },
+                  "is_mentor": { "type": "boolean" },
+                  "mentor_capacity": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Profile updated successfully" },
+          "404": { "description": "Profile not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete Alumni Profile (DELETE)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Profile deleted successfully" },
           "404": { "description": "Profile not found" }
         }
       }

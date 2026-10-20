@@ -18,6 +18,10 @@ class Router {
         return $this->add('PUT', $path, $handler);
     }
 
+    public function patch(string $path, callable|array $handler): self {
+        return $this->add('PATCH', $path, $handler);
+    }
+
     public function delete(string $path, callable|array $handler): self {
         return $this->add('DELETE', $path, $handler);
     }
@@ -34,6 +38,14 @@ class Router {
     public function resolve(string $method, string $uri): void {
         $cleanPath = parse_url($uri, PHP_URL_PATH) ?: '/';
         $cleanPath = rtrim($cleanPath, '/') ?: '/';
+
+        // Check for HTTP method override (e.g. via X-HTTP-Method-Override header or _method POST param)
+        if ($method === 'POST') {
+            $override = $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] ?? ($_POST['_method'] ?? null);
+            if ($override) {
+                $method = strtoupper((string)$override);
+            }
+        }
 
         // Pre-flight CORS
         if ($method === 'OPTIONS') {

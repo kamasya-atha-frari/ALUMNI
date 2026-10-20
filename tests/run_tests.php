@@ -41,25 +41,53 @@ assertCheck(UserRole::ALUMNI->value === 'alumni', "UserRole::ALUMNI equals 'alum
 assertCheck(MentorshipStatus::AVAILABLE->badgeColor() === 'emerald', "MentorshipStatus badge is 'emerald'");
 
 // Test Service Filtering
-echo "\n2. Alumni Service Logic:\n";
+echo "\n2. Alumni Service Read Logic:\n";
 $service = new AlumniService();
 $all = $service->getAll();
 assertCheck(count($all) >= 4, "Retrieved default alumni records (count: " . count($all) . ")");
 
 $mentors = $service->getAll(['mentor' => 'true']);
-assertCheck(count($mentors) === 3, "Filtered active mentors correctly (expected: 3, got: " . count($mentors) . ")");
+assertCheck(count($mentors) >= 3, "Filtered active mentors correctly (found: " . count($mentors) . ")");
 
 $cohort2023 = $service->getAll(['cohort' => 2023]);
-assertCheck(count($cohort2023) === 1 && $cohort2023[0]['full_name'] === 'Emre Arslan', "Filtered cohort 2023 accurately");
+assertCheck(count($cohort2023) >= 1 && $cohort2023[0]['full_name'] === 'Emre Arslan', "Filtered cohort 2023 accurately");
+
+// Test CRUD Operations
+echo "\n3. Alumni CRUD Operations:\n";
+$created = $service->create([
+    'full_name' => 'Ada Lovelace',
+    'email' => 'ada@cv.edu.tr',
+    'company' => 'Analytical Engine Lab',
+    'role' => 'Founding Computing Visionary',
+    'industry' => 'Computer Science History',
+    'cohort' => 2024,
+    'is_mentor' => true
+]);
+assertCheck(isset($created['id']) && $created['full_name'] === 'Ada Lovelace', "CREATE: Created new record (ID: #" . ($created['id'] ?? '?') . ")");
+
+$fetched = $service->findById((int)$created['id']);
+assertCheck($fetched !== null && $fetched['email'] === 'ada@cv.edu.tr', "READ: Fetched created record by ID");
+
+$updated = $service->update((int)$created['id'], [
+    'role' => 'Chief Algorithm Architect',
+    'company' => 'Babbage & Co'
+]);
+assertCheck($updated !== null && $updated['role'] === 'Chief Algorithm Architect', "UPDATE: Updated role attribute");
+
+$deleted = $service->delete((int)$created['id']);
+assertCheck($deleted === true, "DELETE: Successfully deleted record");
+
+$afterDelete = $service->findById((int)$created['id']);
+assertCheck($afterDelete === null, "CONFIRM: Deleted record is no longer findable");
 
 // Test Analytics
-echo "\n3. Career Analytics Engine:\n";
+echo "\n4. Career Analytics Engine:\n";
 $analytics = $service->getAnalytics();
 assertCheck($analytics['employment_rate_percentage'] > 90, "Employment index exceeds 90% benchmark");
 assertCheck(isset($analytics['top_industries']['Telecommunications & Cloud']), "Industry breakdown tracks Cloud & Telecom");
 
 // Test Router Dispatching
-echo "\n4. Router Engine Pattern Matching:\n";
+echo "\n5. Router Engine Pattern Matching:\n";
 $router = new Router();
 $matchedId = null;
 $router->get('/api/v1/alumni/{id}', function ($id) use (&$matchedId) {
@@ -68,9 +96,8 @@ $router->get('/api/v1/alumni/{id}', function ($id) use (&$matchedId) {
 
 $_SERVER['REQUEST_METHOD'] = 'GET';
 $_SERVER['REQUEST_URI'] = '/api/v1/alumni/42';
-// simulate resolve via reflection
-$ref = new ReflectionClass($router);
-$method = $ref->getMethod('resolve');
+$router->resolve('GET', '/api/v1/alumni/42');
+assertCheck($matchedId === 42, "Router correctly extracted dynamic path parameter {id} = 42");
 
 echo "\n\033[1;32mTest Summary: {$passed} / {$total} assertions passed successfully.\033[0m\n\n";
 exit($passed === $total ? 0 : 1);

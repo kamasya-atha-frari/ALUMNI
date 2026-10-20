@@ -3,6 +3,8 @@
 ### Intelligent Alumni Career Graph & Engagement Network
 *Designed for graduates, students, and faculty of **Istanbul University Faculty of Economics, Department of Management Information Systems (Yönetim Bilişim Sistemleri - YBS)**.*
 
+> 📘 **Data Design Documentation**: For comprehensive ER diagrams, detailed data dictionaries, schema architectures, and the Forgetting Test protocol, see [**Data Design Documentation (`ddd.md`)**](./ddd.md).
+
 ---
 
 ## 1. Executive Summary & Vision
@@ -12,6 +14,7 @@
 1. **Talent Discovery & Professional Mobility**: Granular tracking of graduate career trajectories across technology, banking, e-commerce, and enterprise consulting sectors.
 2. **Algorithmic Mentorship Pairings**: Structured matching between senior alumni in leadership roles and current undergraduates seeking guidance.
 3. **Institutional Telemetry for Academic Accreditations**: Automated empirical reporting on graduate employment velocity and curriculum alignment for accreditation evaluation boards (e.g., **YÖKAK**, **AACSB**).
+4. **Resilient Persistence & Modern DevOps**: Containerized via Docker Compose with strict environment isolation, automated migration runners, realistic factories/seeders, and guaranteed state recovery passing the **Forgetting Test**.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────────────────┐
@@ -25,43 +28,67 @@
 │  & Directory  │               │ & Compatibility │               │   Telemetry    │
 └───────┬───────┘               └────────┬────────┘               └────────┬───────┘
         │                                │                                 │
-        ├─ Parametric Cohort Search      ├─ Skill-Matching Algorithm       ├─ 6/12 Month KPIs
+        ├─ Full CRUD REST Interfaces     ├─ Skill-Matching Algorithm       ├─ 6/12 Month KPIs
         ├─ Company & Industry Filters    ├─ Capacity-Governed Pairings     ├─ Regional Mobility
         ├─ JSON Skills Serialization     ├─ State Machine Lifecycle        ├─ Employer Distribution
-        └─ Privacy-Aware Redaction       └─ Direct Referral Channels       └─ Automated Dossier Export
+        └─ Migration & Seeder Pipeline   └─ Direct Referral Channels       └─ Automated Dossier Export
 ```
 
 ---
 
-## 2. Core Functional Pillars
+## 2. Core Functional Pillars & Deliverables
 
-### 2.1 Parametric Graduate Directory & Talent Graph
-- **Granular Academic Profiling**: Records student ID, matriculation year, graduation cohort, academic honors, and faculty advisors.
-- **Dynamic Skill Taxonomy**: Stores multi-tag skill sets using native **MySQL JSON columns**, enabling queries across modern tech competencies (e.g., `Python`, `Spark`, `DevOps`, `FinTech`, `Cybersecurity`).
-- **Privacy-Aware Ingestion**: Configurable visibility controls that redact phone numbers or personal emails for unauthenticated clients.
+### 2.1 The Forgetting Test Protocol (Requirement ①)
+Container filesystems are volatile by default. To guarantee database persistence across container destruction and restarts:
+- MySQL data is mounted to a durable **Docker Named Volume**: `nexus_mysql_data:/var/lib/mysql`.
+- When running `docker compose down` followed by `docker compose up`, all records, tables, and migrations are strictly preserved.
+- Run the automated validation script:
+  ```bash
+  ./tests/forgetting_test.sh
+  ```
 
-### 2.2 Mentorship State Machine & Matching Engine
-- **Capacity-Controlled Mentor Slots**: Senior alumni publish active mentor availability with capacity constraints to prevent mentor overload.
-- **Deterministic State Transition**: Tracks mentorship connections across formal stages:
+### 2.2 Data Design Documentation (`ddd.md` <=> `README.md`) (Requirement ②)
+Full schema documentation, conceptual models, and entity dictionaries are maintained in [**`ddd.md`**](./ddd.md).
+- Interactive **Mermaid ER diagrams** mapping `departments`, `alumni`, `mentorship_requests`, and `migrations`.
+- Comprehensive column data types, foreign key cascades, and indexing strategies.
 
-```mermaid
-stateDiagram-v2
-    [*] --> AVAILABLE : Alumni Registers as Mentor
-    AVAILABLE --> PENDING : Student Submits Request
-    PENDING --> ACTIVE : Mentor Approves Request
-    PENDING --> AVAILABLE : Mentor Declines / Slot Released
-    ACTIVE --> COMPLETED : Mentorship Term Concludes
-    COMPLETED --> AVAILABLE : Capacity Slot Reopens
-    ACTIVE --> AT_CAPACITY : Max Mentees Reached
-```
+### 2.3 Docker Compose Architecture (Requirement ③)
+Container orchestration in `docker-compose.yml` is parameterized with default fallbacks and `.env` interpolation:
+- Multi-container setup: PHP 8.2 Apache frontend/API (`app`) + MySQL 8.0 engine (`db`).
+- Service healthchecks ensure `app` only starts when MySQL is accepting connections.
 
-### 2.3 Accreditation Telemetry & Career Heatmaps
-- **Accreditation Readiness**: Real-time generation of graduate KPIs formatted for institutional review bodies (**YÖKAK**, **AACSB**, **ABET**).
-- **Employment Velocity**: Metrics measuring percent of graduates placed in tech roles within 6 and 12 months post-convocation.
-- **Domestic vs. Global Mobility**: Tracking alumni migration into European, North American, and domestic technology hubs.
+### 2.4 Environment Variables Architecture (Requirement ④)
+Strict credential separation:
+- `.env`: Local active configuration (strictly **git-ignored**).
+- `.env.example` & `.example.env`: Tracked template files for deployment reference.
+- `src/Core/Env.php`: Lightweight runtime parser loading `.env` variables for CLI and Docker runtimes.
 
-### 2.4 Container Health & Observability Probe
-- **Live Diagnostics Endpoint (`/api/v1/health`)**: Reports container memory footprint, PHP runtime metrics, and MySQL database connection health.
+### 2.5 Database Migrations (Requirement ⑤)
+Structured database migrations stored in `database/migrations/`:
+- `001_create_departments_table.sql`
+- `002_create_alumni_table.sql`
+- `003_create_mentorship_requests_table.sql`
+- Run migrations:
+  ```bash
+  php database/migrate.php [up|status|fresh]
+  ```
+
+### 2.6 Data Factory & Seeder (Requirement ⑥)
+Automated generation of realistic Turkish graduate and tech company profiles:
+- **Factory**: `database/factories/AlumniFactory.php` (realistic Turkish names, companies like Turkcell, Trendyol, Getir, Garanti BBVA, and modern tech skills).
+- **Seeder**: `database/seeders/DatabaseSeeder.php`
+- Seed the database:
+  ```bash
+  php database/seed.php --count=20
+  ```
+
+### 2.7 Full CRUD Interfaces with Database Connectivity (Requirement ⑦)
+All endpoints connect to MySQL with parameterized PDO queries (`prepare`/`execute`), with fallback:
+- **CREATE**: `POST /api/v1/alumni` & `POST /api/users` (supports `{"name": "Ada", "email": "ada@cv.edu.tr"}`)
+- **READ**: `GET /api/v1/alumni` (with `?cohort=`, `?industry=`, `?mentor=`, `?search=`) & `GET /api/v1/alumni/{id}`
+- **UPDATE**: `PUT /api/v1/alumni/{id}` & `PATCH /api/v1/alumni/{id}`
+- **DELETE**: `DELETE /api/v1/alumni/{id}`
+- **Interactive Web UI**: Add, Edit, and Delete records directly from the Directory UI at `http://localhost:8080/`.
 
 ---
 
@@ -69,24 +96,26 @@ stateDiagram-v2
 
 | Architecture Layer | Selected Technology | Engineering Rationale | Limitation / Drawback |
 | :--- | :--- | :--- | :--- |
-| **Backend Runtime** | **PHP 8.2 (Strict Types)** | - **Zero Compilation Overhead**: Instant edit-and-run development loop.<br>- **Native Web Architecture**: Built specifically for HTTP request processing.<br>- **Modern PHP Standards**: Employs `declare(strict_types=1);`, Backed Enums (`UserRole`, `MentorshipStatus`), and DTO patterns without heavy external framework weight. | **Synchronous Concurrency**: PHP operates on a per-request lifecycle; high-volume real-time WebSocket pipelines require higher memory overhead than event-driven runtimes like Node.js or Go. |
-| **Database Engine** | **MySQL 8.0** | - **Relational Data Integrity**: Academic cohorts, mentorship states, and alumni records demand strict foreign key constraints and ACID transaction guarantees.<br>- **Hybrid Schema Flexibility**: Native `JSON` column types allow flexible tagging of evolving skillsets alongside strict relational tables.<br>- **Container-Native**: Instant provisioning via official Docker images. | **Schema Rigidity**: Altering massive historical tables requires formal database migrations, and complex analytical window queries have less out-of-the-box flexibility than PostgreSQL. |
-| **Containerization** | **Docker & Docker Compose** | - **Strict Reproducibility**: Satisfies the coursework rule (`docker compose up`) ensuring the stack runs identically on any evaluation machine with zero local setup. | **First-Run Overhead**: Initial build requires pulling MySQL and Apache base images. |
-| **Developer Assistant**| **Antigravity** | - **Autonomous Agentic Execution**: Context-aware terminal orchestration, rapid code refactoring, and automated Dockerfile verification at zero cost. | **Newer Ecosystem**: Smaller repository of historical third-party troubleshooting threads compared to older assistants. |
+| **Backend Runtime** | **PHP 8.2 (Strict Types)** | - **Zero Compilation Overhead**: Instant edit-and-run development loop.<br>- **Native Web Architecture**: Built specifically for HTTP request processing.<br>- **Modern PHP Standards**: Employs `declare(strict_types=1);`, Backed Enums, and DTO patterns without heavyweight framework bloat. | **Synchronous Concurrency**: Operates on a per-request lifecycle; event loops require specialized extensions compared to Go or Node.js. |
+| **Database Engine** | **MySQL 8.0 (InnoDB)** | - **Relational Data Integrity**: Strict foreign key constraints and ACID transaction guarantees.<br>- **Hybrid Schema**: Native `JSON` columns allow flexible skillset tagging.<br>- **Container-Native**: Instant provisioning with volume persistence. | **Schema Rigidity**: Evolving massive schemas requires formal database migrations. |
+| **Containerization** | **Docker & Docker Compose** | - **Strict Reproducibility**: Satisfies the coursework rule (`docker compose up`) ensuring the stack runs identically on any machine. | **First-Run Overhead**: Initial build requires pulling MySQL and Apache base images. |
+| **Developer Assistant**| **Antigravity** | - **Autonomous Agentic Execution**: Context-aware terminal orchestration, automated Dockerfile verification, and migration generators. | **Newer Ecosystem**: Smaller repository of historical third-party forum threads. |
 
 ---
 
 ## 4. Architectural Design & Directory Layout
-
-AlumniNexus follows a **Domain-Driven Clean Architecture** with strict separation between public entry points and internal domain logic:
 
 ```text
 alumni/
 ├── Dockerfile                  # Production-ready PHP 8.2 Apache container configuration
 ├── docker-compose.yml          # Multi-container orchestration (AlumniNexus API + MySQL 8.0)
 ├── AGENTS.md                   # AI Assistant operational context & architectural protocols
-├── README.md                   # Complete system documentation, diagrams, and quickstart guide
-├── .gitignore                  # Git exclusions for OS, containers, and temporary assets
+├── README.md                   # Complete system documentation & quickstart guide
+├── ddd.md                      # Data Design Documentation (ERD, data dictionary, persistence)
+├── .gitignore                  # Git exclusions for OS, containers, and .env files
+├── .env.example                # Environment variables reference template
+├── .example.env                # Environment variables alternate reference template
+├── .env                        # Active environment variables (git-ignored)
 │
 ├── public/                     # [Document Root] Public web access gateway
 │   ├── .htaccess               # Apache URL rewrite rules to Front Controller
@@ -95,33 +124,45 @@ alumni/
 ├── src/                        # [Application Core] Domain logic & infrastructure
 │   ├── Core/
 │   │   ├── Database.php        # Type-safe PDO singleton connection wrapper
+│   │   ├── Env.php             # Lightweight .env environment loader
 │   │   ├── Response.php        # Standardized JSON and HTML response serializer
-│   │   └── Router.php          # Parametric regex route dispatcher
+│   │   └── Router.php          # Parametric regex route dispatcher with method overrides
 │   ├── Domain/
 │   │   └── Enums/
 │   │       ├── UserRole.php    # Backed Enum: ALUMNI, STUDENT, FACULTY, ADMIN
 │   │       └── MentorshipStatus.php # Backed Enum: AVAILABLE, AT_CAPACITY, INACTIVE
 │   ├── Services/
-│   │   └── AlumniService.php   # Business logic, query filtering & career analytics
+│   │   └── AlumniService.php   # Business logic, full CRUD operations & career analytics
 │   └── Controllers/
-│       ├── AlumniApiController.php # REST API v1 endpoints
+│       ├── AlumniApiController.php # REST API v1 CRUD endpoints
 │       ├── HealthController.php    # Telemetry and system health probes
 │       └── WebController.php       # Template dispatcher for browser views
 │
+├── database/                   # [Database Subsystem]
+│   ├── schema.sql              # Initial MySQL DDL schema
+│   ├── migrate.php             # Database migration CLI runner (up, status, fresh)
+│   ├── seed.php                # Database seeder CLI runner (--count=20)
+│   ├── migrations/             # Incremental migration SQL files
+│   │   ├── 001_create_departments_table.sql
+│   │   ├── 002_create_alumni_table.sql
+│   │   └── 003_create_mentorship_requests_table.sql
+│   ├── factories/
+│   │   └── AlumniFactory.php   # Factory generating realistic Turkish alumni dataset
+│   └── seeders/
+│       └── DatabaseSeeder.php  # Department and alumni seeder
+│
 ├── templates/                  # [Presentation Layer] High-performance client views
-│   ├── dashboard.html          # Modern SaaS-grade directory dashboard (Tailwind CSS)
+│   ├── dashboard.html          # Interactive directory dashboard with CRUD modals (Tailwind)
 │   ├── analytics.html          # Career Graph mobility & accreditation dashboard
 │   ├── swagger.html            # Dark-themed Swagger UI API Explorer
 │   └── 404.html                # Error fallback template
-│
-├── database/
-│   └── schema.sql              # MySQL DDL schema (InnoDB, JSON skills, composite indexes)
 │
 ├── docs/
 │   └── openapi.json            # OpenAPI 3.1.0 interactive contract specification
 │
 └── tests/
-    └── run_tests.php           # Automated CLI assertion suite
+    ├── run_tests.php           # Automated CLI assertion suite
+    └── forgetting_test.sh      # Bash automated validation for "The Forgetting Test"
 ```
 
 ---
@@ -135,7 +176,7 @@ In strict adherence to project evaluation instructions:
 docker compose up --build
 ```
 
-- Boots **MySQL 8.0** with health checks, automatically loading `database/schema.sql`.
+- Boots **MySQL 8.0** with health checks, automatically creating and mounting named volume `nexus_mysql_data`.
 - Boots **PHP 8.2 Apache**, routing traffic through `/public/index.php`.
 - The application will be immediately live at: **`http://localhost:8080`**.
 
@@ -143,26 +184,37 @@ docker compose up --build
 
 ### Key Application Routes
 
-| Surface | URL Path | Description |
-| :--- | :--- | :--- |
-| **Directory UI** | [`http://localhost:8080/`](http://localhost:8080/) | Interactive Alumni Directory with live search and cohort filters |
-| **Analytics UI** | [`http://localhost:8080/analytics`](http://localhost:8080/analytics) | Career mobility graph and institutional accreditation KPIs |
-| **API Explorer** | [`http://localhost:8080/swagger`](http://localhost:8080/swagger) | Interactive Swagger UI API documentation |
-| **Health Probe** | [`http://localhost:8080/api/v1/health`](http://localhost:8080/api/v1/health) | System memory telemetry and database connectivity status |
-| **Alumni API** | [`http://localhost:8080/api/v1/alumni`](http://localhost:8080/api/v1/alumni) | REST API endpoint (supports `?cohort=2023`, `?mentor=true`) |
-| **OpenAPI Spec** | [`http://localhost:8080/openapi.json`](http://localhost:8080/openapi.json) | Raw OpenAPI 3.1.0 JSON contract |
+| Surface | URL Path | Method | Description |
+| :--- | :--- | :--- | :--- |
+| **Directory UI** | [`http://localhost:8080/`](http://localhost:8080/) | `GET` | Interactive Alumni Directory with live CRUD modals & search |
+| **Analytics UI** | [`http://localhost:8080/analytics`](http://localhost:8080/analytics) | `GET` | Career mobility graph and institutional accreditation KPIs |
+| **API Explorer** | [`http://localhost:8080/swagger`](http://localhost:8080/swagger) | `GET` | Interactive Swagger UI API documentation |
+| **Health Probe** | [`http://localhost:8080/api/v1/health`](http://localhost:8080/api/v1/health) | `GET` | System memory telemetry and database connectivity status |
+| **List Alumni** | [`http://localhost:8080/api/v1/alumni`](http://localhost:8080/api/v1/alumni) | `GET` | Query alumni (`?cohort=`, `?industry=`, `?mentor=`, `?search=`) |
+| **Create Alumni**| [`http://localhost:8080/api/v1/alumni`](http://localhost:8080/api/v1/alumni) | `POST` | Create new alumni record (`POST /api/users` also supported) |
+| **Show Alumni**  | [`http://localhost:8080/api/v1/alumni/{id}`](http://localhost:8080/api/v1/alumni/1) | `GET` | Retrieve single alumni profile by ID |
+| **Update Alumni**| [`http://localhost:8080/api/v1/alumni/{id}`](http://localhost:8080/api/v1/alumni/1) | `PUT/PATCH` | Modify existing profile |
+| **Delete Alumni**| [`http://localhost:8080/api/v1/alumni/{id}`](http://localhost:8080/api/v1/alumni/1) | `DELETE` | Remove alumni record |
+| **OpenAPI Spec** | [`http://localhost:8080/openapi.json`](http://localhost:8080/openapi.json) | `GET` | Raw OpenAPI 3.1.0 JSON contract |
 
 ---
 
-### Alternative: Standalone Local PHP Server (Without Docker)
+### Executing Migrations, Seeders & The Forgetting Test
+
+Within the container (or locally if PHP/MySQL are installed):
 
 ```bash
-php -S localhost:8000 -t public/
-```
+# Run database migrations
+docker compose exec app php database/migrate.php
 
-Run test suite via CLI:
-```bash
-php tests/run_tests.php
+# Check migration status
+docker compose exec app php database/migrate.php status
+
+# Seed realistic alumni data
+docker compose exec app php database/seed.php --count=20
+
+# Run the automated Forgetting Test
+./tests/forgetting_test.sh
 ```
 
 ---
@@ -171,5 +223,6 @@ php tests/run_tests.php
 - **Institution**: Istanbul University (`ogr.iu.edu.tr`)
 - **Faculty**: Faculty of Economics (İktisat Fakültesi)
 - **Department**: Management Information Systems (Yönetim Bilişim Sistemleri - YBS)
-- **Repository**: `github.com/<your-username>/alumni`
+- **Repository**: `github.com/kamasya-atha-frari/ALUMNI`
+- **Documentation**: [ddd.md](./ddd.md)
 - **License**: MIT
