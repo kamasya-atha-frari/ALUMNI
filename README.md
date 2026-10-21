@@ -68,27 +68,55 @@ Structured database migrations stored in `database/migrations/`:
 - `001_create_departments_table.sql`
 - `002_create_alumni_table.sql`
 - `003_create_mentorship_requests_table.sql`
+- `004_create_job_postings_table.sql` (Companies & Job Postings schema)
+- `005_create_applications_table.sql` (Applications schema)
 - Run migrations:
   ```bash
   php database/migrate.php [up|status|fresh]
   ```
 
 ### 2.6 Data Factory & Seeder (Requirement ⑥)
-Automated generation of realistic Turkish graduate and tech company profiles:
-- **Factory**: `database/factories/AlumniFactory.php` (realistic Turkish names, companies like Turkcell, Trendyol, Getir, Garanti BBVA, and modern tech skills).
-- **Seeder**: `database/seeders/DatabaseSeeder.php`
-- Seed the database:
+Automated generation of realistic Turkish graduate, company, job posting, and application profiles:
+- **Alumni Factory**: `database/factories/AlumniFactory.php`
+- **Job Posting Factory**: `database/factories/JobPostingFactory.php`
+- **Application Factory**: `database/factories/ApplicationFactory.php`
+- **Unified Seeder**: `database/seeders/DatabaseSeeder.php`
+- Seed all tables:
   ```bash
   php database/seed.php --count=20
   ```
+- Or seed dedicated job postings & applications pipeline:
+  ```bash
+  php database/seed_jobs.php --count=10
+  ```
 
-### 2.7 Full CRUD Interfaces with Database Connectivity (Requirement ⑦)
-All endpoints connect to MySQL with parameterized PDO queries (`prepare`/`execute`), with fallback:
-- **CREATE**: `POST /api/v1/alumni` & `POST /api/users` (supports `{"name": "Ada", "email": "ada@cv.edu.tr"}`)
-- **READ**: `GET /api/v1/alumni` (with `?cohort=`, `?industry=`, `?mentor=`, `?search=`) & `GET /api/v1/alumni/{id}`
-- **UPDATE**: `PUT /api/v1/alumni/{id}` & `PATCH /api/v1/alumni/{id}`
-- **DELETE**: `DELETE /api/v1/alumni/{id}`
-- **Interactive Web UI**: Add, Edit, and Delete records directly from the Directory UI at `http://localhost:8080/`.
+### 2.7 Full CRUD Interfaces & Nested Routes (Requirement ⑦)
+All endpoints connect to MySQL with parameterized PDO queries (`prepare`/`execute`), with standby fallback:
+- **Alumni Directory**:
+  - `POST /api/v1/alumni` & `POST /api/users` (supports `{"name": "Ada", "email": "ada@cv.edu.tr"}`)
+  - `GET /api/v1/alumni` & `GET /api/v1/alumni/{id}`
+  - `PUT /api/v1/alumni/{id}` & `PATCH /api/v1/alumni/{id}`
+  - `DELETE /api/v1/alumni/{id}`
+- **Job Postings Feature (Direct & Nested)**:
+  - `GET /api/v1/job-postings` (filters: `job_type`, `status`, `company_id`, `user_id`, `search`)
+  - `POST /api/v1/job-postings` (create job posting)
+  - `GET /api/v1/job-postings/{id}` (single job posting details with application count)
+  - `PUT/PATCH /api/v1/job-postings/{id}` (modify posting)
+  - `DELETE /api/v1/job-postings/{id}` (remove posting)
+  - Nested: `GET /api/v1/companies/{id}/job-postings` & `POST /api/v1/companies/{id}/job-postings`
+  - Nested: `GET /api/v1/users/{id}/job-postings` & `POST /api/v1/users/{id}/job-postings`
+- **Applications Feature (Direct & Nested)**:
+  - `GET /api/v1/applications` (filters: `job_posting_id`, `user_id`, `status`)
+  - `POST /api/v1/applications` (submit candidate application)
+  - `GET /api/v1/applications/{id}` (inspect single application with applicant profile)
+  - `PUT/PATCH /api/v1/applications/{id}` (transition review status: `submitted` -> `under_review` -> `interview` -> `accepted` / `rejected`)
+  - `DELETE /api/v1/applications/{id}` (delete application)
+  - Nested: `GET /api/v1/job-postings/{id}/applications` & `POST /api/v1/job-postings/{id}/applications`
+  - Nested: `GET /api/v1/users/{id}/applications`
+- **Interactive Web UI**:
+  - Graduate Directory: `http://localhost:8080/`
+  - Job Board & Application Pipeline: `http://localhost:8080/jobs`
+  - Career Graph Telemetry: `http://localhost:8080/analytics`
 
 ---
 
@@ -126,7 +154,13 @@ alumni/
 │   │   ├── Database.php        # Type-safe PDO singleton connection wrapper
 │   │   ├── Env.php             # Lightweight .env environment loader
 │   │   ├── Response.php        # Standardized JSON and HTML response serializer
-│   │   └── Router.php          # Parametric regex route dispatcher with method overrides
+│   │   └── Router.php          # Parametric regex route dispatcher ({id} and :id support)
+│   ├── Models/
+│   │   ├── JobPosting.php      # JobPosting model with Company, Poster, Applications relations
+│   │   ├── Application.php     # Application model with JobPosting & Applicant relations
+│   │   ├── Company.php         # Company entity with published JobPostings relation
+│   │   ├── Alumni.php          # Alumni profile entity with JobPostings & Applications relations
+│   │   └── User.php            # User entity alias for classroom compatibility
 │   ├── Domain/
 │   │   └── Enums/
 │   │       ├── UserRole.php    # Backed Enum: ALUMNI, STUDENT, FACULTY, ADMIN
@@ -134,25 +168,34 @@ alumni/
 │   ├── Services/
 │   │   └── AlumniService.php   # Business logic, full CRUD operations & career analytics
 │   └── Controllers/
-│       ├── AlumniApiController.php # REST API v1 CRUD endpoints
-│       ├── HealthController.php    # Telemetry and system health probes
-│       └── WebController.php       # Template dispatcher for browser views
+│       ├── AlumniApiController.php     # REST API v1 alumni CRUD endpoints
+│       ├── JobPostingApiController.php # REST API v1 job postings (CRUD & nested routes)
+│       ├── ApplicationApiController.php# REST API v1 applications (CRUD & nested routes)
+│       ├── CompanyApiController.php    # REST API v1 companies catalog endpoints
+│       ├── HealthController.php        # Telemetry and system health probes
+│       └── WebController.php           # Template dispatcher for browser views
 │
 ├── database/                   # [Database Subsystem]
-│   ├── schema.sql              # Initial MySQL DDL schema
+│   ├── schema.sql              # Initial MySQL DDL schema & baseline fixtures
 │   ├── migrate.php             # Database migration CLI runner (up, status, fresh)
-│   ├── seed.php                # Database seeder CLI runner (--count=20)
+│   ├── seed.php                # Unified database seeder CLI runner (--count=20)
+│   ├── seed_jobs.php           # Dedicated job postings & applications seeder
 │   ├── migrations/             # Incremental migration SQL files
 │   │   ├── 001_create_departments_table.sql
 │   │   ├── 002_create_alumni_table.sql
-│   │   └── 003_create_mentorship_requests_table.sql
+│   │   ├── 003_create_mentorship_requests_table.sql
+│   │   ├── 004_create_job_postings_table.sql
+│   │   └── 005_create_applications_table.sql
 │   ├── factories/
-│   │   └── AlumniFactory.php   # Factory generating realistic Turkish alumni dataset
+│   │   ├── AlumniFactory.php   # Factory generating realistic Turkish alumni dataset
+│   │   ├── JobPostingFactory.php # Factory generating realistic tech job postings
+│   │   └── ApplicationFactory.php# Factory generating realistic candidate applications
 │   └── seeders/
-│       └── DatabaseSeeder.php  # Department and alumni seeder
+│       └── DatabaseSeeder.php  # Unified database seeder
 │
 ├── templates/                  # [Presentation Layer] High-performance client views
-│   ├── dashboard.html          # Interactive directory dashboard with CRUD modals (Tailwind)
+│   ├── dashboard.html          # Interactive alumni directory with CRUD modals (Tailwind)
+│   ├── jobs.html               # Interactive job board & application pipeline UI
 │   ├── analytics.html          # Career Graph mobility & accreditation dashboard
 │   ├── swagger.html            # Dark-themed Swagger UI API Explorer
 │   └── 404.html                # Error fallback template

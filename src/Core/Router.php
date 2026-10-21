@@ -37,7 +37,7 @@ class Router {
 
     public function resolve(string $method, string $uri): void {
         $cleanPath = parse_url($uri, PHP_URL_PATH) ?: '/';
-        $cleanPath = rtrim($cleanPath, '/') ?: '/';
+        $cleanPath = rtrim($cleanPath, '/.') ?: '/';
 
         // Check for HTTP method override (e.g. via X-HTTP-Method-Override header or _method POST param)
         if ($method === 'POST') {
@@ -57,8 +57,9 @@ class Router {
                 continue;
             }
 
-            // Convert /api/v1/alumni/{id} to regex
+            // Convert /api/v1/alumni/{id} and /companies/:id/job-postings to regex
             $pattern = preg_replace('#\{([a-zA-Z0-9_]+)\}#', '(?P<$1>[^/]+)', $route['path']);
+            $pattern = preg_replace('#:([a-zA-Z0-9_]+)#', '(?P<$1>[^/]+)', $pattern);
             $pattern = "#^{$pattern}$#";
 
             if (preg_match($pattern, $cleanPath, $matches)) {

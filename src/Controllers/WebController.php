@@ -24,4 +24,48 @@ class WebController {
     public function swagger(): void {
         Response::html(__DIR__ . '/../../templates/swagger.html');
     }
+
+    public function jobs(): void {
+        Response::html(__DIR__ . '/../../templates/jobs.html');
+    }
+
+    public function applications(): void {
+        Response::html(__DIR__ . '/../../templates/jobs.html');
+    }
+
+    public function about(): void {
+        Response::html(__DIR__ . '/../../templates/about.html');
+    }
+
+    public function hello(): void {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "Hello, World!";
+    }
+
+    public function helloName(string $name): void {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "Hello, " . ucfirst($name) . "!";
+    }
+
+    public function sum(string $number1, string $number2): void {
+        $n1 = is_numeric($number1) ? (float)$number1 : 0;
+        $n2 = is_numeric($number2) ? (float)$number2 : 0;
+        $result = $n1 + $n2;
+        if (floor($result) == $result) {
+            $result = (int)$result;
+        }
+
+        if (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json')) {
+            Response::json(['number1' => $number1, 'number2' => $number2, 'sum' => $result]);
+            return;
+        }
+
+        header('Content-Type: text/plain; charset=utf-8');
+        echo (string)$result;
+    }
+
+    public function ok(): void {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "ok";
+    }
 }

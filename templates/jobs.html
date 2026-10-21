@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlumniNexus • Career Opportunities & Job Postings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-briefcase text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-base tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-rose-300 to-indigo-300">
+                        AlumniNexus
+                    </span>
+                    <span class="text-[10px] block font-mono text-slate-400">Careers & Opportunities</span>
+                </div>
+            </div>
+
+            <nav class="flex items-center space-x-6 text-sm font-medium">
+                <a href="/" class="text-slate-400 hover:text-white transition">Directory</a>
+                <a href="/jobs" class="text-amber-400 hover:text-amber-300 transition">Job Board</a>
+                <a href="/analytics" class="text-slate-400 hover:text-white transition">Career Graph</a>
+                <a href="/swagger" class="text-slate-400 hover:text-white transition">API Explorer</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="openJobModal()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-md shadow-amber-500/20">
+                    <i class="fa-solid fa-plus"></i> Post Job
+                </button>
+                <span id="api-status-badge" class="px-2.5 py-1 text-xs font-mono rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    API Active
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-10 w-full space-y-8">
+        
+        <!-- Hero Header -->
+        <div class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-900 to-slate-950 p-8 md:p-10 shadow-2xl">
+            <div class="max-w-3xl space-y-3">
+                <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    <i class="fa-solid fa-building-columns"></i> Faculty of Economics • MIS Department Career Portal
+                </span>
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                    Graduate Job Board & <br><span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-rose-300 to-indigo-400">Application Pipeline</span>
+                </h1>
+                <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+                    Explore curated tech career opportunities published by leading employers and alumni network partners. Seamlessly submit and track candidate applications.
+                </p>
+            </div>
+
+            <!-- Fast Stat Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-800/80">
+                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+                    <p class="text-xs font-mono text-slate-500 uppercase">Active Postings</p>
+                    <p id="stat-active-jobs" class="text-2xl font-extrabold text-amber-400 mt-1">--</p>
+                </div>
+                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+                    <p class="text-xs font-mono text-slate-500 uppercase">Hiring Companies</p>
+                    <p id="stat-companies" class="text-2xl font-extrabold text-indigo-400 mt-1">--</p>
+                </div>
+                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+                    <p class="text-xs font-mono text-slate-500 uppercase">Total Applications</p>
+                    <p id="stat-applications" class="text-2xl font-extrabold text-emerald-400 mt-1">--</p>
+                </div>
+                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+                    <p class="text-xs font-mono text-slate-500 uppercase">Placement Velocity</p>
+                    <p class="text-2xl font-extrabold text-rose-400 mt-1">94.8%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Navigation Tabs -->
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center space-x-3">
+                <button id="btnTabJobs" onclick="switchTab('jobs')" class="px-4 py-2 text-sm font-bold rounded-xl bg-amber-500 text-slate-950 transition flex items-center gap-2">
+                    <i class="fa-solid fa-list-check"></i> Job Postings
+                </button>
+                <button id="btnTabApps" onclick="switchTab('apps')" class="px-4 py-2 text-sm font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-signature"></i> Received Applications
+                    <span id="apps-count-pill" class="px-2 py-0.5 text-xs rounded-full bg-slate-800 text-amber-400 font-mono">0</span>
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="refreshData()" class="p-2 text-xs rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" title="Refresh">
+                    <i class="fa-solid fa-arrow-rotate-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================================= -->
+        <!-- VIEW 1: JOB POSTINGS BOARD                                    -->
+        <!-- ============================================================= -->
+        <div id="viewJobs" class="space-y-6">
+            <!-- Search & Filters -->
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <button onclick="filterType(null)" class="type-filter-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 text-white transition">All Modalities</button>
+                    <button onclick="filterType('full-time')" class="type-filter-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Full-Time</button>
+                    <button onclick="filterType('remote')" class="type-filter-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Remote</button>
+                    <button onclick="filterType('internship')" class="type-filter-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Internship</button>
+                </div>
+
+                <div class="w-full md:w-80 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                    <input type="text" id="jobSearchInput" oninput="searchJobs(this.value)" placeholder="Search title, company, skills..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition">
+                </div>
+            </div>
+
+            <!-- Jobs Grid -->
+            <div id="jobsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="col-span-full py-16 text-center text-slate-500 font-mono text-sm">Loading job postings...</div>
+            </div>
+        </div>
+
+        <!-- ============================================================= -->
+        <!-- VIEW 2: APPLICATIONS PIPELINE                                -->
+        <!-- ============================================================= -->
+        <div id="viewApps" class="space-y-6 hidden">
+            <!-- Filter Bar for Applications -->
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterAppStatus(null)" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 text-white transition">All Statuses</button>
+                    <button onclick="filterAppStatus('submitted')" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Submitted</button>
+                    <button onclick="filterAppStatus('under_review')" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Under Review</button>
+                    <button onclick="filterAppStatus('interview')" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Interview</button>
+                    <button onclick="filterAppStatus('accepted')" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Accepted</button>
+                </div>
+                <div>
+                    <span class="text-xs font-mono text-slate-400">Review status updates save immediately</span>
+                </div>
+            </div>
+
+            <!-- Applications Table / Cards -->
+            <div id="appsContainer" class="space-y-4">
+                <div class="py-16 text-center text-slate-500 font-mono text-sm">Loading applications...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ============================================================= -->
+    <!-- MODAL: POST NEW JOB                                           -->
+    <!-- ============================================================= -->
+    <div id="jobModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-briefcase text-amber-400"></i> Create New Job Posting
+                </h3>
+                <button onclick="closeJobModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="jobForm" onsubmit="handleJobSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Job Title *</label>
+                    <input type="text" id="jobTitle" required placeholder="e.g. Senior Cloud & Data Engineer" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Company Name *</label>
+                        <input type="text" id="jobCompanyName" required placeholder="e.g. Trendyol Group" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Location</label>
+                        <input type="text" id="jobLocation" placeholder="e.g. Istanbul, Turkey (Hybrid)" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Employment Type</label>
+                        <select id="jobType" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                            <option value="full-time">Full-Time</option>
+                            <option value="remote">Remote</option>
+                            <option value="internship">Internship</option>
+                            <option value="part-time">Part-Time</option>
+                            <option value="contract">Contract</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Experience Tier</label>
+                        <select id="jobExp" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                            <option value="Entry">Entry-Level</option>
+                            <option value="Mid-Level" selected>Mid-Level</option>
+                            <option value="Senior">Senior</option>
+                            <option value="Lead">Lead / Architect</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Salary Band</label>
+                        <input type="text" id="jobSalary" placeholder="₺75,000 - ₺110,000" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Position Overview & Responsibilities *</label>
+                    <textarea id="jobDesc" rows="3" required placeholder="Describe core deliverables, technologies, and team mission..." class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Requirements & Qualifications</label>
+                    <textarea id="jobReq" rows="2" placeholder="Required degrees, technical competencies, frameworks..." class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeJobModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 text-slate-300 hover:text-white transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 transition">Publish Position</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- MODAL: VIEW JOB DETAILS & DIRECT APPLY                        -->
+    <!-- ============================================================= -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between pb-3 border-b border-slate-800">
+                <div>
+                    <span id="detailBadge" class="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30">FULL-TIME</span>
+                    <h2 id="detailTitle" class="text-xl font-bold text-white mt-1">Senior Cloud & Data Engineer</h2>
+                    <p id="detailCompany" class="text-xs text-slate-400 mt-0.5"><i class="fa-solid fa-building mr-1"></i> Turkcell Tech • Istanbul, Turkey</p>
+                </div>
+                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Job Info Badges -->
+            <div class="grid grid-cols-3 gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-xs">
+                <div>
+                    <span class="text-slate-500 block">Experience</span>
+                    <span id="detailExp" class="font-semibold text-slate-200">Senior</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">Salary Range</span>
+                    <span id="detailSalary" class="font-semibold text-emerald-400">₺95,000 - ₺130,000</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block">Applications</span>
+                    <span id="detailAppsCount" class="font-semibold text-indigo-400">3 Received</span>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="space-y-2 text-xs">
+                <h4 class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Role Description</h4>
+                <p id="detailDesc" class="text-slate-400 leading-relaxed"></p>
+            </div>
+
+            <!-- Requirements -->
+            <div class="space-y-2 text-xs">
+                <h4 class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Required Qualifications</h4>
+                <p id="detailReq" class="text-slate-400 leading-relaxed"></p>
+            </div>
+
+            <!-- Apply Form Box -->
+            <div class="mt-4 pt-4 border-t border-slate-800 bg-slate-950/80 p-5 rounded-2xl border border-slate-800/80 space-y-3">
+                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane text-amber-400"></i> Submit Your Application
+                </h4>
+
+                <form id="applyForm" onsubmit="handleApplicationSubmit(event)" class="space-y-3">
+                    <input type="hidden" id="applyJobId" value="">
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-300 mb-1">Your Full Name *</label>
+                            <input type="text" id="applyName" required placeholder="e.g. Zeynep Aydın" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-300 mb-1">Your Email Address *</label>
+                            <input type="email" id="applyEmail" required placeholder="zeynep.aydin@ogr.iu.edu.tr" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-300 mb-1">Resume / CV Document URL</label>
+                        <input type="url" id="applyResume" placeholder="https://drive.google.com/file/d/your-resume or LinkedIn" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-300 mb-1">Statement of Interest / Cover Letter</label>
+                        <textarea id="applyLetter" rows="2" placeholder="Highlight relevant coursework, projects, or why you are excited for this role..." class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"></textarea>
+                    </div>
+
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" class="px-5 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-lg shadow-amber-500/20 hover:opacity-95 transition">
+                            Submit Application
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Frontend Scripting Logic -->
+    <script>
+        let allJobs = [];
+        let allApps = [];
+        let selectedJob = null;
+        let currentTypeFilter = null;
+        let currentAppStatusFilter = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJobs();
+            loadApplications();
+        });
+
+        function switchTab(tab) {
+            const viewJobs = document.getElementById('viewJobs');
+            const viewApps = document.getElementById('viewApps');
+            const btnJobs = document.getElementById('btnTabJobs');
+            const btnApps = document.getElementById('btnTabApps');
+
+            if (tab === 'jobs') {
+                viewJobs.classList.remove('hidden');
+                viewApps.classList.add('hidden');
+                btnJobs.className = 'px-4 py-2 text-sm font-bold rounded-xl bg-amber-500 text-slate-950 transition flex items-center gap-2';
+                btnApps.className = 'px-4 py-2 text-sm font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition flex items-center gap-2';
+            } else {
+                viewJobs.classList.add('hidden');
+                viewApps.classList.remove('hidden');
+                btnApps.className = 'px-4 py-2 text-sm font-bold rounded-xl bg-amber-500 text-slate-950 transition flex items-center gap-2';
+                btnJobs.className = 'px-4 py-2 text-sm font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition flex items-center gap-2';
+            }
+        }
+
+        async function loadJobs() {
+            try {
+                const res = await fetch('/api/v1/job-postings');
+                const data = await res.json();
+                if (data.status === 'success') {
+                    allJobs = data.data;
+                    renderJobs(allJobs);
+                    updateJobStats();
+                }
+            } catch (err) {
+                console.error('Failed to load jobs:', err);
+            }
+        }
+
+        async function loadApplications() {
+            try {
+                const res = await fetch('/api/v1/applications');
+                const data = await res.json();
+                if (data.status === 'success') {
+                    allApps = data.data;
+                    renderApplications(allApps);
+                    document.getElementById('apps-count-pill').textContent = allApps.length;
+                    document.getElementById('stat-applications').textContent = allApps.length;
+                }
+            } catch (err) {
+                console.error('Failed to load applications:', err);
+            }
+        }
+
+        function updateJobStats() {
+            const activeCount = allJobs.filter(j => j.status === 'active').length;
+            document.getElementById('stat-active-jobs').textContent = activeCount;
+            const uniqueCompanies = new Set(allJobs.map(j => j.company_name));
+            document.getElementById('stat-companies').textContent = uniqueCompanies.size;
+        }
+
+        function renderJobs(list) {
+            const grid = document.getElementById('jobsGrid');
+            if (!list || list.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-16 text-center text-slate-500 font-mono text-sm">No job postings found matching criteria.</div>';
+                return;
+            }
+
+            grid.innerHTML = list.map(job => `
+                <div class="bg-slate-900/70 border border-slate-800 hover:border-slate-700 rounded-3xl p-6 transition flex flex-col justify-between space-y-4 hover:shadow-xl hover:shadow-black/50">
+                    <div>
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <span class="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                    ${job.job_type}
+                                </span>
+                                <h3 class="text-base font-bold text-white mt-2">${escapeHtml(job.title)}</h3>
+                                <p class="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-1">
+                                    <i class="fa-solid fa-building text-slate-500"></i> ${escapeHtml(job.company_name)}
+                                </p>
+                            </div>
+                            <span class="text-xs font-mono px-2 py-0.5 rounded-full ${job.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-500'}">
+                                ${job.status}
+                            </span>
+                        </div>
+
+                        <p class="text-xs text-slate-400 line-clamp-3 mt-3 leading-relaxed">
+                            ${escapeHtml(job.description)}
+                        </p>
+                    </div>
+
+                    <div class="space-y-3 pt-3 border-t border-slate-800/80">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-slate-400 flex items-center gap-1"><i class="fa-solid fa-location-dot text-slate-500"></i> ${escapeHtml(job.location || 'Istanbul')}</span>
+                            ${job.salary_range ? `<span class="text-emerald-400 font-mono font-semibold">${escapeHtml(job.salary_range)}</span>` : ''}
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-[11px] text-slate-500 font-mono">
+                                <i class="fa-solid fa-user-group text-slate-600 mr-1"></i> ${job.applications_count || 0} applicants
+                            </span>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="deleteJob(${job.id})" class="p-1.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-950/30 rounded-lg transition" title="Delete posting">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                                <button onclick="openDetailModal(${job.id})" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 transition flex items-center gap-1 shadow-sm">
+                                    View & Apply <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderApplications(list) {
+            const container = document.getElementById('appsContainer');
+            if (!list || list.length === 0) {
+                container.innerHTML = '<div class="py-16 text-center text-slate-500 font-mono text-sm">No applications submitted yet.</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(app => `
+                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <h4 class="text-sm font-bold text-white">${escapeHtml(app.applicant_name)}</h4>
+                            <span class="text-xs text-slate-400 font-mono">(${escapeHtml(app.applicant_email)})</span>
+                        </div>
+                        <p class="text-xs text-slate-300">
+                            Applied for: <span class="font-semibold text-amber-400">${escapeHtml(app.job_title || 'Position #' + app.job_posting_id)}</span>
+                            ${app.company_name ? `at <span class="text-indigo-300 font-medium">${escapeHtml(app.company_name)}</span>` : ''}
+                        </p>
+                        ${app.cover_letter ? `<p class="text-xs text-slate-400 italic line-clamp-2 max-w-2xl mt-1">"${escapeHtml(app.cover_letter)}"</p>` : ''}
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+                        ${app.resume_url ? `
+                            <a href="${escapeHtml(app.resume_url)}" target="_blank" class="px-3 py-1 text-xs rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1">
+                                <i class="fa-solid fa-file-pdf text-rose-400"></i> Resume
+                            </a>
+                        ` : ''}
+
+                        <select onchange="updateAppStatus(${app.id}, this.value)" class="px-3 py-1 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-amber-400">
+                            <option value="submitted" ${app.status === 'submitted' ? 'selected' : ''}>Submitted</option>
+                            <option value="under_review" ${app.status === 'under_review' ? 'selected' : ''}>Under Review</option>
+                            <option value="interview" ${app.status === 'interview' ? 'selected' : ''}>Interview</option>
+                            <option value="accepted" ${app.status === 'accepted' ? 'selected' : ''}>Accepted</option>
+                            <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                        </select>
+
+                        <button onclick="deleteApp(${app.id})" class="p-1.5 text-xs text-rose-400 hover:bg-rose-950/30 rounded-lg transition" title="Delete">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterType(type) {
+            currentTypeFilter = type;
+            applyJobFilters();
+        }
+
+        function searchJobs(query) {
+            applyJobFilters(query);
+        }
+
+        function applyJobFilters(searchVal = null) {
+            let res = allJobs;
+            if (currentTypeFilter) {
+                res = res.filter(j => j.job_type === currentTypeFilter);
+            }
+            const query = searchVal !== null ? searchVal : (document.getElementById('jobSearchInput')?.value || '');
+            if (query.trim() !== '') {
+                const q = query.toLowerCase();
+                res = res.filter(j =>
+                    j.title.toLowerCase().includes(q) ||
+                    j.company_name.toLowerCase().includes(q) ||
+                    (j.description && j.description.toLowerCase().includes(q))
+                );
+            }
+            renderJobs(res);
+        }
+
+        function filterAppStatus(status) {
+            currentAppStatusFilter = status;
+            if (!status) {
+                renderApplications(allApps);
+            } else {
+                renderApplications(allApps.filter(a => a.status === status));
+            }
+        }
+
+        function openJobModal() {
+            document.getElementById('jobForm').reset();
+            document.getElementById('jobModal').classList.remove('hidden');
+        }
+
+        function closeJobModal() {
+            document.getElementById('jobModal').classList.add('hidden');
+        }
+
+        async function handleJobSubmit(e) {
+            e.preventDefault();
+            const payload = {
+                title: document.getElementById('jobTitle').value,
+                company_name: document.getElementById('jobCompanyName').value,
+                location: document.getElementById('jobLocation').value,
+                job_type: document.getElementById('jobType').value,
+                experience_level: document.getElementById('jobExp').value,
+                salary_range: document.getElementById('jobSalary').value,
+                description: document.getElementById('jobDesc').value,
+                requirements: document.getElementById('jobReq').value,
+                status: 'active'
+            };
+
+            try {
+                const res = await fetch('/api/v1/job-postings', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    closeJobModal();
+                    await loadJobs();
+                } else {
+                    alert('Error: ' + (data.message || 'Could not create job'));
+                }
+            } catch (err) {
+                alert('Network error while publishing job');
+            }
+        }
+
+        function openDetailModal(jobId) {
+            selectedJob = allJobs.find(j => j.id === jobId);
+            if (!selectedJob) return;
+
+            document.getElementById('detailBadge').textContent = selectedJob.job_type;
+            document.getElementById('detailTitle').textContent = selectedJob.title;
+            document.getElementById('detailCompany').innerHTML = `<i class="fa-solid fa-building mr-1"></i> ${escapeHtml(selectedJob.company_name)} • ${escapeHtml(selectedJob.location || 'Istanbul')}`;
+            document.getElementById('detailExp').textContent = selectedJob.experience_level || 'Mid-Level';
+            document.getElementById('detailSalary').textContent = selectedJob.salary_range || 'Competitive';
+            document.getElementById('detailAppsCount').textContent = (selectedJob.applications_count || 0) + ' Received';
+            document.getElementById('detailDesc').textContent = selectedJob.description || 'No description provided.';
+            document.getElementById('detailReq').textContent = selectedJob.requirements || 'No explicit prerequisites specified.';
+            
+            document.getElementById('applyJobId').value = selectedJob.id;
+            document.getElementById('applyForm').reset();
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        async function handleApplicationSubmit(e) {
+            e.preventDefault();
+            const jobId = document.getElementById('applyJobId').value;
+            const payload = {
+                job_posting_id: parseInt(jobId),
+                applicant_name: document.getElementById('applyName').value,
+                applicant_email: document.getElementById('applyEmail').value,
+                resume_url: document.getElementById('applyResume').value,
+                cover_letter: document.getElementById('applyLetter').value,
+                status: 'submitted'
+            };
+
+            try {
+                const res = await fetch(`/api/v1/job-postings/${jobId}/applications`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    alert('Application successfully submitted!');
+                    closeDetailModal();
+                    await loadApplications();
+                    await loadJobs();
+                } else {
+                    alert('Error: ' + (data.message || 'Submission failed'));
+                }
+            } catch (err) {
+                alert('Network error submitting application');
+            }
+        }
+
+        async function updateAppStatus(appId, status) {
+            try {
+                const res = await fetch(`/api/v1/applications/${appId}`, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ status })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    await loadApplications();
+                }
+            } catch (err) {
+                console.error('Status update failed:', err);
+            }
+        }
+
+        async function deleteJob(id) {
+            if (!confirm(`Are you sure you want to delete job posting #${id}?`)) return;
+            try {
+                const res = await fetch(`/api/v1/job-postings/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    await loadJobs();
+                }
+            } catch (err) {
+                alert('Failed to delete job posting');
+            }
+        }
+
+        async function deleteApp(id) {
+            if (!confirm(`Are you sure you want to delete application #${id}?`)) return;
+            try {
+                const res = await fetch(`/api/v1/applications/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    await loadApplications();
+                }
+            } catch (err) {
+                alert('Failed to delete application');
+            }
+        }
+
+        function refreshData() {
+            loadJobs();
+            loadApplications();
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>

@@ -19,6 +19,10 @@ This Data Design Document specifies the storage architecture, entity-relationshi
 erDiagram
     DEPARTMENTS ||--o{ ALUMNI : "graduates from"
     ALUMNI ||--o{ MENTORSHIP_REQUESTS : "receives"
+    COMPANIES ||--o{ JOB_POSTINGS : "publishes"
+    ALUMNI ||--o{ JOB_POSTINGS : "posts"
+    JOB_POSTINGS ||--o{ APPLICATIONS : "receives"
+    ALUMNI ||--o{ APPLICATIONS : "submits"
     
     DEPARTMENTS {
         int id PK "Auto Increment"
@@ -44,6 +48,47 @@ erDiagram
         int mentor_capacity "Max mentees concurrent capacity"
         timestamp created_at "Profile creation timestamp"
         timestamp updated_at "Profile last update timestamp"
+    }
+
+    COMPANIES {
+        int id PK "Auto Increment"
+        string name UK "Corporate Entity Name (150)"
+        string industry "Industry Sector (150)"
+        string location "Headquarters Location (100)"
+        string website "Corporate Website (255)"
+        text description "Company Overview & Mission"
+        timestamp created_at "Registration timestamp"
+        timestamp updated_at "Update timestamp"
+    }
+
+    JOB_POSTINGS {
+        int id PK "Auto Increment"
+        string title "Job Title / Designation (200)"
+        int company_id FK "References companies(id)"
+        string company_name "Company Name Snapshot (150)"
+        int user_id FK "References alumni(id) / Poster"
+        text description "Detailed Position Overview"
+        text requirements "Required Competencies & Background"
+        string location "Work Location / Hybrid / Remote (150)"
+        enum job_type "full-time, part-time, remote, internship, contract"
+        string salary_range "Compensation Range (100)"
+        string experience_level "Experience Tier (50)"
+        enum status "active, closed, draft"
+        timestamp created_at "Publication timestamp"
+        timestamp updated_at "Last update timestamp"
+    }
+
+    APPLICATIONS {
+        int id PK "Auto Increment"
+        int job_posting_id FK "References job_postings(id)"
+        int user_id FK "References alumni(id) / Applicant"
+        string applicant_name "Candidate Legal Name (150)"
+        string applicant_email "Candidate Contact Email (150)"
+        string resume_url "Resume / CV Document URL (255)"
+        text cover_letter "Candidate Letter of Intent"
+        enum status "submitted, under_review, interview, accepted, rejected"
+        timestamp created_at "Submission timestamp"
+        timestamp updated_at "Status update timestamp"
     }
 
     MENTORSHIP_REQUESTS {
@@ -130,6 +175,62 @@ Internal schema versioning table managed by `database/migrate.php`.
 | `migration` | `VARCHAR(255)`| `UNIQUE` | No | - | Migration SQL file name |
 | `batch` | `INT` | - | No | - | Batch sequence number |
 | `executed_at`| `TIMESTAMP` | - | No | `CURRENT_TIMESTAMP` | Time migration was applied |
+
+---
+
+### 3.5 Table: `companies`
+Corporate entities and enterprise employers hiring alumni and offering internships.
+
+| Column | Type | Constraints | Nullable | Default | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `id` | `INT` | `PRIMARY KEY AUTO_INCREMENT` | No | - | Unique company identifier |
+| `name` | `VARCHAR(150)` | `UNIQUE` | No | - | Official company / enterprise name |
+| `industry` | `VARCHAR(150)` | `INDEX (idx_company_industry)` | Yes | `NULL` | Industry classification sector |
+| `location` | `VARCHAR(100)` | - | Yes | `NULL` | Corporate headquarters or main branch |
+| `website` | `VARCHAR(255)` | - | Yes | `NULL` | Company URL or career portal |
+| `description` | `TEXT` | - | Yes | `NULL` | Corporate overview and profile |
+| `created_at` | `TIMESTAMP` | - | No | `CURRENT_TIMESTAMP` | Company record creation timestamp |
+| `updated_at` | `TIMESTAMP` | - | No | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | Last profile update timestamp |
+
+---
+
+### 3.6 Table: `job_postings`
+Career opportunities, full-time roles, internships, and project contracts posted by companies or alumni.
+
+| Column | Type | Constraints | Nullable | Default | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `id` | `INT` | `PRIMARY KEY AUTO_INCREMENT` | No | - | Unique job posting identifier |
+| `title` | `VARCHAR(200)` | - | No | - | Position title (e.g. Lead Data Engineer) |
+| `company_id` | `INT` | `FOREIGN KEY REFERENCES companies(id) ON DELETE SET NULL` | Yes | `NULL` | Associated hiring company |
+| `company_name` | `VARCHAR(150)` | - | No | - | Snapshot company name for display resilience |
+| `user_id` | `INT` | `FOREIGN KEY REFERENCES alumni(id) ON DELETE SET NULL` | Yes | `NULL` | Alumni user who authored/published the post |
+| `description` | `TEXT` | - | No | - | Comprehensive job description & duties |
+| `requirements` | `TEXT` | - | Yes | `NULL` | Required qualifications, degrees, skills |
+| `location` | `VARCHAR(150)` | - | Yes | `NULL` | Office location, Hybrid, or Remote |
+| `job_type` | `ENUM` | `('full-time', 'part-time', 'remote', 'internship', 'contract')` | No | `'full-time'` | Employment contract modality |
+| `salary_range` | `VARCHAR(100)` | - | Yes | `NULL` | Compensation range / salary band |
+| `experience_level` | `VARCHAR(50)` | - | Yes | `'Mid-Level'` | Target seniority (Entry, Mid, Senior, Lead) |
+| `status` | `ENUM` | `('active', 'closed', 'draft')` | No | `'active'` | Publication lifecycle state |
+| `created_at` | `TIMESTAMP` | `INDEX (idx_job_created)` | No | `CURRENT_TIMESTAMP` | Publication timestamp |
+| `updated_at` | `TIMESTAMP` | - | No | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | Last modification timestamp |
+
+---
+
+### 3.7 Table: `applications`
+Candidate job applications submitted by students and alumni for published job opportunities.
+
+| Column | Type | Constraints | Nullable | Default | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `id` | `INT` | `PRIMARY KEY AUTO_INCREMENT` | No | - | Unique application identifier |
+| `job_posting_id`| `INT` | `FOREIGN KEY REFERENCES job_postings(id) ON DELETE CASCADE` | No | - | Target job vacancy |
+| `user_id` | `INT` | `FOREIGN KEY REFERENCES alumni(id) ON DELETE SET NULL` | Yes | `NULL` | Applying alumni/student profile (optional) |
+| `applicant_name`| `VARCHAR(150)` | - | No | - | Candidate full legal name |
+| `applicant_email`| `VARCHAR(150)` | - | No | - | Candidate contact email |
+| `resume_url` | `VARCHAR(255)` | - | Yes | `NULL` | Link to candidate CV / portfolio document |
+| `cover_letter` | `TEXT` | - | Yes | `NULL` | Candidate letter of intent / motivation |
+| `status` | `ENUM` | `('submitted', 'under_review', 'interview', 'accepted', 'rejected')` | No | `'submitted'` | Application review workflow state |
+| `created_at` | `TIMESTAMP` | `INDEX (idx_app_created)` | No | `CURRENT_TIMESTAMP` | Application submission timestamp |
+| `updated_at` | `TIMESTAMP` | - | No | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | Last review status update timestamp |
 
 ---
 

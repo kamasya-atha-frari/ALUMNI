@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlumniNexus • About Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-base tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-rose-300 to-indigo-300">
+                        AlumniNexus
+                    </span>
+                    <span class="text-[10px] block font-mono text-slate-400">About & Project Mission</span>
+                </div>
+            </div>
+
+            <nav class="flex items-center space-x-6 text-sm font-medium">
+                <a href="/" class="text-slate-400 hover:text-white transition">Directory</a>
+                <a href="/jobs" class="text-slate-400 hover:text-white transition">Job Board</a>
+                <a href="/about" class="text-amber-400 hover:text-amber-300 transition">About</a>
+                <a href="/analytics" class="text-slate-400 hover:text-white transition">Career Graph</a>
+                <a href="/swagger" class="text-slate-400 hover:text-white transition">API Explorer</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto px-6 py-12 w-full space-y-8">
+        <div class="border border-slate-800 rounded-3xl bg-slate-900/70 p-8 md:p-12 space-y-6 shadow-2xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <i class="fa-solid fa-circle-info"></i> Temporary About Page • Istanbul University MIS
+            </div>
+
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white">
+                About <span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-indigo-400">AlumniNexus</span>
+            </h1>
+
+            <p class="text-slate-300 text-base md:text-lg leading-relaxed">
+                AlumniNexus is an institutional talent intelligence platform engineered for graduates, faculty, and students of <strong>Istanbul University Faculty of Economics, Department of Management Information Systems (Yönetim Bilişim Sistemleri - YBS)</strong>.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                <div class="bg-slate-950/70 border border-slate-800 p-6 rounded-2xl space-y-2">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-code text-amber-400"></i> Modern Architecture
+                    </h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Pure PHP 8.2 backend adhering to strict typing (`declare(strict_types=1);`), containerized with Docker and MySQL 8.0 with durable named volumes passing the Forgetting Test.
+                    </p>
+                </div>
+
+                <div class="bg-slate-950/70 border border-slate-800 p-6 rounded-2xl space-y-2">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase text-indigo-400"></i> Career & Applications
+                    </h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        End-to-end recruitment pipeline connecting graduates with technology enterprises like Turkcell, Trendyol, and Getir, complete with candidate review workflow.
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500 font-mono">
+                <span>Classroom Verification Route: <code>GET /about</code></span>
+                <span>temp. about page</span>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

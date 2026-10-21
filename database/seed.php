@@ -32,6 +32,8 @@ spl_autoload_register(function (string $class): void {
 });
 
 require_once __DIR__ . '/factories/AlumniFactory.php';
+require_once __DIR__ . '/factories/JobPostingFactory.php';
+require_once __DIR__ . '/factories/ApplicationFactory.php';
 require_once __DIR__ . '/seeders/DatabaseSeeder.php';
 
 use AlumniNexus\Core\Database;

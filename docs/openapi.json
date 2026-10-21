@@ -129,6 +129,112 @@
           "200": { "description": "Institutional employment rate and industry KPIs" }
         }
       }
+    },
+    "/api/v1/job-postings": {
+      "get": {
+        "summary": "List Job Postings (READ All)",
+        "parameters": [
+          { "name": "job_type", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "List of active job postings" }
+        }
+      },
+      "post": {
+        "summary": "Create Job Posting (CREATE)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "description"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "company_name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "location": { "type": "string" },
+                  "job_type": { "type": "string", "enum": ["full-time", "remote", "internship", "contract"] },
+                  "salary_range": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Job posting published successfully" }
+        }
+      }
+    },
+    "/api/v1/job-postings/{id}": {
+      "get": {
+        "summary": "Get Single Job Posting (READ Single)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Job posting detail" } }
+      },
+      "put": {
+        "summary": "Update Job Posting (UPDATE)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Job posting updated" } }
+      },
+      "delete": {
+        "summary": "Delete Job Posting (DELETE)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Job posting deleted" } }
+      }
+    },
+    "/api/v1/companies/{id}/job-postings": {
+      "get": {
+        "summary": "Get Job Postings for Company (Nested Route)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Job postings published by company" } }
+      }
+    },
+    "/api/v1/applications": {
+      "get": {
+        "summary": "List Applications (READ All)",
+        "parameters": [
+          { "name": "job_posting_id", "in": "query", "schema": { "type": "integer" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "List of candidate applications" } }
+      },
+      "post": {
+        "summary": "Submit Application (CREATE)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["job_posting_id", "applicant_name", "applicant_email"],
+                "properties": {
+                  "job_posting_id": { "type": "integer" },
+                  "applicant_name": { "type": "string" },
+                  "applicant_email": { "type": "string" },
+                  "resume_url": { "type": "string" },
+                  "cover_letter": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Application submitted" } }
+      }
+    },
+    "/api/v1/job-postings/{id}/applications": {
+      "get": {
+        "summary": "Get Applications for Job Posting (Nested Route)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Applications for this job posting" } }
+      },
+      "post": {
+        "summary": "Submit Application to Specific Job Posting (Nested Route)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "201": { "description": "Application submitted directly to job" } }
+      }
     }
   }
 }
