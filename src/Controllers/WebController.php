@@ -51,10 +51,6 @@ class WebController {
         Response::html(__DIR__ . '/../../templates/jobs.html');
     }
 
-    public function about(): void {
-        Response::html(__DIR__ . '/../../templates/about.html');
-    }
-
     public function hello(): void {
         header('Content-Type: text/plain; charset=utf-8');
         echo "Hello, World!";
