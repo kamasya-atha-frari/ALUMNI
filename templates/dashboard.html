@@ -266,7 +266,7 @@
         }
 
         function openEditModal(id) {
-            const item = allAlumni.find(a => a.id === id);
+            const item = allAlumni.find(a => String(a.id) === String(id));
             if (!item) return;
 
             document.getElementById('modalTitle').innerText = `Edit Alumni Record #${id}`;
