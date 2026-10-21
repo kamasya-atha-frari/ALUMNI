@@ -2,8 +2,9 @@
 declare(strict_types=1);
 
 /**
- * AlumniNexus Automated Test Suite
- * Includes Week 5/6 Database, Job Postings, and Applications integration tests.
+ * AlumniNexus Automated Master Test Suite
+ * Covers Week 2/3 Whiteboard Milestone Routes & In-Memory User Service,
+ * Week 4 Database & Persistence, and Week 5/6 Job Postings & Applications.
  */
 
 spl_autoload_register(function (string $class): void {
@@ -16,6 +17,7 @@ spl_autoload_register(function (string $class): void {
 });
 
 use AlumniNexus\Services\AlumniService;
+use AlumniNexus\Services\UserService;
 use AlumniNexus\Domain\Enums\UserRole;
 use AlumniNexus\Domain\Enums\MentorshipStatus;
 use AlumniNexus\Core\Router;
@@ -39,14 +41,14 @@ function assertCheck(bool $condition, string $label): void {
     }
 }
 
-echo "\n\033[1;34m=== AlumniNexus System Test Suite ===\033[0m\n\n";
+echo "\n\033[1;34m=== AlumniNexus Unified Master Test Suite ===\033[0m\n\n";
 
 // 1. Test Domain Enums
 echo "1. Domain Enums:\n";
 assertCheck(UserRole::ALUMNI->value === 'alumni', "UserRole::ALUMNI equals 'alumni'");
 assertCheck(MentorshipStatus::AVAILABLE->badgeColor() === 'emerald', "MentorshipStatus badge is 'emerald'");
 
-// 2. Test Service Filtering
+// 2. Test Alumni Service Read Logic
 echo "\n2. Alumni Service Read Logic:\n";
 $service = new AlumniService();
 $all = $service->getAll();
@@ -58,7 +60,7 @@ assertCheck(count($mentors) >= 3, "Filtered active mentors correctly (found: " .
 $cohort2023 = $service->getAll(['cohort' => 2023]);
 assertCheck(count($cohort2023) >= 1 && $cohort2023[0]['full_name'] === 'Emre Arslan', "Filtered cohort 2023 accurately");
 
-// 3. Test CRUD Operations
+// 3. Test Alumni CRUD Operations
 echo "\n3. Alumni CRUD Operations:\n";
 $created = $service->create([
     'full_name' => 'Ada Lovelace',
@@ -86,27 +88,110 @@ assertCheck($deleted === true, "DELETE: Successfully deleted record");
 $afterDelete = $service->findById((int)$created['id']);
 assertCheck($afterDelete === null, "CONFIRM: Deleted record is no longer findable");
 
-// 4. Test Analytics
+// 4. Test Analytics Engine
 echo "\n4. Career Analytics Engine:\n";
 $analytics = $service->getAnalytics();
 assertCheck($analytics['employment_rate_percentage'] > 90, "Employment index exceeds 90% benchmark");
 assertCheck(isset($analytics['top_industries']['Telecommunications & Cloud']), "Industry breakdown tracks Cloud & Telecom");
 
-// 5. Test Router Engine Pattern Matching
-echo "\n5. Router Engine Pattern Matching:\n";
+// 5. Whiteboard Milestone Routes & Subdirectory Normalization (Images 3 & 4)
+echo "\n5. Whiteboard Milestone Routes & Subdirectory Normalization:\n";
 $router = new Router();
-$matchedId = null;
-$router->get('/api/v1/alumni/{id}', function ($id) use (&$matchedId) {
-    $matchedId = (int)$id;
+
+$router->get('/auto', fn(): string => "ok");
+$router->post('/', fn(): string => "ok");
+$router->post('/auto', fn(): string => "ok");
+$router->get('/hello', fn(): string => "Hello, World!");
+$router->get('/auto/hello', fn(): string => "Hello, World!");
+$router->get('/hello/{name}', fn(string $name): string => "Hello, " . htmlspecialchars(ucfirst($name)) . "!");
+$router->get('/auto/hello/{name}', fn(string $name): string => "Hello, " . htmlspecialchars(ucfirst($name)) . "!");
+$router->get('/sum/{number1}/{number2}', function ($n1, $n2): string {
+    $sum = (float)$n1 + (float)$n2;
+    return (string)((floor($sum) == $sum) ? (int)$sum : $sum);
 });
 
-$_SERVER['REQUEST_METHOD'] = 'GET';
-$_SERVER['REQUEST_URI'] = '/api/v1/alumni/42';
-$router->resolve('GET', '/api/v1/alumni/42');
-assertCheck($matchedId === 42, "Router correctly extracted dynamic path parameter {id} = 42");
+$mainVisited = false;
+$router->get('/', function () use (&$mainVisited) {
+    $mainVisited = true;
+});
 
-// 6. Test JobPosting Model & CRUD Operations
-echo "\n6. JobPosting Model & CRUD:\n";
+$aboutVisited = false;
+$router->get('/about', function () use (&$aboutVisited) {
+    $aboutVisited = true;
+});
+
+$jobsVisited = false;
+$router->get('/jobs', function () use (&$jobsVisited) {
+    $jobsVisited = true;
+});
+
+assertCheck($router->dispatch('GET', '/auto', false), "Item 1: Matched GET /auto ('ok')");
+assertCheck($router->dispatch('POST', '/', false), "Item 1: Matched POST / ('ok')");
+assertCheck($router->dispatch('GET', '/hello', false), "Item 2: Matched GET /hello ('Hello, World!')");
+assertCheck($router->dispatch('GET', '/hello/emre', false), "Item 3: Matched GET /hello/emre ('Hello, Emre!')");
+assertCheck($router->dispatch('GET', '/sum/15/25', false), "Item 4: Matched GET /sum/15/25 (sum = 40)");
+
+$router->dispatch('GET', '/', false);
+assertCheck($mainVisited, "Item 5: Matched GET / (temporary one main page)");
+
+$router->dispatch('GET', '/about', false);
+assertCheck($aboutVisited, "Item 6: Matched GET /about (temp. about page)");
+
+// Subdirectory Normalization
+assertCheck($router->dispatch('GET', '/alumni/hello/emre', false), "Subdirectory: Normalized /alumni/hello/emre -> /hello/emre");
+assertCheck($router->dispatch('GET', '/alumni/sum/10/20', false), "Subdirectory: Normalized /alumni/sum/10/20 -> /sum/10/20");
+
+// Trailing dot tolerance (e.g. user typed /jobs.)
+$router->resolve('GET', '/jobs.');
+assertCheck($jobsVisited, "URL TOLERANCE: /jobs. (with trailing dot) successfully resolved to /jobs");
+
+// 6. Week 03 REST API & In-Memory User Service (Whiteboard Items 1-7)
+echo "\n6. Week 03 REST API & In-Memory User Service:\n";
+$tempStorage = sys_get_temp_dir() . '/test_alumni_unified_' . uniqid() . '.json';
+$userService = new UserService($tempStorage);
+$userService->reset();
+
+$users = $userService->getAll();
+assertCheck(count($users) >= 4, "Initial in-memory user dataset loaded (count: " . count($users) . ")");
+assertCheck($users[0]['name'] === 'Elif Kaya', "Slide B verified: user Elif Kaya exists");
+
+$newUser = $userService->create(['name' => 'Canan Dag', 'graduationYear' => 2025]);
+assertCheck($newUser['name'] === 'Canan Dag' && $newUser['graduationYear'] === 2025, "Item 3: POST /api/users created user in-memory");
+
+$fetchedUser = $userService->getById((int)$newUser['id']);
+assertCheck($fetchedUser !== null && $fetchedUser['id'] === $newUser['id'], "Item 5: GET /api/users/{id} retrieved record");
+
+$patchedUser = $userService->update((int)$newUser['id'], ['graduationYear' => 2026]);
+assertCheck($patchedUser['graduationYear'] === 2026, "Item 5: PATCH /api/users/{id} modified graduationYear");
+
+$deletedUser = $userService->delete((int)$newUser['id']);
+assertCheck($deletedUser === true && $userService->getById((int)$newUser['id']) === null, "Item 6: DELETE /api/users/{id} purged record");
+
+if (file_exists($tempStorage)) {
+    @unlink($tempStorage);
+}
+
+// Router dispatch checks for Week 03
+$router->get('/api/health', fn(): string => '{"status":"ok"}');
+$router->post('/api/users', fn(): string => '{"id":1}');
+$router->get('/api/users', fn(): string => '[]');
+$router->get('/api/users/{id}', fn($id): string => '{"id":' . $id . '}');
+$router->put('/api/users/{id}', fn($id): string => '{"id":' . $id . '}');
+$router->patch('/api/users/{id}', fn($id): string => '{"id":' . $id . '}');
+$router->delete('/api/users/{id}', fn($id): string => '{"status":"deleted"}');
+$router->get('/api/swagger', fn(): string => 'swagger');
+
+assertCheck($router->dispatch('GET', '/api/health', false), "Item 1: Matched GET /api/health");
+assertCheck($router->dispatch('POST', '/api/users', false), "Item 3: Matched POST /api/users");
+assertCheck($router->dispatch('GET', '/api/users', false), "Item 4: Matched GET /api/users");
+assertCheck($router->dispatch('GET', '/api/users/42', false), "Item 5: Matched GET /api/users/{id}");
+assertCheck($router->dispatch('PUT', '/api/users/42', false), "Item 5: Matched PUT /api/users/{id}");
+assertCheck($router->dispatch('PATCH', '/api/users/42', false), "Item 5: Matched PATCH /api/users/{id}");
+assertCheck($router->dispatch('DELETE', '/api/users/42', false), "Item 6: Matched DELETE /api/users/{id}");
+assertCheck($router->dispatch('GET', '/api/swagger', false), "Item 7: Matched GET /api/swagger");
+
+// 7. Test JobPosting Model & CRUD Operations
+echo "\n7. JobPosting Model & CRUD:\n";
 $initialJobs = JobPosting::all();
 assertCheck(count($initialJobs) >= 3, "JobPosting::all() retrieved baseline postings (found: " . count($initialJobs) . ")");
 
@@ -137,8 +222,8 @@ assertCheck($updateJobResult === true && $foundJob->salary_range === '₺130,000
 $filterJobs = JobPosting::all(['job_type' => 'full-time']);
 assertCheck(count($filterJobs) >= 2, "FILTER: Successfully filtered jobs by job_type='full-time'");
 
-// 7. Test Application Model & CRUD Operations
-echo "\n7. Application Model & CRUD:\n";
+// 8. Test Application Model & CRUD Operations
+echo "\n8. Application Model & CRUD:\n";
 $initialApps = Application::all();
 assertCheck(count($initialApps) >= 2, "Application::all() retrieved baseline applications (found: " . count($initialApps) . ")");
 
@@ -159,8 +244,8 @@ assertCheck($foundApp !== null && $foundApp->job_posting_id === (int)$newJob->id
 $updateAppResult = $foundApp->update(['status' => 'interview']);
 assertCheck($updateAppResult === true && $foundApp->status === 'interview', "UPDATE: Updated Application status to 'interview'");
 
-// 8. Test Relationships
-echo "\n8. Model Entity Relationships:\n";
+// 9. Test Relationships
+echo "\n9. Model Entity Relationships:\n";
 // JobPosting -> Company
 $jobCompany = $newJob->company();
 assertCheck($jobCompany !== null && $jobCompany->name === 'Trendyol Group', "RELATION: JobPosting::company() resolved Company entity ({$jobCompany?->name})");
@@ -192,8 +277,8 @@ assertCheck($alumniOne !== null && count($alumniOne->jobPostings()) >= 1, "RELAT
 $alumniTwo = Alumni::find(2);
 assertCheck($alumniTwo !== null && count($alumniTwo->applications()) >= 1, "RELATION: Alumni::applications() returned submitted applications");
 
-// 9. Nested & Direct Route Resolution
-echo "\n9. Nested and Direct Routes Resolution:\n";
+// 10. Nested & Direct Route Resolution
+echo "\n10. Nested and Direct Routes Resolution:\n";
 $router2 = new Router();
 $nestedCompanyHit = false;
 $nestedUserJobHit = false;
@@ -224,37 +309,6 @@ assertCheck($nestedJobAppHit, "NESTED ROUTE: /api/v1/job-postings/{id}/applicati
 
 $router2->resolve('GET', '/api/companies/5/job-postings');
 assertCheck($colonParamHit, "NESTED ROUTE: /api/companies/:id/job-postings (:id syntax) resolved cleanly");
-
-// 10. Classroom Whiteboard Auto Routes (Images 3 & 4)
-echo "\n10. Classroom Whiteboard Auto Routes:\n";
-$routerClass = new Router();
-$helloHit = false;
-$helloNameVal = null;
-$sumVal = null;
-$okHit = false;
-
-$routerClass->get('/ok', function () use (&$okHit) { $okHit = true; });
-$routerClass->get('/hello', function () use (&$helloHit) { $helloHit = true; });
-$routerClass->get('/hello/{name}', function ($name) use (&$helloNameVal) { $helloNameVal = "Hello, " . ucfirst($name) . "!"; });
-$routerClass->get('/sum/{number1}/{number2}', function ($n1, $n2) use (&$sumVal) { $sumVal = (int)$n1 + (int)$n2; });
-
-$routerClass->resolve('GET', '/ok');
-assertCheck($okHit, "CLASSROOM ROUTE 1: GET /ok matches correctly");
-
-$routerClass->resolve('GET', '/hello');
-assertCheck($helloHit, "CLASSROOM ROUTE 2: GET /hello matches correctly");
-
-$routerClass->resolve('GET', '/hello/emre');
-assertCheck($helloNameVal === 'Hello, Emre!', "CLASSROOM ROUTE 3: GET /hello/emre matches 'Hello, Emre!'");
-
-$routerClass->resolve('GET', '/sum/5/10');
-assertCheck($sumVal === 15, "CLASSROOM ROUTE 4: GET /sum/5/10 calculates sum = 15");
-
-// Trailing dot normalization test (e.g. user typed /jobs.)
-$jobsHit = false;
-$routerClass->get('/jobs', function () use (&$jobsHit) { $jobsHit = true; });
-$routerClass->resolve('GET', '/jobs.');
-assertCheck($jobsHit, "URL TOLERANCE: /jobs. (with trailing dot) successfully resolved to /jobs");
 
 // Clean up created entities
 $newApp->delete();

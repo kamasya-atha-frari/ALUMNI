@@ -29,4 +29,12 @@ class HealthController {
             ]
         ]);
     }
+
+    public function ping(): void {
+        Response::json([
+            'status' => 'ok',
+            'message' => 'AlumniNexus API is running smoothly',
+            'timestamp' => date('c')
+        ]);
+    }
 }

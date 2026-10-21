@@ -194,17 +194,20 @@ alumni/
 │       └── DatabaseSeeder.php  # Unified database seeder
 │
 ├── templates/                  # [Presentation Layer] High-performance client views
-│   ├── dashboard.html          # Interactive alumni directory with CRUD modals (Tailwind)
+│   ├── dashboard.html          # Interactive alumni directory with CRUD modals (Tailwind CSS)
 │   ├── jobs.html               # Interactive job board & application pipeline UI
+│   ├── about.html              # Department overview & temporary about page
 │   ├── analytics.html          # Career Graph mobility & accreditation dashboard
 │   ├── swagger.html            # Dark-themed Swagger UI API Explorer
 │   └── 404.html                # Error fallback template
 │
 ├── docs/
-│   └── openapi.json            # OpenAPI 3.1.0 interactive contract specification
+│   ├── openapi.json            # OpenAPI 3.1.0 interactive contract specification
+│   └── AlumniNexus_Week03_Postman_Collection.json # Week 03 Postman Collection
 │
 └── tests/
-    ├── run_tests.php           # Automated CLI assertion suite
+    ├── run_tests.php           # Automated CLI master assertion suite
+    ├── test_week3_api.php      # Week 03 automated verification suite
     └── forgetting_test.sh      # Bash automated validation for "The Forgetting Test"
 ```
 
@@ -222,22 +225,64 @@ docker compose up --build
 - Boots **MySQL 8.0** with health checks, automatically creating and mounting named volume `nexus_mysql_data`.
 - Boots **PHP 8.2 Apache**, routing traffic through `/public/index.php`.
 - The application will be immediately live at: **`http://localhost:8080`**.
+- Subdirectory deployments on local Apache/XAMPP (`http://localhost/alumni`) are automatically supported via dynamic base path normalization.
 
 ---
 
-### Key Application Routes
+### Whiteboard Milestone Routes (`Routes / "auto"`)
+
+| # | HTTP Method | Endpoint Pattern | Example URL | Expected Response / Output |
+| :-: | :--- | :--- | :--- | :--- |
+| **1** | `GET` / `POST` | `/` or `/auto` | `http://localhost:8080/auto` | `"ok"` |
+| **2** | `GET` | `/hello` | `http://localhost:8080/hello` | `"Hello, World!"` |
+| **3** | `GET` | `/hello/{name}` | `http://localhost:8080/hello/emre` | `"Hello, Emre!"` |
+| **4** | `GET` | `/sum/{number1}/{number2}` | `http://localhost:8080/sum/15/25` | `40` (sum of number1 + number2) |
+| **5** | `GET` | `/` | `http://localhost:8080/` | Temporary One Main Page (`templates/dashboard.html`) |
+| **6** | `GET` | `/about` | `http://localhost:8080/about` | Temporary About Page (`templates/about.html`) |
+
+---
+
+### Week 03 Whiteboard Milestone: RESTful API & In-Memory User Management
+*(Lecture: Assoc. Prof. Dr. Emre Akadal • Web Programming • Week 03)*
+
+| Item # | HTTP Method | Endpoint | Description | Request Body Example | Expected Status |
+| :-: | :--- | :--- | :--- | :--- | :-: |
+| **①** | `GET` | `/api/health` | Health Check Probe (Returns JSON) | *None* | `200 OK` |
+| **②** | *Tooling* | **Postman** | Import collection: `docs/AlumniNexus_Week03_Postman_Collection.json` | - | - |
+| **③** | `POST` | `/api/users` | Create User *(Don't use any database yet)* | `{"name": "Elif Kaya", "graduationYear": 2024}` | `201 Created` |
+| **④** | `GET` | `/api/users` | List All Users (In-Memory Dataset) | *None* | `200 OK` |
+| **⑤** | `GET` | `/api/users/{id}` | Retrieve Single User by ID | *None* | `200 OK` / `404` |
+| **⑤** | `PUT` | `/api/users/{id}` | Replace Entire User Object *(Slide C: replace whole)* | `{"name": "Elif Kaya Akın", "graduationYear": 2025}` | `200 OK` / `404` |
+| **⑤** | `PATCH` | `/api/users/{id}` | Partial Update *(Slide C: change one field)* | `{"graduationYear": 2026}` | `200 OK` / `404` |
+| **⑥** | `DELETE` | `/api/users/{id}` | Remove User Record *(Slide C: remove record)* | *None* | `200 OK` / `404` |
+| **⑦** | `GET` | `/api/swagger` | Interactive Swagger UI API Documentation | *None* | `200 OK` |
+
+> **Slide D Verification**:
+> - Request body sent: `{"name": "Elif Kaya", "graduationYear": 2024}`
+> - Response received: `HTTP/1.1 201 Created` with Content-Type `application/json`
+> - Payload: `{"id": 42, "name": "Elif Kaya", "graduationYear": 2024}`
+> - `/api/alumni` routes are also provided as direct aliases for live lecture testing.
+
+---
+
+### Key Application Routes Summary
 
 | Surface | URL Path | Method | Description |
 | :--- | :--- | :--- | :--- |
 | **Directory UI** | [`http://localhost:8080/`](http://localhost:8080/) | `GET` | Interactive Alumni Directory with live CRUD modals & search |
+| **Job Board UI** | [`http://localhost:8080/jobs`](http://localhost:8080/jobs) | `GET` | Interactive Job Board & applications pipeline interface |
+| **About Page** | [`http://localhost:8080/about`](http://localhost:8080/about) | `GET` | Istanbul University MIS Department overview (Whiteboard Item 6) |
 | **Analytics UI** | [`http://localhost:8080/analytics`](http://localhost:8080/analytics) | `GET` | Career mobility graph and institutional accreditation KPIs |
 | **API Explorer** | [`http://localhost:8080/swagger`](http://localhost:8080/swagger) | `GET` | Interactive Swagger UI API documentation |
 | **Health Probe** | [`http://localhost:8080/api/v1/health`](http://localhost:8080/api/v1/health) | `GET` | System memory telemetry and database connectivity status |
+| **Users API** | [`http://localhost:8080/api/users`](http://localhost:8080/api/users) | `GET/POST` | Week 03 In-Memory User CRUD without database |
 | **List Alumni** | [`http://localhost:8080/api/v1/alumni`](http://localhost:8080/api/v1/alumni) | `GET` | Query alumni (`?cohort=`, `?industry=`, `?mentor=`, `?search=`) |
 | **Create Alumni**| [`http://localhost:8080/api/v1/alumni`](http://localhost:8080/api/v1/alumni) | `POST` | Create new alumni record (`POST /api/users` also supported) |
 | **Show Alumni**  | [`http://localhost:8080/api/v1/alumni/{id}`](http://localhost:8080/api/v1/alumni/1) | `GET` | Retrieve single alumni profile by ID |
 | **Update Alumni**| [`http://localhost:8080/api/v1/alumni/{id}`](http://localhost:8080/api/v1/alumni/1) | `PUT/PATCH` | Modify existing profile |
 | **Delete Alumni**| [`http://localhost:8080/api/v1/alumni/{id}`](http://localhost:8080/api/v1/alumni/1) | `DELETE` | Remove alumni record |
+| **Job Postings** | [`http://localhost:8080/api/v1/job-postings`](http://localhost:8080/api/v1/job-postings) | `CRUD` | Direct & nested routes for company job opportunities |
+| **Applications** | [`http://localhost:8080/api/v1/applications`](http://localhost:8080/api/v1/applications) | `CRUD` | Candidate application submission & review workflow |
 | **OpenAPI Spec** | [`http://localhost:8080/openapi.json`](http://localhost:8080/openapi.json) | `GET` | Raw OpenAPI 3.1.0 JSON contract |
 
 ---
