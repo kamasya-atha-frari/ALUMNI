@@ -1,0 +1,8 @@
+$kind: http-request
+name: 3. GET List All Users (/api/users)
+description: "Whiteboard Item 4: GET /api/users -> list all users in JSON"
+url: "{{baseUrl}}/api/users"
+method: GET
+headers:
+  Accept: application/json
+order: 3000

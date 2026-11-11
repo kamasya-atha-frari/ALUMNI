@@ -1,0 +1,28 @@
+[2026-11-11 08:09:04] [500] [ID:err_test_123] [POST /api/v1/jobs/test-error]
+Error: RuntimeException: Database query timeout simulation
+File: /var/www/html/tests/test_middleware_and_validation.php:275
+Trace:
+#0 {main}
+--------------------------------------------------------------------------------
+[2026-11-11 08:09:04] [500] [ID:err_671452c4] [POST /api/v1/simulate-crash]
+Error: RuntimeException: Database query timeout simulation
+File: /var/www/html/tests/test_middleware_and_validation.php:275
+Trace:
+#0 {main}
+--------------------------------------------------------------------------------
+[2026-11-11 08:09:04] [500] [ID:err_25bd7041] [GET /api/crash-me]
+Error: Exception: Boom! Test explosion
+File: /var/www/html/tests/test_middleware_and_validation.php:335
+Trace:
+#0 [internal function]: {closure}()
+#1 /var/www/html/src/Core/Router.php(86): call_user_func_array(Object(Closure), Array)
+#2 /var/www/html/src/Core/Router.php(150): AlumniIstü\Core\Router->dispatch('GET', '/api/crash-me', true)
+#3 /var/www/html/tests/test_middleware_and_validation.php(340): AlumniIstü\Core\Router->resolve('GET', '/api/crash-me')
+#4 {main}
+--------------------------------------------------------------------------------
+[2026-11-11 08:12:13] [500] [ID:err_master_test] [GET /api/test-master]
+Error: Exception: Master test suite simulated error
+File: /var/www/html/tests/run_tests.php:353
+Trace:
+#0 {main}
+--------------------------------------------------------------------------------

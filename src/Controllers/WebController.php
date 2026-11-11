@@ -1,0 +1,85 @@
+<?php
+declare(strict_types=1);
+
+namespace AlumniIstü\Controllers;
+
+use AlumniIstü\Core\Response;
+use AlumniIstü\Services\AlumniService;
+
+class WebController {
+    private AlumniService $service;
+
+    public function __construct() {
+        $this->service = new AlumniService();
+    }
+
+    public function home(): void {
+        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+        if (isset($_GET['raw']) || isset($_GET['test']) || (str_starts_with($accept, 'text/plain') && !str_contains($accept, 'text/html'))) {
+            Response::text("ok");
+        }
+        Response::html(__DIR__ . '/../../templates/dashboard.html');
+    }
+
+    public function about(): void {
+        Response::html(__DIR__ . '/../../templates/about.html');
+    }
+
+    public function analytics(): void {
+        Response::html(__DIR__ . '/../../templates/analytics.html');
+    }
+
+    public function swagger(): void {
+        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+        if (str_contains($accept, 'application/json') || isset($_GET['json'])) {
+            $file = __DIR__ . '/../../docs/openapi.json';
+            if (file_exists($file)) {
+                header('Content-Type: application/json; charset=utf-8');
+                header('Access-Control-Allow-Origin: *');
+                echo file_get_contents($file);
+                exit;
+            }
+        }
+        Response::html(__DIR__ . '/../../templates/swagger.html');
+    }
+
+    public function jobs(): void {
+        Response::html(__DIR__ . '/../../templates/jobs.html');
+    }
+
+    public function applications(): void {
+        Response::html(__DIR__ . '/../../templates/jobs.html');
+    }
+
+    public function hello(): void {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "Hello, World!";
+    }
+
+    public function helloName(string $name): void {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "Hello, " . ucfirst($name) . "!";
+    }
+
+    public function sum(string $number1, string $number2): void {
+        $n1 = is_numeric($number1) ? (float)$number1 : 0;
+        $n2 = is_numeric($number2) ? (float)$number2 : 0;
+        $result = $n1 + $n2;
+        if (floor($result) == $result) {
+            $result = (int)$result;
+        }
+
+        if (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json')) {
+            Response::json(['number1' => $number1, 'number2' => $number2, 'sum' => $result]);
+            return;
+        }
+
+        header('Content-Type: text/plain; charset=utf-8');
+        echo (string)$result;
+    }
+
+    public function ok(): void {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "ok";
+    }
+}

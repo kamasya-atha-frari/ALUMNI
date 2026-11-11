@@ -1,0 +1,6 @@
+$kind: http-request
+name: 8. GET Swagger UI Documentation (/api/swagger)
+description: "Whiteboard Item 7: swagger GET /api/swagger"
+url: "{{baseUrl}}/api/swagger"
+method: GET
+order: 8000

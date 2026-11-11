@@ -1,0 +1,16 @@
+$kind: http-request
+name: 2. POST Create User (/api/users)
+description: "Whiteboard Item 3 & Slide D: POST /api/users (don't use any database yet) -> 201 Created"
+url: "{{baseUrl}}/api/users"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Elif Kaya",
+      "graduationYear": 2024
+    }
+order: 2000

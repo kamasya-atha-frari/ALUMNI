@@ -1,0 +1,150 @@
+{
+  "info": {
+    "_postman_id": "c1efb0f5-9854-4778-9bb9-125841c69fb7",
+    "name": "AlumniNexus - Web Programming Week 03 (Assoc. Prof. Dr. Emre Akadal)",
+    "description": "Postman Collection for Week 03 RESTful API & JSON lecture milestones (In-Memory User CRUD without Database + Health Check + Swagger UI).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. GET Health Check (/api/health)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        },
+        "description": "Whiteboard Item 1: GET /api/health -> JSON status"
+      }
+    },
+    {
+      "name": "2. POST Create User (/api/users)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Elif Kaya\",\n  \"graduationYear\": 2024\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users"]
+        },
+        "description": "Whiteboard Item 3 & Slide D: POST /api/users (don't use any database yet) -> 201 Created"
+      }
+    },
+    {
+      "name": "3. GET List All Users (/api/users)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users"]
+        },
+        "description": "Whiteboard Item 4: GET /api/users -> list all users in JSON"
+      }
+    },
+    {
+      "name": "4. GET Single User by ID (/api/users/{id})",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/users/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Whiteboard Item 5: GET /api/users/{id}"
+      }
+    },
+    {
+      "name": "5. PUT Replace User Whole (/api/users/{id})",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Elif Kaya Akın\",\n  \"graduationYear\": 2025\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Whiteboard Item 5 & Slide C: PUT /api/users/{id} (you replace it whole)"
+      }
+    },
+    {
+      "name": "6. PATCH Update User Field (/api/users/{id})",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"graduationYear\": 2026\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Whiteboard Item 5 & Slide C: PATCH /api/users/{id} (you change one field)"
+      }
+    },
+    {
+      "name": "7. DELETE Remove User (/api/users/{id})",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/users/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Whiteboard Item 6 & Slide C: DELETE /api/users/{id} (you remove a record)"
+      }
+    },
+    {
+      "name": "8. GET Swagger UI Documentation (/api/swagger)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/swagger",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "swagger"]
+        },
+        "description": "Whiteboard Item 7: swagger GET /api/swagger"
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+$kind: http-request
+name: 6. PATCH Update User Field (/api/users/{id})
+description: "Whiteboard Item 5 & Slide C: PATCH /api/users/{id} (you change one field)"
+url: "{{baseUrl}}/api/users/1"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: text
+  content: |-
+    {
+      "graduationYear": 2026
+    }
+order: 6000

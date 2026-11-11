@@ -1,0 +1,5 @@
+$kind: collection
+name: AlumniIstü - Web Programming Week 03 (Assoc. Prof. Dr. Emre Akadal)
+description: Postman Collection for Week 03 RESTful API & JSON lecture milestones (In-Memory User CRUD without Database + Health Check + Swagger UI).
+variables:
+  baseUrl: http://localhost:8080

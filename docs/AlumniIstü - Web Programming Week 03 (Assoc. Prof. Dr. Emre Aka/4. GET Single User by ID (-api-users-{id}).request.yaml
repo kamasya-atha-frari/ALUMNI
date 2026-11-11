@@ -1,0 +1,8 @@
+$kind: http-request
+name: 4. GET Single User by ID (/api/users/{id})
+description: "Whiteboard Item 5: GET /api/users/{id}"
+url: "{{baseUrl}}/api/users/1"
+method: GET
+headers:
+  Accept: application/json
+order: 4000

@@ -1,0 +1,396 @@
+{
+  "info": {
+    "_postman_id": "c1efb0f5-9854-4778-9bb9-125841c69fb7",
+    "name": "AlumniIstü - Web Programming (Assoc. Prof. Dr. Emre Akadal)",
+    "description": "Comprehensive Postman Collection for AlumniIstü milestones: In-Memory User CRUD, Job Postings, 404 Guardian Middleware, Logger Middleware, and Invalid Request Validation Testing.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Health & Telemetry",
+      "item": [
+        {
+          "name": "GET Health Check (/api/health)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Whiteboard Item 1: GET /api/health -> JSON status"
+          }
+        },
+        {
+          "name": "GET Swagger UI (/api/swagger)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/swagger",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "swagger"]
+            },
+            "description": "Swagger UI Documentation"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Invalid Requests & Validation (Whiteboard Item 1 & 2)",
+      "item": [
+        {
+          "name": "1.1 POST Job Posting - Missing Title (Expects 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company\": \"Turkcell Tech\",\n  \"description\": \"Senior Cloud Engineer with Spark experience.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/job-postings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "job-postings"]
+            },
+            "description": "Invalid Request: 'title' is missing. Returns 422 with validation error."
+          }
+        },
+        {
+          "name": "1.2 POST Job Posting - Title Exceeds 120 Chars (Expects 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Principal Enterprise Cloud Distributed Computing & Big Data Engineering Architect Lead Specialist for High Scale Infrastructure Systems\",\n  \"company\": \"Trendyol Group\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/job-postings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "job-postings"]
+            },
+            "description": "Invalid Request: 'title' has 135 characters (> 120 max limit). Returns 422."
+          }
+        },
+        {
+          "name": "1.3 POST Job Posting - Missing Company (Expects 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Associate Data Scientist\",\n  \"description\": \"Building recommendation pipelines.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/job-postings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "job-postings"]
+            },
+            "description": "Invalid Request: 'company' is missing. Returns 422."
+          }
+        },
+        {
+          "name": "1.4 POST Job Posting - Minimal Valid (Salary & Description Omitted, Expects 201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Junior DevOps Engineer\",\n  \"company\": \"Getir Tech\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/job-postings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "job-postings"]
+            },
+            "description": "Valid Request: 'title' (max 120) and 'company' provided. 'salary' and 'description' are optional and omitted. Returns 201."
+          }
+        },
+        {
+          "name": "1.5 POST User - Missing Name (Expects 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"graduationYear\": 2025\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Invalid Request: 'name' is required in user payload. Returns 400."
+          }
+        },
+        {
+          "name": "1.6 POST Alumni - Invalid Email Format (Expects 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Emre Test\",\n  \"email\": \"not-a-valid-email\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/alumni",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "alumni"]
+            },
+            "description": "Invalid Request: Email address is malformed. Returns 422."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. 404 Guardian Middleware (Whiteboard Item 4)",
+      "item": [
+        {
+          "name": "2.1 GET Unknown Endpoint (Expects 404 with reason)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/nonexistent-guardian-check",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "nonexistent-guardian-check"]
+            },
+            "description": "404 Guardian intercepts unknown route and returns 404 with descriptive reason."
+          }
+        },
+        {
+          "name": "2.2 POST Unknown Action Endpoint (Expects 404 with reason)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/nonexistent-action",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "nonexistent-action"]
+            },
+            "description": "404 Guardian intercepts unknown POST endpoint."
+          }
+        },
+        {
+          "name": "2.3 GET Non-Existent User ID (Expects 404 with reason)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "99999"]
+            },
+            "description": "Entity Not Found: Returns 404 with specific reason that ID 99999 does not exist."
+          }
+        },
+        {
+          "name": "2.4 GET Non-Existent Job Posting ID (Expects 404 with reason)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/job-postings/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "job-postings", "99999"]
+            },
+            "description": "Entity Not Found: Returns 404 with descriptive reason."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. User Management CRUD (In-Memory)",
+      "item": [
+        {
+          "name": "GET List All Users (/api/users)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            }
+          }
+        },
+        {
+          "name": "POST Create User (/api/users)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Elif Kaya\",\n  \"graduationYear\": 2024\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            }
+          }
+        },
+        {
+          "name": "GET Single User by ID (/api/users/{id})",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            }
+          }
+        },
+        {
+          "name": "PUT Replace User Whole (/api/users/{id})",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Elif Kaya Akın\",\n  \"graduationYear\": 2025\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            }
+          }
+        },
+        {
+          "name": "PATCH Update User Field (/api/users/{id})",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"graduationYear\": 2026\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Remove User (/api/users/{id})",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Job Postings CRUD",
+      "item": [
+        {
+          "name": "GET List All Job Postings",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/job-postings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "job-postings"]
+            }
+          }
+        },
+        {
+          "name": "GET Single Job Posting by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/job-postings/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "job-postings", "1"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Full Job Posting",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Senior Data Engineer\",\n  \"company\": \"Turkcell Tech\",\n  \"description\": \"Build streaming data pipelines.\",\n  \"salary\": \"₺95,000 - ₺130,000 / month\",\n  \"city\": \"Istanbul, Turkey\",\n  \"job_type\": \"full-time\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/job-postings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "job-postings"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

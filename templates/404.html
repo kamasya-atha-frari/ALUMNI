@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404 Not Found • AlumniIstü</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center font-sans">
+    <div class="text-center space-y-4 max-w-md px-6">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-400 text-xs font-mono uppercase tracking-wider mb-2">
+            🛡️ 404 Guardian Middleware
+        </div>
+        <h1 class="text-6xl font-extrabold text-amber-500 font-mono">404</h1>
+        <h2 class="text-xl font-bold text-white">Endpoint Not Found</h2>
+        <p class="text-sm text-slate-400">The requested endpoint <code class="text-amber-300 bg-slate-900 px-2 py-0.5 rounded">{{PATH}}</code> does not exist.</p>
+        <div class="text-xs text-slate-300 font-mono bg-slate-900/90 border border-slate-800 p-3 rounded-lg text-left">
+            <span class="text-slate-500 uppercase font-semibold block mb-1">Guardian Reason:</span>
+            <span>{{REASON}}</span>
+        </div>
+        <a href="/" class="inline-block mt-4 px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-700 transition">Return to Directory</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+$kind: http-request
+name: 7. DELETE Remove User (/api/users/{id})
+description: "Whiteboard Item 6 & Slide C: DELETE /api/users/{id} (you remove a record)"
+url: "{{baseUrl}}/api/users/1"
+method: DELETE
+headers:
+  Accept: application/json
+order: 7000

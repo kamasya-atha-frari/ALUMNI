@@ -1,0 +1,16 @@
+$kind: http-request
+name: 5. PUT Replace User Whole (/api/users/{id})
+description: "Whiteboard Item 5 & Slide C: PUT /api/users/{id} (you replace it whole)"
+url: "{{baseUrl}}/api/users/1"
+method: PUT
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Elif Kaya Akın",
+      "graduationYear": 2025
+    }
+order: 5000

@@ -1,0 +1,8 @@
+$kind: http-request
+name: 1. GET Health Check (/api/health)
+description: "Whiteboard Item 1: GET /api/health -> JSON status"
+url: "{{baseUrl}}/api/health"
+method: GET
+headers:
+  Accept: application/json
+order: 1000
