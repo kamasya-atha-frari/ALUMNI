@@ -120,14 +120,12 @@ foreach ($files as $file) {
     $sql = file_get_contents($file);
 
     try {
-        $pdo->beginTransaction();
         $pdo->exec($sql);
         $insertStmt = $pdo->prepare("INSERT INTO migrations (migration, batch) VALUES (:migration, :batch)");
         $insertStmt->execute([
             'migration' => $baseName,
             'batch' => $nextBatch
         ]);
-        $pdo->commit();
         echo "\033[32mDONE ✔\033[0m\n";
         $appliedCount++;
     } catch (\Throwable $e) {
