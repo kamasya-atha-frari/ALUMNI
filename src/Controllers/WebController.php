@@ -18,7 +18,16 @@ class WebController {
         if (isset($_GET['raw']) || isset($_GET['test']) || (str_starts_with($accept, 'text/plain') && !str_contains($accept, 'text/html'))) {
             Response::text("ok");
         }
-        Response::html(__DIR__ . '/../../templates/dashboard.html');
+
+        // MVC Flow: Query Model/Service layer for initial Homepage telemetry
+        $alumniList = $this->service->getAll();
+        $totalAlumni = count($alumniList);
+        $totalMentors = count(array_filter($alumniList, fn($a) => !empty($a['is_mentor'])));
+
+        Response::html(__DIR__ . '/../../templates/dashboard.html', [
+            'TOTAL_ALUMNI' => (string)$totalAlumni,
+            'TOTAL_MENTORS' => (string)$totalMentors,
+        ]);
     }
 
     public function about(): void {
