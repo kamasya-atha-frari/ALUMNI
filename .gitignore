@@ -1,0 +1,19 @@
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Docker files
+.docker/
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary database files
+*.sql.bak

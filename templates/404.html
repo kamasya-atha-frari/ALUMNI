@@ -2,22 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Not Found • AlumniIstü</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #14213D;
+            --color-cream: #F4EDE0;
+            --color-coral: #FF6B58;
+            --color-canvas: #14213D;
+            --color-surface: #1c2a4a;
+            --color-text-main: #F4EDE0;
+            --color-accent: #FF6B58;
+
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', serif;
+            --font-inter: 'Inter', sans-serif;
+            
+            --radius-full: 9999px;
+            --radius-lg: 10px;
+            --page-max-width: 1216px;
+            --section-gap: 160px;
+        }
+        body {
+            background-color: var(--color-canvas);
+            color: var(--color-text-main);
+            font-family: var(--font-inter);
+        }
+        .surface-card {
+            background-color: var(--color-surface);
+            border: 1px solid rgba(244, 237, 224, 0.14);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
+        }
+        .btn-primary-coral {
+            background-color: var(--color-coral);
+            color: var(--color-cream);
+            border: 1px solid var(--color-coral);
+            border-radius: var(--radius-full);
+            padding: 10px 20px;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center font-sans">
-    <div class="text-center space-y-4 max-w-md px-6">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-400 text-xs font-mono uppercase tracking-wider mb-2">
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="surface-card max-w-md w-full p-8 text-center space-y-4">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-[#FF6B58]/15 border border-[#FF6B58]/40 rounded-full text-[#FF6B58] text-xs font-medium uppercase tracking-wider">
             🛡️ 404 Guardian Middleware
         </div>
-        <h1 class="text-6xl font-extrabold text-amber-500 font-mono">404</h1>
-        <h2 class="text-xl font-bold text-white">Endpoint Not Found</h2>
-        <p class="text-sm text-slate-400">The requested endpoint <code class="text-amber-300 bg-slate-900 px-2 py-0.5 rounded">{{PATH}}</code> does not exist.</p>
-        <div class="text-xs text-slate-300 font-mono bg-slate-900/90 border border-slate-800 p-3 rounded-lg text-left">
-            <span class="text-slate-500 uppercase font-semibold block mb-1">Guardian Reason:</span>
+        <h1 class="text-5xl font-normal text-[#FF6B58]" style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">404</h1>
+        <h2 class="text-2xl font-normal text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">Endpoint Not Found</h2>
+        <p class="text-sm text-[#F4EDE0]/75 font-light">
+            The requested endpoint <code class="text-[#FF6B58] bg-[#14213D] px-2 py-0.5 rounded">{{PATH}}</code> does not exist.
+        </p>
+        <div class="text-xs text-[#F4EDE0]/80 bg-[#14213D] border border-[#F4EDE0]/15 p-3.5 rounded-[10px] text-left">
+            <span class="text-[#F4EDE0]/55 uppercase font-medium block mb-1">Guardian Reason:</span>
             <span>{{REASON}}</span>
         </div>
-        <a href="/" class="inline-block mt-4 px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-700 transition">Return to Directory</a>
+        <div class="pt-2">
+            <a href="/" class="btn-primary-coral inline-block">Return to Directory</a>
+        </div>
     </div>
 </body>
 </html>

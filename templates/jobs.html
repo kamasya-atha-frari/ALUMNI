@@ -3,190 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlumniIstü • Career Opportunities & Job Postings</title>
+    <title>AlumniIstü (ALUMNI) • Job Board &amp; Applications</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        :root {
+            --color-navy: #14213D;
+            --color-cream: #F4EDE0;
+            --color-coral: #FF6B58;
+            --color-canvas: #14213D;
+            --color-surface: #1c2a4a;
+            --color-text-main: #F4EDE0;
+            --color-accent: #FF6B58;
+
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', serif;
+            --font-inter: 'Inter', sans-serif;
+            
+            --radius-full: 9999px;
+            --radius-lg: 10px;
+            --page-max-width: 1216px;
+            --section-gap: 160px;
+        }
+
+        body {
+            background-color: var(--color-canvas);
+            color: var(--color-text-main);
+            font-family: var(--font-inter);
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-container {
+            max-width: var(--page-max-width);
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .section-stack {
+            display: flex;
+            flex-direction: column;
+            gap: var(--section-gap);
+            padding-top: 80px;
+            padding-bottom: 120px;
+        }
+
+        .heading-hero {
+            font-family: var(--font-ivy-presto);
+            font-weight: 400;
+            font-size: clamp(2.35rem, 4.2vw, 3.5rem);
+            line-height: 1.14;
+            letter-spacing: 0.02em;
+            color: var(--color-cream);
+        }
+
+        .heading-section {
+            font-family: var(--font-ivy-presto);
+            font-weight: 500;
+            font-size: clamp(1.75rem, 2.8vw, 2.25rem);
+            line-height: 1.22;
+            letter-spacing: 0.018em;
+            color: var(--color-cream);
+        }
+
+        .surface-card {
+            background-color: var(--color-surface);
+            border: 1px solid rgba(244, 237, 224, 0.14);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .surface-card:hover {
+            border-color: rgba(244, 237, 224, 0.32);
+        }
+
+        .surface-navy-card {
+            background-color: var(--color-navy);
+            border: 1px solid rgba(244, 237, 224, 0.14);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
+        }
+
+        .btn-primary-coral {
+            background-color: var(--color-coral);
+            color: var(--color-cream);
+            border: 1px solid var(--color-coral);
+            border-radius: var(--radius-full);
+            padding: 10px 20px;
+            font-family: var(--font-inter);
+            font-weight: 500;
+            font-size: 0.875rem;
+            box-shadow: none;
+            transition: opacity 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary-coral:hover {
+            opacity: 0.92;
+            box-shadow: 0 0 18px rgba(255, 107, 88, 0.35);
+        }
+
+        .btn-ghost-cream {
+            background-color: transparent;
+            color: var(--color-cream);
+            border: 1px solid var(--color-cream);
+            border-radius: var(--radius-full);
+            padding: 10px 20px;
+            font-family: var(--font-inter);
+            font-weight: 400;
+            font-size: 0.875rem;
+            box-shadow: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .btn-ghost-cream:hover,
+        .btn-ghost-cream.active {
+            background-color: rgba(244, 237, 224, 0.08);
+            border-color: var(--color-coral);
+            color: var(--color-coral);
+        }
+
+        .input-pill-cream {
+            background-color: rgba(20, 33, 61, 0.75);
+            color: var(--color-cream);
+            border: 1px solid rgba(244, 237, 224, 0.28);
+            border-radius: var(--radius-full);
+            padding: 10px 20px;
+            font-family: var(--font-inter);
+            font-size: 0.875rem;
+            box-shadow: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-pill-cream::placeholder {
+            color: rgba(244, 237, 224, 0.50);
+        }
+
+        .input-pill-cream:focus {
+            outline: none;
+            border-color: var(--color-coral);
+        }
+
+        .textarea-cream {
+            background-color: rgba(20, 33, 61, 0.75);
+            color: var(--color-cream);
+            border: 1px solid rgba(244, 237, 224, 0.28);
+            border-radius: var(--radius-lg);
+            padding: 12px 18px;
+            font-family: var(--font-inter);
+            font-size: 0.875rem;
+            box-shadow: none;
+        }
+
+        .textarea-cream:focus {
+            outline: none;
+            border-color: var(--color-coral);
+        }
+
+        .badge-pill {
+            border-radius: var(--radius-full);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(244, 237, 224, 0.2);
+            color: var(--color-cream);
+            background-color: rgba(20, 33, 61, 0.6);
+        }
+
+        .badge-coral {
+            border-radius: var(--radius-full);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 107, 88, 0.45);
+            color: var(--color-coral);
+            background-color: rgba(255, 107, 88, 0.12);
+        }
+
+        .nav-link {
+            position: relative;
+            padding-bottom: 6px;
+            color: rgba(244, 237, 224, 0.75);
+            font-weight: 400;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--color-cream);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background-color: var(--color-coral);
+            border-radius: 2px;
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
+<body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
 
     <!-- Top Navigation Bar -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
-                    <i class="fa-solid fa-briefcase text-lg"></i>
+    <header class="border-b border-[#F4EDE0]/10 bg-[#14213D]/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="page-container h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-full bg-[#1c2a4a] border border-[#FF6B58] flex items-center justify-center text-[#FF6B58]">
+                    <i class="fa-solid fa-compass-drafting text-xs"></i>
                 </div>
                 <div>
-                    <span class="font-extrabold text-base tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-rose-300 to-indigo-300">
+                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); font-weight: 500; letter-spacing: 0.03em;">
                         AlumniIstü
                     </span>
-                    <span class="text-[10px] block font-mono text-slate-400">Careers & Opportunities</span>
+                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/60 font-light">
+                        Istanbul University • MIS
+                    </span>
                 </div>
-            </div>
+            </a>
 
-            <nav class="flex items-center space-x-6 text-sm font-medium">
-                <a href="/" class="text-slate-400 hover:text-white transition">Directory</a>
-                <a href="/jobs" class="text-amber-400 hover:text-amber-300 transition">Job Board</a>
-                <a href="/analytics" class="text-slate-400 hover:text-white transition">Career Graph</a>
-                <a href="/swagger" class="text-slate-400 hover:text-white transition">API Explorer</a>
+            <nav class="hidden md:flex items-center space-x-8 text-sm">
+                <a href="/" class="nav-link">Beranda</a>
+                <a href="/jobs" class="nav-link active">Job Board</a>
+                <a href="/analytics" class="nav-link">Career Graph</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/swagger" class="nav-link">API Explorer</a>
             </nav>
 
             <div class="flex items-center space-x-3">
-                <button onclick="openJobModal()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-md shadow-amber-500/20">
-                    <i class="fa-solid fa-plus"></i> Post Job
+                <button onclick="openJobModal()" class="btn-primary-coral flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-xs"></i> Post Opportunity
                 </button>
-                <span id="api-status-badge" class="px-2.5 py-1 text-xs font-mono rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    API Active
-                </span>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-grow max-w-7xl mx-auto px-6 py-10 w-full space-y-8">
+    <main class="flex-grow page-container section-stack w-full">
         
-        <!-- Hero Header -->
-        <div class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-900 to-slate-950 p-8 md:p-10 shadow-2xl">
-            <div class="max-w-3xl space-y-3">
-                <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                    <i class="fa-solid fa-building-columns"></i> Faculty of Economics • MIS Department Career Portal
+        <!-- SECTION 1: Hero & KPIs -->
+        <section class="surface-card p-8 md:p-14">
+            <div class="max-w-3xl space-y-5">
+                <span class="badge-coral">
+                    <i class="fa-solid fa-briefcase mr-1"></i> CAREER CONCIERGE &amp; PLACEMENT
                 </span>
-                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
-                    Graduate Job Board & <br><span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-rose-300 to-indigo-400">Application Pipeline</span>
+                <h1 class="heading-hero">
+                    Graduate Career Mandates &amp; <br>
+                    <span class="italic text-[#FF6B58]">Application Pipeline</span>
                 </h1>
-                <p class="text-slate-400 text-sm md:text-base leading-relaxed">
-                    Explore curated tech career opportunities published by leading employers and alumni network partners. Seamlessly submit and track candidate applications.
+                <p class="text-[#F4EDE0]/80 text-base font-light leading-relaxed">
+                    Peluang karier teknologi yang dikurasi oleh jejaring alumni dan perusahaan mitra Fakultas Ekonomi (YBS) Universitas Istanbul.
                 </p>
             </div>
 
-            <!-- Fast Stat Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-slate-800/80">
-                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
-                    <p class="text-xs font-mono text-slate-500 uppercase">Active Postings</p>
-                    <p id="stat-active-jobs" class="text-2xl font-extrabold text-amber-400 mt-1">--</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 pt-8 border-t border-[#F4EDE0]/10">
+                <div class="surface-navy-card p-5">
+                    <p class="text-xs text-[#F4EDE0]/60 uppercase font-light">Active Postings</p>
+                    <p id="stat-active-jobs" class="heading-section mt-1">--</p>
                 </div>
-                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
-                    <p class="text-xs font-mono text-slate-500 uppercase">Hiring Companies</p>
-                    <p id="stat-companies" class="text-2xl font-extrabold text-indigo-400 mt-1">--</p>
+                <div class="surface-navy-card p-5">
+                    <p class="text-xs text-[#F4EDE0]/60 uppercase font-light">Hiring Companies</p>
+                    <p id="stat-companies" class="heading-section mt-1">--</p>
                 </div>
-                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
-                    <p class="text-xs font-mono text-slate-500 uppercase">Total Applications</p>
-                    <p id="stat-applications" class="text-2xl font-extrabold text-emerald-400 mt-1">--</p>
+                <div class="surface-navy-card p-5">
+                    <p class="text-xs text-[#F4EDE0]/60 uppercase font-light">Applications</p>
+                    <p id="stat-applications" class="heading-section mt-1">--</p>
                 </div>
-                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
-                    <p class="text-xs font-mono text-slate-500 uppercase">Placement Velocity</p>
-                    <p class="text-2xl font-extrabold text-rose-400 mt-1">94.8%</p>
+                <div class="surface-navy-card p-5">
+                    <p class="text-xs text-[#F4EDE0]/60 uppercase font-light">Placement Velocity</p>
+                    <p class="heading-section text-[#FF6B58] mt-1">94.8%</p>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Section Navigation Tabs -->
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div class="flex items-center space-x-3">
-                <button id="btnTabJobs" onclick="switchTab('jobs')" class="px-4 py-2 text-sm font-bold rounded-xl bg-amber-500 text-slate-950 transition flex items-center gap-2">
-                    <i class="fa-solid fa-list-check"></i> Job Postings
+        <!-- SECTION 2: Interactive Job Board & Applications Ledger -->
+        <section class="space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[#F4EDE0]/10 pb-5">
+                <div class="flex items-center gap-3">
+                    <button id="btnTabJobs" onclick="switchTab('jobs')" class="btn-primary-coral flex items-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> Job Postings
+                    </button>
+                    <button id="btnTabApps" onclick="switchTab('apps')" class="btn-ghost-cream flex items-center gap-2">
+                        <i class="fa-solid fa-file-signature"></i> Applications
+                        <span id="apps-count-pill" class="badge-coral ml-1">0</span>
+                    </button>
+                </div>
+
+                <button onclick="refreshData()" class="btn-ghost-cream flex items-center gap-2" title="Refresh">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> Sync
                 </button>
-                <button id="btnTabApps" onclick="switchTab('apps')" class="px-4 py-2 text-sm font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition flex items-center gap-2">
-                    <i class="fa-solid fa-file-signature"></i> Received Applications
-                    <span id="apps-count-pill" class="px-2 py-0.5 text-xs rounded-full bg-slate-800 text-amber-400 font-mono">0</span>
-                </button>
             </div>
 
-            <div class="flex items-center space-x-2">
-                <button onclick="refreshData()" class="p-2 text-xs rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition" title="Refresh">
-                    <i class="fa-solid fa-arrow-rotate-right"></i>
-                </button>
-            </div>
-        </div>
+            <!-- VIEW 1: JOB POSTINGS BOARD -->
+            <div id="viewJobs" class="space-y-6">
+                <div class="surface-card p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-wrap gap-2.5 w-full md:w-auto">
+                        <button onclick="filterType(null, this)" class="type-filter-btn btn-ghost-cream active">All Modalities</button>
+                        <button onclick="filterType('full-time', this)" class="type-filter-btn btn-ghost-cream">Full-Time</button>
+                        <button onclick="filterType('remote', this)" class="type-filter-btn btn-ghost-cream">Remote</button>
+                        <button onclick="filterType('internship', this)" class="type-filter-btn btn-ghost-cream">Internship</button>
+                    </div>
 
-        <!-- ============================================================= -->
-        <!-- VIEW 1: JOB POSTINGS BOARD                                    -->
-        <!-- ============================================================= -->
-        <div id="viewJobs" class="space-y-6">
-            <!-- Search & Filters -->
-            <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
-                <div class="flex flex-wrap gap-2 w-full md:w-auto">
-                    <button onclick="filterType(null)" class="type-filter-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 text-white transition">All Modalities</button>
-                    <button onclick="filterType('full-time')" class="type-filter-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Full-Time</button>
-                    <button onclick="filterType('remote')" class="type-filter-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Remote</button>
-                    <button onclick="filterType('internship')" class="type-filter-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Internship</button>
+                    <div class="w-full md:w-80 relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-[#F4EDE0]/45 text-xs"></i>
+                        <input type="text" id="jobSearchInput" oninput="searchJobs(this.value)" placeholder="Search role, company, skill..." class="input-pill-cream w-full pl-10">
+                    </div>
                 </div>
 
-                <div class="w-full md:w-80 relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-                    <input type="text" id="jobSearchInput" oninput="searchJobs(this.value)" placeholder="Search title, company, skills..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition">
+                <div id="jobsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="col-span-full surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">Loading job postings...</div>
                 </div>
             </div>
 
-            <!-- Jobs Grid -->
-            <div id="jobsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="col-span-full py-16 text-center text-slate-500 font-mono text-sm">Loading job postings...</div>
-            </div>
-        </div>
-
-        <!-- ============================================================= -->
-        <!-- VIEW 2: APPLICATIONS PIPELINE                                -->
-        <!-- ============================================================= -->
-        <div id="viewApps" class="space-y-6 hidden">
-            <!-- Filter Bar for Applications -->
-            <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="filterAppStatus(null)" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 text-white transition">All Statuses</button>
-                    <button onclick="filterAppStatus('submitted')" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Submitted</button>
-                    <button onclick="filterAppStatus('under_review')" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Under Review</button>
-                    <button onclick="filterAppStatus('interview')" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Interview</button>
-                    <button onclick="filterAppStatus('accepted')" class="app-status-btn px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Accepted</button>
+            <!-- VIEW 2: APPLICATIONS PIPELINE -->
+            <div id="viewApps" class="space-y-6 hidden">
+                <div class="surface-card p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-wrap gap-2.5">
+                        <button onclick="filterAppStatus(null, this)" class="app-status-btn btn-ghost-cream active">All Statuses</button>
+                        <button onclick="filterAppStatus('submitted', this)" class="app-status-btn btn-ghost-cream">Submitted</button>
+                        <button onclick="filterAppStatus('under_review', this)" class="app-status-btn btn-ghost-cream">Under Review</button>
+                        <button onclick="filterAppStatus('interview', this)" class="app-status-btn btn-ghost-cream">Interview</button>
+                        <button onclick="filterAppStatus('accepted', this)" class="app-status-btn btn-ghost-cream">Accepted</button>
+                    </div>
+                    <span class="text-xs text-[#F4EDE0]/60 font-light">Status changes persist immediately</span>
                 </div>
-                <div>
-                    <span class="text-xs font-mono text-slate-400">Review status updates save immediately</span>
+
+                <div id="appsContainer" class="space-y-4">
+                    <div class="surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">Loading applications...</div>
                 </div>
             </div>
-
-            <!-- Applications Table / Cards -->
-            <div id="appsContainer" class="space-y-4">
-                <div class="py-16 text-center text-slate-500 font-mono text-sm">Loading applications...</div>
-            </div>
-        </div>
+        </section>
     </main>
 
-    <!-- ============================================================= -->
-    <!-- MODAL: POST NEW JOB                                           -->
-    <!-- ============================================================= -->
-    <div id="jobModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-briefcase text-amber-400"></i> Create New Job Posting
-                </h3>
-                <button onclick="closeJobModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <!-- MODAL: POST NEW JOB -->
+    <div id="jobModal" class="fixed inset-0 z-50 hidden bg-[#14213D]/85 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="surface-card max-w-xl w-full p-8 space-y-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-4 border-b border-[#F4EDE0]/10">
+                <div>
+                    <span class="badge-coral">EMPLOYER CONCIERGE</span>
+                    <h3 class="heading-section mt-2">Publish Opportunity</h3>
+                </div>
+                <button onclick="closeJobModal()" class="btn-ghost-cream !px-3.5 !py-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <form id="jobForm" onsubmit="handleJobSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Job Title *</label>
-                    <input type="text" id="jobTitle" required placeholder="e.g. Senior Cloud & Data Engineer" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Job Title *</label>
+                    <input type="text" id="jobTitle" required placeholder="e.g. Senior Cloud & Data Engineer" class="input-pill-cream w-full">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Company Name *</label>
-                        <input type="text" id="jobCompanyName" required placeholder="e.g. Trendyol Group" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Company Name *</label>
+                        <input type="text" id="jobCompanyName" required placeholder="e.g. Trendyol Group" class="input-pill-cream w-full">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Location</label>
-                        <input type="text" id="jobLocation" placeholder="e.g. Istanbul, Turkey (Hybrid)" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Location</label>
+                        <input type="text" id="jobLocation" placeholder="e.g. Istanbul, Turkey" class="input-pill-cream w-full">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Employment Type</label>
-                        <select id="jobType" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Employment Type</label>
+                        <select id="jobType" class="input-pill-cream w-full">
                             <option value="full-time">Full-Time</option>
                             <option value="remote">Remote</option>
                             <option value="internship">Internship</option>
@@ -195,8 +380,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Experience Tier</label>
-                        <select id="jobExp" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Experience</label>
+                        <select id="jobExp" class="input-pill-cream w-full">
                             <option value="Entry">Entry-Level</option>
                             <option value="Mid-Level" selected>Mid-Level</option>
                             <option value="Senior">Senior</option>
@@ -204,104 +389,98 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Salary Band</label>
-                        <input type="text" id="jobSalary" placeholder="₺75,000 - ₺110,000" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Salary Band</label>
+                        <input type="text" id="jobSalary" placeholder="₺75,000 - ₺110,000" class="input-pill-cream w-full">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Position Overview & Responsibilities *</label>
-                    <textarea id="jobDesc" rows="3" required placeholder="Describe core deliverables, technologies, and team mission..." class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"></textarea>
+                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Description *</label>
+                    <textarea id="jobDesc" rows="3" required placeholder="Describe core deliverables and team mission..." class="textarea-cream w-full"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Requirements & Qualifications</label>
-                    <textarea id="jobReq" rows="2" placeholder="Required degrees, technical competencies, frameworks..." class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"></textarea>
+                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Requirements</label>
+                    <textarea id="jobReq" rows="2" placeholder="Required degrees, technical competencies..." class="textarea-cream w-full"></textarea>
                 </div>
 
-                <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-800">
-                    <button type="button" onclick="closeJobModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 text-slate-300 hover:text-white transition">Cancel</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 transition">Publish Position</button>
+                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-[#F4EDE0]/10">
+                    <button type="button" onclick="closeJobModal()" class="btn-ghost-cream">Cancel</button>
+                    <button type="submit" class="btn-primary-coral">Publish Opportunity</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ============================================================= -->
-    <!-- MODAL: VIEW JOB DETAILS & DIRECT APPLY                        -->
-    <!-- ============================================================= -->
-    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-start justify-between pb-3 border-b border-slate-800">
+    <!-- MODAL: VIEW JOB DETAILS & DIRECT APPLY -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-[#14213D]/85 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="surface-card max-w-2xl w-full p-8 space-y-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between pb-4 border-b border-[#F4EDE0]/10">
                 <div>
-                    <span id="detailBadge" class="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30">FULL-TIME</span>
-                    <h2 id="detailTitle" class="text-xl font-bold text-white mt-1">Senior Cloud & Data Engineer</h2>
-                    <p id="detailCompany" class="text-xs text-slate-400 mt-0.5"><i class="fa-solid fa-building mr-1"></i> Turkcell Tech • Istanbul, Turkey</p>
+                    <span id="detailBadge" class="badge-coral uppercase">FULL-TIME</span>
+                    <h2 id="detailTitle" class="heading-section mt-2">Senior Cloud &amp; Data Engineer</h2>
+                    <p id="detailCompany" class="text-xs text-[#F4EDE0]/70 mt-1"></p>
                 </div>
-                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeDetailModal()" class="btn-ghost-cream !px-3.5 !py-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- Job Info Badges -->
-            <div class="grid grid-cols-3 gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-xs">
+            <div class="grid grid-cols-3 gap-3 surface-navy-card p-4 text-xs">
                 <div>
-                    <span class="text-slate-500 block">Experience</span>
-                    <span id="detailExp" class="font-semibold text-slate-200">Senior</span>
+                    <span class="text-[#F4EDE0]/55 block">Experience</span>
+                    <span id="detailExp" class="font-medium text-[#F4EDE0] mt-0.5 block">Senior</span>
                 </div>
                 <div>
-                    <span class="text-slate-500 block">Salary Range</span>
-                    <span id="detailSalary" class="font-semibold text-emerald-400">₺95,000 - ₺130,000</span>
+                    <span class="text-[#F4EDE0]/55 block">Salary Range</span>
+                    <span id="detailSalary" class="font-medium text-[#FF6B58] mt-0.5 block">₺95,000 - ₺130,000</span>
                 </div>
                 <div>
-                    <span class="text-slate-500 block">Applications</span>
-                    <span id="detailAppsCount" class="font-semibold text-indigo-400">3 Received</span>
+                    <span class="text-[#F4EDE0]/55 block">Applications</span>
+                    <span id="detailAppsCount" class="font-medium text-[#F4EDE0] mt-0.5 block">3 Received</span>
                 </div>
             </div>
 
-            <!-- Description -->
-            <div class="space-y-2 text-xs">
-                <h4 class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Role Description</h4>
-                <p id="detailDesc" class="text-slate-400 leading-relaxed"></p>
+            <div class="space-y-1.5 text-sm font-light">
+                <h4 class="text-xs uppercase tracking-wider text-[#F4EDE0]/60 font-medium">Role Description</h4>
+                <p id="detailDesc" class="text-[#F4EDE0]/85 leading-relaxed"></p>
             </div>
 
-            <!-- Requirements -->
-            <div class="space-y-2 text-xs">
-                <h4 class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Required Qualifications</h4>
-                <p id="detailReq" class="text-slate-400 leading-relaxed"></p>
+            <div class="space-y-1.5 text-sm font-light">
+                <h4 class="text-xs uppercase tracking-wider text-[#F4EDE0]/60 font-medium">Qualifications</h4>
+                <p id="detailReq" class="text-[#F4EDE0]/85 leading-relaxed"></p>
             </div>
 
-            <!-- Apply Form Box -->
-            <div class="mt-4 pt-4 border-t border-slate-800 bg-slate-950/80 p-5 rounded-2xl border border-slate-800/80 space-y-3">
-                <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-paper-plane text-amber-400"></i> Submit Your Application
+            <div class="surface-navy-card p-6 space-y-4">
+                <h4 class="text-sm font-medium text-[#F4EDE0] flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane text-[#FF6B58]"></i> Submit Application
                 </h4>
 
-                <form id="applyForm" onsubmit="handleApplicationSubmit(event)" class="space-y-3">
+                <form id="applyForm" onsubmit="handleApplicationSubmit(event)" class="space-y-3.5">
                     <input type="hidden" id="applyJobId" value="">
                     
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[11px] font-medium text-slate-300 mb-1">Your Full Name *</label>
-                            <input type="text" id="applyName" required placeholder="e.g. Zeynep Aydın" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                            <label class="block text-xs text-[#F4EDE0]/75 mb-1">Full Name *</label>
+                            <input type="text" id="applyName" required placeholder="e.g. Zeynep Aydın" class="input-pill-cream w-full">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-medium text-slate-300 mb-1">Your Email Address *</label>
-                            <input type="email" id="applyEmail" required placeholder="zeynep.aydin@ogr.iu.edu.tr" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                            <label class="block text-xs text-[#F4EDE0]/75 mb-1">Email Address *</label>
+                            <input type="email" id="applyEmail" required placeholder="zeynep.aydin@ogr.iu.edu.tr" class="input-pill-cream w-full">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-[11px] font-medium text-slate-300 mb-1">Resume / CV Document URL</label>
-                        <input type="url" id="applyResume" placeholder="https://drive.google.com/file/d/your-resume or LinkedIn" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/75 mb-1">Resume / Portfolio URL</label>
+                        <input type="url" id="applyResume" placeholder="https://linkedin.com/in/your-profile" class="input-pill-cream w-full">
                     </div>
 
                     <div>
-                        <label class="block text-[11px] font-medium text-slate-300 mb-1">Statement of Interest / Cover Letter</label>
-                        <textarea id="applyLetter" rows="2" placeholder="Highlight relevant coursework, projects, or why you are excited for this role..." class="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"></textarea>
+                        <label class="block text-xs text-[#F4EDE0]/75 mb-1">Cover Note</label>
+                        <textarea id="applyLetter" rows="2" placeholder="Highlight relevant coursework or domain experience..." class="textarea-cream w-full"></textarea>
                     </div>
 
                     <div class="flex justify-end pt-1">
-                        <button type="submit" class="px-5 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-amber-500 to-indigo-600 text-white shadow-lg shadow-amber-500/20 hover:opacity-95 transition">
-                            Submit Application
+                        <button type="submit" class="btn-primary-coral">
+                            Submit Application →
                         </button>
                     </div>
                 </form>
@@ -309,7 +488,13 @@
         </div>
     </div>
 
-    <!-- Frontend Scripting Logic -->
+    <footer class="border-t border-[#F4EDE0]/10 py-10 mt-auto">
+        <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60 font-light">
+            <span>© 2026 <strong class="text-[#F4EDE0] font-medium">AlumniIstü (ALUMNI)</strong> • Career Concierge</span>
+            <span>Navy <code class="text-[#F4EDE0]">#14213D</code> • Cream <code class="text-[#F4EDE0]">#F4EDE0</code> • Coral <code class="text-[#FF6B58]">#FF6B58</code></span>
+        </div>
+    </footer>
+
     <script>
         let allJobs = [];
         let allApps = [];
@@ -331,13 +516,13 @@
             if (tab === 'jobs') {
                 viewJobs.classList.remove('hidden');
                 viewApps.classList.add('hidden');
-                btnJobs.className = 'px-4 py-2 text-sm font-bold rounded-xl bg-amber-500 text-slate-950 transition flex items-center gap-2';
-                btnApps.className = 'px-4 py-2 text-sm font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition flex items-center gap-2';
+                btnJobs.className = 'btn-primary-coral flex items-center gap-2';
+                btnApps.className = 'btn-ghost-cream flex items-center gap-2';
             } else {
                 viewJobs.classList.add('hidden');
                 viewApps.classList.remove('hidden');
-                btnApps.className = 'px-4 py-2 text-sm font-bold rounded-xl bg-amber-500 text-slate-950 transition flex items-center gap-2';
-                btnJobs.className = 'px-4 py-2 text-sm font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition flex items-center gap-2';
+                btnApps.className = 'btn-primary-coral flex items-center gap-2';
+                btnJobs.className = 'btn-ghost-cream flex items-center gap-2';
             }
         }
 
@@ -380,86 +565,86 @@
         function renderJobs(list) {
             const grid = document.getElementById('jobsGrid');
             if (!list || list.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-16 text-center text-slate-500 font-mono text-sm">No job postings found matching criteria.</div>';
+                grid.innerHTML = '<div class="col-span-full surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">No job postings found matching criteria.</div>';
                 return;
             }
 
             grid.innerHTML = list.map(job => `
-                <div class="bg-slate-900/70 border border-slate-800 hover:border-slate-700 rounded-3xl p-6 transition flex flex-col justify-between space-y-4 hover:shadow-xl hover:shadow-black/50">
+                <article class="surface-card p-6 flex flex-col justify-between space-y-5">
                     <div>
                         <div class="flex items-start justify-between gap-3">
                             <div>
-                                <span class="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                    ${job.job_type}
-                                </span>
-                                <h3 class="text-base font-bold text-white mt-2">${escapeHtml(job.title)}</h3>
-                                <p class="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-1">
-                                    <i class="fa-solid fa-building text-slate-500"></i> ${escapeHtml(job.company_name)}
+                                <span class="badge-coral uppercase">${escapeHtml(job.job_type)}</span>
+                                <h3 class="text-base font-medium text-[#F4EDE0] mt-3">${escapeHtml(job.title)}</h3>
+                                <p class="text-xs text-[#F4EDE0]/70 font-light flex items-center gap-1.5 mt-1">
+                                    <i class="fa-regular fa-building text-[#FF6B58]"></i> ${escapeHtml(job.company_name)}
                                 </p>
                             </div>
-                            <span class="text-xs font-mono px-2 py-0.5 rounded-full ${job.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-500'}">
-                                ${job.status}
+                            <span class="badge-pill uppercase">
+                                ${escapeHtml(job.status)}
                             </span>
                         </div>
 
-                        <p class="text-xs text-slate-400 line-clamp-3 mt-3 leading-relaxed">
+                        <p class="text-xs text-[#F4EDE0]/70 font-light line-clamp-3 mt-3.5 leading-relaxed">
                             ${escapeHtml(job.description)}
                         </p>
                     </div>
 
-                    <div class="space-y-3 pt-3 border-t border-slate-800/80">
+                    <div class="space-y-3 pt-4 border-t border-[#F4EDE0]/10">
                         <div class="flex items-center justify-between text-xs">
-                            <span class="text-slate-400 flex items-center gap-1"><i class="fa-solid fa-location-dot text-slate-500"></i> ${escapeHtml(job.location || 'Istanbul')}</span>
-                            ${job.salary_range ? `<span class="text-emerald-400 font-mono font-semibold">${escapeHtml(job.salary_range)}</span>` : ''}
+                            <span class="text-[#F4EDE0]/65 font-light flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-[#F4EDE0]/45"></i> ${escapeHtml(job.location || 'Istanbul')}
+                            </span>
+                            ${job.salary_range ? `<span class="text-[#FF6B58] font-medium">${escapeHtml(job.salary_range)}</span>` : ''}
                         </div>
 
                         <div class="flex items-center justify-between pt-1">
-                            <span class="text-[11px] text-slate-500 font-mono">
-                                <i class="fa-solid fa-user-group text-slate-600 mr-1"></i> ${job.applications_count || 0} applicants
+                            <span class="text-xs text-[#F4EDE0]/55 font-light">
+                                <i class="fa-solid fa-user-group mr-1"></i> ${job.applications_count || 0} applicants
                             </span>
                             <div class="flex items-center space-x-2">
-                                <button onclick="deleteJob(${job.id})" class="p-1.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-950/30 rounded-lg transition" title="Delete posting">
+                                <button onclick="deleteJob(${job.id})" class="btn-ghost-cream !px-3 !py-1.5 text-xs" title="Delete posting">
                                     <i class="fa-regular fa-trash-can"></i>
                                 </button>
-                                <button onclick="openDetailModal(${job.id})" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 transition flex items-center gap-1 shadow-sm">
-                                    View & Apply <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                <button onclick="openDetailModal(${job.id})" class="btn-primary-coral !py-1.5 !px-4 !text-xs flex items-center gap-1.5">
+                                    Apply <i class="fa-solid fa-arrow-right text-[10px]"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
             `).join('');
         }
 
         function renderApplications(list) {
             const container = document.getElementById('appsContainer');
             if (!list || list.length === 0) {
-                container.innerHTML = '<div class="py-16 text-center text-slate-500 font-mono text-sm">No applications submitted yet.</div>';
+                container.innerHTML = '<div class="surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">No applications submitted yet.</div>';
                 return;
             }
 
             container.innerHTML = list.map(app => `
-                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="surface-card p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div class="space-y-1">
-                        <div class="flex items-center gap-2">
-                            <h4 class="text-sm font-bold text-white">${escapeHtml(app.applicant_name)}</h4>
-                            <span class="text-xs text-slate-400 font-mono">(${escapeHtml(app.applicant_email)})</span>
+                        <div class="flex items-center gap-2.5">
+                            <h4 class="text-sm font-medium text-[#F4EDE0]">${escapeHtml(app.applicant_name)}</h4>
+                            <span class="text-xs text-[#F4EDE0]/55 font-light">(${escapeHtml(app.applicant_email)})</span>
                         </div>
-                        <p class="text-xs text-slate-300">
-                            Applied for: <span class="font-semibold text-amber-400">${escapeHtml(app.job_title || 'Position #' + app.job_posting_id)}</span>
-                            ${app.company_name ? `at <span class="text-indigo-300 font-medium">${escapeHtml(app.company_name)}</span>` : ''}
+                        <p class="text-xs text-[#F4EDE0]/75 font-light">
+                            Applied for: <span class="font-medium text-[#FF6B58]">${escapeHtml(app.job_title || 'Position #' + app.job_posting_id)}</span>
+                            ${app.company_name ? `• <span class="text-[#F4EDE0]">${escapeHtml(app.company_name)}</span>` : ''}
                         </p>
-                        ${app.cover_letter ? `<p class="text-xs text-slate-400 italic line-clamp-2 max-w-2xl mt-1">"${escapeHtml(app.cover_letter)}"</p>` : ''}
+                        ${app.cover_letter ? `<p class="text-xs text-[#F4EDE0]/60 italic font-light line-clamp-2 max-w-2xl mt-1">"${escapeHtml(app.cover_letter)}"</p>` : ''}
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+                    <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
                         ${app.resume_url ? `
-                            <a href="${escapeHtml(app.resume_url)}" target="_blank" class="px-3 py-1 text-xs rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1">
-                                <i class="fa-solid fa-file-pdf text-rose-400"></i> Resume
+                            <a href="${escapeHtml(app.resume_url)}" target="_blank" class="btn-ghost-cream !py-1.5 !px-3.5 !text-xs flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-lines text-[#FF6B58]"></i> Resume
                             </a>
                         ` : ''}
 
-                        <select onchange="updateAppStatus(${app.id}, this.value)" class="px-3 py-1 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-amber-400">
+                        <select onchange="updateAppStatus(${app.id}, this.value)" class="input-pill-cream !py-1.5 !px-4 !text-xs">
                             <option value="submitted" ${app.status === 'submitted' ? 'selected' : ''}>Submitted</option>
                             <option value="under_review" ${app.status === 'under_review' ? 'selected' : ''}>Under Review</option>
                             <option value="interview" ${app.status === 'interview' ? 'selected' : ''}>Interview</option>
@@ -467,7 +652,7 @@
                             <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rejected</option>
                         </select>
 
-                        <button onclick="deleteApp(${app.id})" class="p-1.5 text-xs text-rose-400 hover:bg-rose-950/30 rounded-lg transition" title="Delete">
+                        <button onclick="deleteApp(${app.id})" class="btn-ghost-cream !px-3 !py-1.5 text-xs" title="Delete">
                             <i class="fa-regular fa-trash-can"></i>
                         </button>
                     </div>
@@ -475,8 +660,10 @@
             `).join('');
         }
 
-        function filterType(type) {
+        function filterType(type, btnEl) {
             currentTypeFilter = type;
+            document.querySelectorAll('.type-filter-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
             applyJobFilters();
         }
 
@@ -501,8 +688,10 @@
             renderJobs(res);
         }
 
-        function filterAppStatus(status) {
+        function filterAppStatus(status, btnEl) {
             currentAppStatusFilter = status;
+            document.querySelectorAll('.app-status-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
             if (!status) {
                 renderApplications(allApps);
             } else {
@@ -552,12 +741,12 @@
         }
 
         function openDetailModal(jobId) {
-            selectedJob = allJobs.find(j => j.id === jobId);
+            selectedJob = allJobs.find(j => Number(j.id) === Number(jobId));
             if (!selectedJob) return;
 
             document.getElementById('detailBadge').textContent = selectedJob.job_type;
             document.getElementById('detailTitle').textContent = selectedJob.title;
-            document.getElementById('detailCompany').innerHTML = `<i class="fa-solid fa-building mr-1"></i> ${escapeHtml(selectedJob.company_name)} • ${escapeHtml(selectedJob.location || 'Istanbul')}`;
+            document.getElementById('detailCompany').innerHTML = `<i class="fa-regular fa-building text-[#FF6B58] mr-1"></i> ${escapeHtml(selectedJob.company_name)} • ${escapeHtml(selectedJob.location || 'Istanbul')}`;
             document.getElementById('detailExp').textContent = selectedJob.experience_level || 'Mid-Level';
             document.getElementById('detailSalary').textContent = selectedJob.salary_range || 'Competitive';
             document.getElementById('detailAppsCount').textContent = (selectedJob.applications_count || 0) + ' Received';
@@ -593,7 +782,6 @@
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    alert('Application successfully submitted!');
                     closeDetailModal();
                     await loadApplications();
                     await loadJobs();
@@ -622,7 +810,7 @@
         }
 
         async function deleteJob(id) {
-            if (!confirm(`Are you sure you want to delete job posting #${id}?`)) return;
+            if (!confirm(`Delete job posting #${id}?`)) return;
             try {
                 const res = await fetch(`/api/v1/job-postings/${id}`, { method: 'DELETE' });
                 const data = await res.json();
@@ -635,7 +823,7 @@
         }
 
         async function deleteApp(id) {
-            if (!confirm(`Are you sure you want to delete application #${id}?`)) return;
+            if (!confirm(`Delete application #${id}?`)) return;
             try {
                 const res = await fetch(`/api/v1/applications/${id}`, { method: 'DELETE' });
                 const data = await res.json();

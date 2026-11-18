@@ -3,161 +3,446 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlumniIstü • Istanbul University MIS Career Graph</title>
+    <title>AlumniIstü (ALUMNI) • Istanbul University MIS Network</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        :root {
+            --color-navy: #14213D;
+            --color-cream: #F4EDE0;
+            --color-coral: #FF6B58;
+            --color-canvas: #14213D;
+            --color-surface: #1c2a4a;
+            --color-text-main: #F4EDE0;
+            --color-accent: #FF6B58;
+
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', serif;
+            --font-inter: 'Inter', sans-serif;
+            
+            --radius-full: 9999px;
+            --radius-lg: 10px;
+            --page-max-width: 1216px;
+            --section-gap: 160px;
+        }
+
+        body {
+            background-color: var(--color-canvas);
+            color: var(--color-text-main);
+            font-family: var(--font-inter);
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-container {
+            max-width: var(--page-max-width);
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .section-stack {
+            display: flex;
+            flex-direction: column;
+            gap: var(--section-gap);
+            padding-top: 80px;
+            padding-bottom: 120px;
+        }
+
+        /* Typography: Display & Headings (>=28px) Ivy Presto / Playfair Display (400/500) + positive letter-spacing */
+        .heading-hero {
+            font-family: var(--font-ivy-presto);
+            font-weight: 400;
+            font-size: clamp(2.5rem, 4.5vw, 3.75rem);
+            line-height: 1.14;
+            letter-spacing: 0.02em;
+            color: var(--color-cream);
+        }
+
+        .heading-section {
+            font-family: var(--font-ivy-presto);
+            font-weight: 500;
+            font-size: clamp(1.75rem, 2.8vw, 2.35rem); /* >= 28px */
+            line-height: 1.22;
+            letter-spacing: 0.018em;
+            color: var(--color-cream);
+        }
+
+        /* Surfaces & Elevation: #1c2a4a or #14213D with thin border, zero heavy drop shadows */
+        .surface-card {
+            background-color: var(--color-surface);
+            border: 1px solid rgba(244, 237, 224, 0.14);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .surface-card:hover {
+            border-color: rgba(244, 237, 224, 0.32);
+        }
+
+        .surface-navy-card {
+            background-color: var(--color-navy);
+            border: 1px solid rgba(244, 237, 224, 0.14);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
+        }
+
+        /* Core Components */
+        .btn-primary-coral {
+            background-color: var(--color-coral);
+            color: var(--color-cream);
+            border: 1px solid var(--color-coral);
+            border-radius: var(--radius-full);
+            padding: 10px 20px;
+            font-family: var(--font-inter);
+            font-weight: 500;
+            font-size: 0.875rem;
+            box-shadow: none;
+            transition: opacity 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary-coral:hover {
+            opacity: 0.92;
+            box-shadow: 0 0 18px rgba(255, 107, 88, 0.35);
+        }
+
+        .btn-ghost-cream {
+            background-color: transparent;
+            color: var(--color-cream);
+            border: 1px solid var(--color-cream);
+            border-radius: var(--radius-full);
+            padding: 10px 20px;
+            font-family: var(--font-inter);
+            font-weight: 400;
+            font-size: 0.875rem;
+            box-shadow: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .btn-ghost-cream:hover,
+        .btn-ghost-cream.active {
+            background-color: rgba(244, 237, 224, 0.08);
+            border-color: var(--color-coral);
+            color: var(--color-coral);
+        }
+
+        .input-pill-cream {
+            background-color: rgba(20, 33, 61, 0.75);
+            color: var(--color-cream);
+            border: 1px solid rgba(244, 237, 224, 0.28);
+            border-radius: var(--radius-full);
+            padding: 10px 20px;
+            font-family: var(--font-inter);
+            font-size: 0.875rem;
+            box-shadow: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-pill-cream::placeholder {
+            color: rgba(244, 237, 224, 0.50);
+        }
+
+        .input-pill-cream:focus {
+            outline: none;
+            border-color: var(--color-coral);
+        }
+
+        .badge-pill {
+            border-radius: var(--radius-full);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(244, 237, 224, 0.2);
+            color: var(--color-cream);
+            background-color: rgba(20, 33, 61, 0.6);
+        }
+
+        .badge-coral {
+            border-radius: var(--radius-full);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 107, 88, 0.45);
+            color: var(--color-coral);
+            background-color: rgba(255, 107, 88, 0.12);
+        }
+
+        /* Navigation Underline: 2px radius */
+        .nav-link {
+            position: relative;
+            padding-bottom: 6px;
+            color: rgba(244, 237, 224, 0.75);
+            font-weight: 400;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--color-cream);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background-color: var(--color-coral);
+            border-radius: 2px;
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
+<body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
 
     <!-- Top Navigation Bar -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/20">
-                    <i class="fa-solid fa-network-wired text-lg"></i>
+    <header class="border-b border-[#F4EDE0]/10 bg-[#14213D]/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="page-container h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-full bg-[#1c2a4a] border border-[#FF6B58] flex items-center justify-center text-[#FF6B58]">
+                    <i class="fa-solid fa-compass-drafting text-xs"></i>
                 </div>
                 <div>
-                    <span class="font-extrabold text-base tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-rose-300 to-indigo-300">
+                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); font-weight: 500; letter-spacing: 0.03em;">
                         AlumniIstü
                     </span>
-                    <span class="text-[10px] block font-mono text-slate-400">Istanbul University • MIS</span>
+                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/60 font-light">
+                        Istanbul University • MIS
+                    </span>
                 </div>
-            </div>
+            </a>
 
-            <nav class="flex items-center space-x-6 text-sm font-medium">
-                <a href="/" class="text-amber-400 hover:text-amber-300 transition">Directory</a>
-                <a href="/jobs" class="text-slate-400 hover:text-white transition">Job Board</a>
-                <a href="/about" class="text-slate-400 hover:text-white transition">About</a>
-                <a href="/analytics" class="text-slate-400 hover:text-white transition">Career Graph</a>
-                <a href="/swagger" class="text-slate-400 hover:text-white transition">API Explorer</a>
+            <nav class="hidden md:flex items-center space-x-8 text-sm">
+                <a href="/" class="nav-link active">Beranda</a>
+                <a href="/jobs" class="nav-link">Job Board</a>
+                <a href="/analytics" class="nav-link">Career Graph</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/swagger" class="nav-link">API Explorer</a>
             </nav>
 
             <div class="flex items-center space-x-3">
-                <button onclick="openModal()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-md shadow-amber-500/20">
-                    <i class="fa-solid fa-plus"></i> New Alumni
+                <button onclick="openModal()" class="btn-primary-coral flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-xs"></i> Register Alumni
                 </button>
-                <span id="health-badge" class="px-2.5 py-1 text-xs font-mono rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    API Active
-                </span>
             </div>
         </div>
     </header>
 
-    <!-- Hero / Headline -->
-    <main class="flex-grow max-w-7xl mx-auto px-6 py-10 w-full space-y-8">
-        <div class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-900 to-slate-950 p-8 md:p-12 shadow-2xl">
-            <div class="max-w-3xl space-y-4">
-                <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    <i class="fa-solid fa-graduation-cap"></i> Management Information Systems • Department of Economics
-                </span>
-                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
-                    Graduate Intelligence & <br><span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-indigo-400">Career Trajectory Network</span>
-                </h1>
-                <p class="text-slate-400 text-base md:text-lg leading-relaxed">
-                    A modern, containerized API platform connecting Istanbul University MIS graduates, mentors, and industry pioneers. Full CRUD support backed by persistent database storage.
+    <!-- Main Content Container (Max Width: 1216px, Section Gap: 160px) -->
+    <main class="flex-grow page-container section-stack w-full">
+
+        <!-- SECTION 1: Hero & Executive Booking Aesthetic -->
+        <section class="surface-card p-8 md:p-14">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="badge-coral">
+                            <i class="fa-solid fa-sparkles mr-1"></i> MIDNIGHT DARK EDITION
+                        </span>
+                        <span class="badge-pill">
+                            İKTİSAT FAKÜLTESİ • YBS
+                        </span>
+                    </div>
+
+                    <h1 class="heading-hero">
+                        Distinguished Alumni Network &amp; <br>
+                        <span class="italic text-[#FF6B58]">Executive Career Concierge</span>
+                    </h1>
+
+                    <p class="text-[#F4EDE0]/80 text-base font-light max-w-2xl leading-relaxed">
+                        Platform eksklusif penghubung lulusan, mentor industri, dan jejaring karier Departemen Management Information Systems (YBS) Universitas Istanbul dalam kanvas malam yang tenang dan presisi.
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <button onclick="openModal()" class="btn-primary-coral">
+                            Curate Alumni Profile
+                        </button>
+                        <a href="/jobs" class="btn-ghost-cream">
+                            Explore Career Opportunities →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Telemetry Summary Cards (10px radius) -->
+                <div class="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                    <div class="surface-navy-card p-6">
+                        <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/60 block font-light">Verified Graduates</span>
+                        <span id="statTotalAlumni" class="heading-section block mt-1">—</span>
+                        <span class="text-xs text-[#FF6B58] mt-1 inline-block">Active Directory Nodes</span>
+                    </div>
+                    <div class="surface-navy-card p-6">
+                        <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/60 block font-light">Executive Mentors</span>
+                        <span id="statTotalMentors" class="heading-section block mt-1">—</span>
+                        <span class="text-xs text-[#F4EDE0]/70 mt-1 inline-block">1:1 Mentorship Available</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Directory Explorer, Cohort Filters & Live CRUD Grid -->
+        <section class="space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#F4EDE0]/10 pb-6">
+                <div>
+                    <span class="badge-coral mb-3 inline-block">DIRECTORY &amp; MENTORSHIP GRAPH</span>
+                    <h2 class="heading-section">Curated Alumni Directory</h2>
+                </div>
+                <p class="text-sm text-[#F4EDE0]/70 font-light max-w-md">
+                    Filter berdasarkan angkatan kelulusan, ketersediaan mentor, atau cari keahlian spesifik secara langsung.
                 </p>
             </div>
-        </div>
 
-        <!-- Filter & Search Controls -->
-        <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
-            <div class="flex flex-wrap gap-2 w-full md:w-auto">
-                <button onclick="filterCohort(null)" class="filter-btn px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition">All Cohorts</button>
-                <button onclick="filterCohort(2024)" class="filter-btn px-4 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Class of 2024</button>
-                <button onclick="filterCohort(2023)" class="filter-btn px-4 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Class of 2023</button>
-                <button onclick="filterCohort(2022)" class="filter-btn px-4 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">Class of 2022</button>
-                <button onclick="toggleMentorsOnly()" id="mentor-btn" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-950/30 transition">
-                    <i class="fa-solid fa-user-check mr-1"></i> Mentors Only
+            <!-- Controls Bar (10px Card, 9999px Pill Buttons & Search Input) -->
+            <div class="surface-card p-5 flex flex-col lg:flex-row gap-4 items-center justify-between">
+                <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+                    <button onclick="filterCohort(null, this)" class="cohort-pill btn-ghost-cream active">
+                        All Cohorts
+                    </button>
+                    <button onclick="filterCohort(2024, this)" class="cohort-pill btn-ghost-cream">
+                        Class of 2024
+                    </button>
+                    <button onclick="filterCohort(2023, this)" class="cohort-pill btn-ghost-cream">
+                        Class of 2023
+                    </button>
+                    <button onclick="filterCohort(2022, this)" class="cohort-pill btn-ghost-cream">
+                        Class of 2022
+                    </button>
+                    <button onclick="toggleMentorsOnly()" id="mentor-btn" class="btn-ghost-cream flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-[#FF6B58] text-xs"></i> Mentors Only
+                    </button>
+                </div>
+
+                <div class="w-full lg:w-80 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-[#F4EDE0]/45 text-xs"></i>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        oninput="searchAlumni(this.value)"
+                        placeholder="Search name, company, or skill..."
+                        class="input-pill-cream w-full pl-10"
+                    >
+                </div>
+            </div>
+
+            <!-- Alumni Cards Grid (10px Card Radius) -->
+            <div id="alumniGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="col-span-full surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">
+                    Loading alumni profiles...
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Concierge Email Capture & Network Invitation -->
+        <section class="surface-card p-8 md:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div class="space-y-3 max-w-xl">
+                <span class="badge-coral">PRIVATE DISPATCH</span>
+                <h2 class="heading-section">Join the Executive Alumni Dispatch</h2>
+                <p class="text-sm text-[#F4EDE0]/75 font-light leading-relaxed">
+                    Dapatkan pembaruan eksklusif mengenai kuota mentorship, lowongan kepemimpinan teknologi, dan agenda tahunan fakultas langsung di kotak masuk Anda.
+                </p>
+            </div>
+            <form onsubmit="event.preventDefault(); alert('Thank you! Your academic email has been registered.'); this.reset();" class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                <input
+                    type="email"
+                    required
+                    placeholder="Enter your @ogr.iu.edu.tr email..."
+                    class="input-pill-cream w-full sm:w-72"
+                >
+                <button type="submit" class="btn-primary-coral w-full sm:w-auto whitespace-nowrap">
+                    Request Access
+                </button>
+            </form>
+        </section>
+
+    </main>
+
+    <!-- Modal for Create / Edit Alumni (10px Card Surface + 9999px Inputs & Buttons) -->
+    <div id="crudModal" class="fixed inset-0 z-50 hidden bg-[#14213D]/85 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="surface-card max-w-lg w-full p-8 space-y-5">
+            <div class="flex items-center justify-between pb-4 border-b border-[#F4EDE0]/10">
+                <div>
+                    <span class="badge-coral">DIRECTORY CONCIERGE</span>
+                    <h3 id="modalTitle" class="heading-section mt-2">Curate Alumni Profile</h3>
+                </div>
+                <button onclick="closeModal()" class="btn-ghost-cream !px-3.5 !py-2">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div class="w-full md:w-72 relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-                <input type="text" id="searchInput" oninput="searchAlumni(this.value)" placeholder="Search role, company, skill..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition">
-            </div>
-        </div>
-
-        <!-- Live Cards Grid -->
-        <div id="alumniGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="col-span-full py-16 text-center text-slate-500 font-mono text-sm">Loading directory profiles...</div>
-        </div>
-    </main>
-
-    <!-- Modal for Create / Edit Alumni (CRUD) -->
-    <div id="crudModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h3 id="modalTitle" class="text-lg font-bold text-white">Add New Alumni Record</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-
-            <form id="alumniForm" onsubmit="handleFormSubmit(event)" class="space-y-3">
+            <form id="alumniForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
                 <input type="hidden" id="formId" value="">
                 
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Full Name *</label>
-                    <input type="text" id="formFullName" required placeholder="e.g. Ada Lovelace" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Full Name *</label>
+                    <input type="text" id="formFullName" required placeholder="e.g. Defne Yıldırım" class="input-pill-cream w-full">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Email *</label>
-                        <input type="email" id="formEmail" required placeholder="ada@cv.edu.tr" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Email Address *</label>
+                        <input type="email" id="formEmail" required placeholder="defne@ogr.iu.edu.tr" class="input-pill-cream w-full">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Cohort (Year)</label>
-                        <input type="number" id="formCohort" value="2024" min="1990" max="2030" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Company</label>
-                        <input type="text" id="formCompany" placeholder="e.g. Turkcell Tech" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Role / Title</label>
-                        <input type="text" id="formRole" placeholder="e.g. Lead Engineer" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Cohort Year</label>
+                        <input type="number" id="formCohort" value="2024" min="1990" max="2030" class="input-pill-cream w-full">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Industry</label>
-                        <input type="text" id="formIndustry" placeholder="e.g. Cloud & Telecom" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Company</label>
+                        <input type="text" id="formCompany" placeholder="e.g. Trendyol Tech" class="input-pill-cream w-full">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Location</label>
-                        <input type="text" id="formLocation" placeholder="Istanbul, Turkey" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Role / Title</label>
+                        <input type="text" id="formRole" placeholder="e.g. Principal Product Manager" class="input-pill-cream w-full">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Industry</label>
+                        <input type="text" id="formIndustry" placeholder="e.g. FinTech & Banking" class="input-pill-cream w-full">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Location</label>
+                        <input type="text" id="formLocation" placeholder="Istanbul, Turkey" class="input-pill-cream w-full">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1">Skills (comma-separated)</label>
-                    <input type="text" id="formSkills" placeholder="Python, SQL, Docker, AWS" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400">
+                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Skills (comma-separated)</label>
+                    <input type="text" id="formSkills" placeholder="Python, SQL, Cloud Architecture" class="input-pill-cream w-full">
                 </div>
 
-                <div class="flex items-center gap-2 pt-1">
-                    <input type="checkbox" id="formIsMentor" class="rounded bg-slate-950 border-slate-800 text-amber-500 focus:ring-amber-500">
-                    <label for="formIsMentor" class="text-xs text-slate-300">Available as an Active Mentor</label>
+                <div class="flex items-center gap-2.5 pt-1">
+                    <input type="checkbox" id="formIsMentor" class="w-4 h-4 accent-[#FF6B58] cursor-pointer">
+                    <label for="formIsMentor" class="text-xs text-[#F4EDE0]/85 cursor-pointer">
+                        Available for 1:1 Executive Mentorship
+                    </label>
                 </div>
 
-                <div class="flex justify-end gap-2 pt-4 border-t border-slate-800">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Cancel</button>
-                    <button type="submit" id="saveBtn" class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 transition">Save Record</button>
+                <div class="flex justify-end gap-3 pt-4 border-t border-[#F4EDE0]/10">
+                    <button type="button" onclick="closeModal()" class="btn-ghost-cream">
+                        Cancel
+                    </button>
+                    <button type="submit" id="saveBtn" class="btn-primary-coral">
+                        Save Profile
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500 mt-auto">
-        <p>© 2026 Istanbul University • Faculty of Economics • Management Information Systems (YBS)</p>
+    <footer class="border-t border-[#F4EDE0]/10 py-10 mt-auto">
+        <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60 font-light">
+            <span>© 2026 <strong class="text-[#F4EDE0] font-medium">AlumniIstü (ALUMNI)</strong> • Istanbul University Faculty of Economics (YBS)</span>
+            <span>Navy <code class="text-[#F4EDE0]">#14213D</code> • Cream <code class="text-[#F4EDE0]">#F4EDE0</code> • Coral <code class="text-[#FF6B58]">#FF6B58</code></span>
+        </div>
     </footer>
 
     <script>
@@ -170,23 +455,36 @@
                 const res = await fetch('/api/v1/alumni');
                 const json = await res.json();
                 allAlumni = json.data || [];
+                updateHeroStats();
                 renderGrid();
             } catch (err) {
-                document.getElementById('alumniGrid').innerHTML = '<p class="text-rose-400 col-span-full text-center">Failed to load API.</p>';
+                document.getElementById('alumniGrid').innerHTML =
+                    '<div class="col-span-full surface-card p-8 text-center text-[#FF6B58] text-sm">Failed to load AlumniIstü directory API.</div>';
             }
         }
 
-        function filterCohort(cohort) {
+        function updateHeroStats() {
+            const totalEl = document.getElementById('statTotalAlumni');
+            const mentorEl = document.getElementById('statTotalMentors');
+            if (totalEl) totalEl.textContent = allAlumni.length;
+            if (mentorEl) mentorEl.textContent = allAlumni.filter(a => a.is_mentor).length;
+        }
+
+        function filterCohort(cohort, btnEl) {
             currentCohort = cohort;
+            document.querySelectorAll('.cohort-pill').forEach(btn => btn.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
             renderGrid();
         }
 
         function toggleMentorsOnly() {
             mentorsOnly = !mentorsOnly;
             const btn = document.getElementById('mentor-btn');
-            btn.className = mentorsOnly 
-                ? 'px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 text-white transition'
-                : 'px-4 py-2 text-xs font-semibold rounded-xl bg-slate-900 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-950/30 transition';
+            if (mentorsOnly) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
             renderGrid();
         }
 
@@ -203,55 +501,85 @@
 
         function renderGrid() {
             let data = allAlumni;
-            if (currentCohort) data = data.filter(a => a.cohort === currentCohort);
-            if (mentorsOnly) data = data.filter(a => a.is_mentor);
+            if (currentCohort) data = data.filter(a => Number(a.cohort) === Number(currentCohort));
+            if (mentorsOnly) data = data.filter(a => Boolean(a.is_mentor));
             renderCards(data);
         }
 
         function renderCards(records) {
             const grid = document.getElementById('alumniGrid');
             if (records.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-16 text-center text-slate-500 text-sm">No alumni match this criterion.</div>';
+                grid.innerHTML = `
+                    <div class="col-span-full surface-card p-12 text-center space-y-4">
+                        <p class="text-[#F4EDE0]/75 text-sm font-light">No alumni profiles match the selected filter.</p>
+                        <button onclick="filterCohort(null, document.querySelector('.cohort-pill'))" class="btn-ghost-cream">
+                            Reset Filter
+                        </button>
+                    </div>
+                `;
                 return;
             }
 
             grid.innerHTML = records.map(item => `
-                <div class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 p-6 rounded-2xl transition duration-300 flex flex-col justify-between relative">
+                <article class="surface-card p-6 flex flex-col justify-between">
                     <div>
                         <div class="flex items-start justify-between gap-3 mb-4">
                             <div>
-                                <h3 class="font-bold text-white group-hover:text-amber-400 transition">${escapeHtml(item.full_name || 'Anonymous')}</h3>
-                                <p class="text-xs text-slate-400">Class of ${item.cohort} • ${escapeHtml(item.department || 'MIS')}</p>
+                                <h3 class="font-medium text-base text-[#F4EDE0]">
+                                    ${escapeHtml(item.full_name || 'Anonymous Fellow')}
+                                </h3>
+                                <p class="text-xs text-[#F4EDE0]/60 font-light mt-0.5">
+                                    Class of ${item.cohort || '2024'} • ${escapeHtml(item.department || 'MIS')}
+                                </p>
                             </div>
                             <div class="flex items-center gap-1.5">
-                                ${item.is_mentor 
-                                    ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">MENTOR</span>' 
-                                    : ''}
-                                <button onclick="openEditModal(${item.id})" title="Edit Profile" class="text-slate-400 hover:text-amber-400 p-1 text-xs transition"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteAlumniRecord(${item.id})" title="Delete Profile" class="text-slate-400 hover:text-rose-400 p-1 text-xs transition"><i class="fa-solid fa-trash"></i></button>
+                                ${item.is_mentor ? '<span class="badge-coral">MENTOR</span>' : ''}
+                                <button onclick="openEditModal(${item.id})" title="Edit Profile" class="btn-ghost-cream !px-2.5 !py-1 text-xs">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button onclick="deleteAlumniRecord(${item.id})" title="Delete Profile" class="btn-ghost-cream !px-2.5 !py-1 text-xs">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="space-y-1 mb-4">
-                            <p class="text-sm font-semibold text-slate-200">${escapeHtml(item.role || 'Professional')}</p>
-                            <p class="text-xs text-slate-400 flex items-center gap-1.5"><i class="fa-regular fa-building"></i> ${escapeHtml(item.company || 'Enterprise')}</p>
-                            <p class="text-xs text-slate-500 flex items-center gap-1.5"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(item.location || 'Istanbul, TR')}</p>
+
+                        <div class="space-y-1.5 mb-5">
+                            <p class="text-sm font-medium text-[#F4EDE0]">
+                                ${escapeHtml(item.role || 'Technology Professional')}
+                            </p>
+                            <p class="text-xs text-[#F4EDE0]/75 font-light flex items-center gap-2">
+                                <i class="fa-regular fa-building text-[#FF6B58] w-3.5"></i>
+                                <span>${escapeHtml(item.company || 'Enterprise')}</span>
+                            </p>
+                            <p class="text-xs text-[#F4EDE0]/60 font-light flex items-center gap-2">
+                                <i class="fa-solid fa-location-dot text-[#F4EDE0]/45 w-3.5"></i>
+                                <span>${escapeHtml(item.location || 'Istanbul, Turkey')}</span>
+                            </p>
                         </div>
                     </div>
+
                     <div>
-                        <div class="flex flex-wrap gap-1.5 pt-4 border-t border-slate-800/80 mb-4">
-                            ${(item.skills || []).map(skill => `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 text-slate-300">${escapeHtml(skill)}</span>`).join('')}
+                        <div class="flex flex-wrap gap-1.5 pt-4 border-t border-[#F4EDE0]/10 mb-4">
+                            ${(item.skills || []).map(skill => `
+                                <span class="badge-pill">${escapeHtml(skill)}</span>
+                            `).join('')}
                         </div>
-                        <div class="flex items-center justify-between text-xs text-slate-500 pt-2">
-                            <span><i class="fa-regular fa-envelope"></i> ${escapeHtml(item.email)}</span>
-                            <span class="text-amber-400 font-semibold cursor-pointer" onclick="openEditModal(${item.id})">Details →</span>
+
+                        <div class="flex items-center justify-between text-xs pt-1">
+                            <span class="text-[#F4EDE0]/65 font-light truncate max-w-[180px]" title="${escapeHtml(item.email || '')}">
+                                <i class="fa-regular fa-envelope mr-1"></i>${escapeHtml(item.email || '')}
+                            </span>
+                            <button onclick="openEditModal(${item.id})" class="btn-primary-coral !py-1.5 !px-3.5 !text-xs">
+                                Inspect →
+                            </button>
                         </div>
                     </div>
-                </div>
+                </article>
             `).join('');
         }
 
         function openModal() {
-            document.getElementById('modalTitle').innerText = 'Add New Alumni Record';
+            document.getElementById('modalTitle').innerText = 'Curate Alumni Profile';
             document.getElementById('formId').value = '';
             document.getElementById('formFullName').value = '';
             document.getElementById('formEmail').value = '';
@@ -266,10 +594,10 @@
         }
 
         function openEditModal(id) {
-            const item = allAlumni.find(a => String(a.id) === String(id));
+            const item = allAlumni.find(a => Number(a.id) === Number(id));
             if (!item) return;
 
-            document.getElementById('modalTitle').innerText = `Edit Alumni Record #${id}`;
+            document.getElementById('modalTitle').innerText = `Edit Profile #${id}`;
             document.getElementById('formId').value = item.id;
             document.getElementById('formFullName').value = item.full_name || '';
             document.getElementById('formEmail').value = item.email || '';
@@ -327,7 +655,7 @@
         }
 
         async function deleteAlumniRecord(id) {
-            if (!confirm(`Are you sure you want to delete alumni record #${id}?`)) {
+            if (!confirm(`Remove alumni profile #${id}?`)) {
                 return;
             }
 
@@ -346,7 +674,7 @@
 
         function escapeHtml(text) {
             const div = document.createElement('div');
-            div.textContent = text;
+            div.textContent = text || '';
             return div.innerHTML;
         }
 

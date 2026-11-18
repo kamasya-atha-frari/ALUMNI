@@ -3,72 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Graph & Analytics • AlumniIstü</title>
+    <title>AlumniIstü (ALUMNI) • Career Graph &amp; Telemetry</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        :root {
+            --color-navy: #14213D;
+            --color-cream: #F4EDE0;
+            --color-coral: #FF6B58;
+            --color-canvas: #14213D;
+            --color-surface: #1c2a4a;
+            --color-text-main: #F4EDE0;
+            --color-accent: #FF6B58;
+
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', serif;
+            --font-inter: 'Inter', sans-serif;
+            
+            --radius-full: 9999px;
+            --radius-lg: 10px;
+            --page-max-width: 1216px;
+            --section-gap: 160px;
+        }
+        body {
+            background-color: var(--color-canvas);
+            color: var(--color-text-main);
+            font-family: var(--font-inter);
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .page-container {
+            max-width: var(--page-max-width);
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+        .section-stack {
+            display: flex;
+            flex-direction: column;
+            gap: var(--section-gap);
+            padding-top: 80px;
+            padding-bottom: 120px;
+        }
+        .heading-hero {
+            font-family: var(--font-ivy-presto);
+            font-weight: 400;
+            font-size: clamp(2.35rem, 4vw, 3.25rem);
+            line-height: 1.15;
+            letter-spacing: 0.02em;
+            color: var(--color-cream);
+        }
+        .heading-section {
+            font-family: var(--font-ivy-presto);
+            font-weight: 500;
+            font-size: 1.75rem;
+            line-height: 1.24;
+            letter-spacing: 0.018em;
+            color: var(--color-cream);
+        }
+        .surface-card {
+            background-color: var(--color-surface);
+            border: 1px solid rgba(244, 237, 224, 0.14);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
+        }
+        .badge-coral {
+            border-radius: var(--radius-full);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 107, 88, 0.45);
+            color: var(--color-coral);
+            background-color: rgba(255, 107, 88, 0.12);
+        }
+        .nav-link {
+            position: relative;
+            padding-bottom: 6px;
+            color: rgba(244, 237, 224, 0.75);
+            font-weight: 400;
+            transition: color 0.2s ease;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--color-cream);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background-color: var(--color-coral);
+            border-radius: 2px;
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
-                    <i class="fa-solid fa-chart-line text-lg"></i>
+<body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
+    <header class="border-b border-[#F4EDE0]/10 bg-[#14213D]/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="page-container h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-full bg-[#1c2a4a] border border-[#FF6B58] flex items-center justify-center text-[#FF6B58]">
+                    <i class="fa-solid fa-chart-line text-xs"></i>
                 </div>
                 <div>
-                    <span class="font-extrabold text-base tracking-tight text-white">AlumniIstü Analytics</span>
-                    <span class="text-[10px] block font-mono text-slate-400">Institutional Career Telemetry</span>
+                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); font-weight: 500; letter-spacing: 0.03em;">
+                        AlumniIstü
+                    </span>
+                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/60 font-light">
+                        Institutional Telemetry
+                    </span>
                 </div>
-            </div>
-            <nav class="flex items-center space-x-6 text-sm font-medium">
-                <a href="/" class="text-slate-400 hover:text-white transition">Directory</a>
-                <a href="/jobs" class="text-slate-400 hover:text-white transition">Job Board</a>
-                <a href="/about" class="text-slate-400 hover:text-white transition">About</a>
-                <a href="/analytics" class="text-amber-400 hover:text-amber-300 transition">Career Graph</a>
-                <a href="/swagger" class="text-slate-400 hover:text-white transition">API Explorer</a>
+            </a>
+            <nav class="hidden md:flex items-center space-x-8 text-sm">
+                <a href="/" class="nav-link">Beranda</a>
+                <a href="/jobs" class="nav-link">Job Board</a>
+                <a href="/analytics" class="nav-link active">Career Graph</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/swagger" class="nav-link">API Explorer</a>
             </nav>
         </div>
     </header>
 
-    <main class="flex-grow max-w-7xl mx-auto px-6 py-10 w-full space-y-8">
-        <div>
-            <h1 class="text-3xl font-extrabold text-white tracking-tight">Graduate Mobility & Institutional KPIs</h1>
-            <p class="text-slate-400 text-sm mt-1">Empirical telemetry for YÖKAK, AACSB quality audits and curriculum alignment.</p>
-        </div>
+    <main class="flex-grow page-container section-stack w-full">
+        <!-- SECTION 1: Hero & KPI Cards -->
+        <section class="space-y-8">
+            <div class="surface-card p-8 md:p-12 space-y-4">
+                <span class="badge-coral inline-block">YÖKAK &amp; AACSB ACCREDITATION TELEMETRY</span>
+                <h1 class="heading-hero">Graduate Mobility &amp; <span class="italic text-[#FF6B58]">Institutional KPIs</span></h1>
+                <p class="text-[#F4EDE0]/75 text-base font-light max-w-2xl">
+                    Metrik empiris mobilitas karier dan keselarasan kurikulum lulusan Management Information Systems (YBS) Universitas Istanbul.
+                </p>
+            </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                <p class="text-xs font-mono text-slate-500 uppercase">Employment Index</p>
-                <p class="text-3xl font-extrabold text-emerald-400 mt-2">96.4%</p>
-                <p class="text-xs text-slate-400 mt-1">Employed within 6 mos</p>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="surface-card p-6">
+                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Employment Index</p>
+                    <p class="heading-section text-[#FF6B58] mt-2">96.4%</p>
+                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">Placed within 6 months</p>
+                </div>
+                <div class="surface-card p-6">
+                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Active Mentors</p>
+                    <p class="heading-section text-[#F4EDE0] mt-2" id="stat-mentors">--</p>
+                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">1:1 Concierge available</p>
+                </div>
+                <div class="surface-card p-6">
+                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Global Mobility</p>
+                    <p class="heading-section text-[#F4EDE0] mt-2">24.5%</p>
+                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">EU, UK &amp; North America</p>
+                </div>
+                <div class="surface-card p-6">
+                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Persistence Engine</p>
+                    <p class="heading-section text-[#FF6B58] mt-2" id="stat-source">MySQL</p>
+                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">PDO Prepared Statements</p>
+                </div>
             </div>
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                <p class="text-xs font-mono text-slate-500 uppercase">Active Mentors</p>
-                <p class="text-3xl font-extrabold text-amber-400 mt-2" id="stat-mentors">--</p>
-                <p class="text-xs text-slate-400 mt-1">Available for students</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                <p class="text-xs font-mono text-slate-500 uppercase">Global Mobility</p>
-                <p class="text-3xl font-extrabold text-indigo-400 mt-2">24.5%</p>
-                <p class="text-xs text-slate-400 mt-1">Working abroad (EU/US)</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                <p class="text-xs font-mono text-slate-500 uppercase">Data Persistence</p>
-                <p class="text-3xl font-extrabold text-rose-400 mt-2" id="stat-source">MySQL</p>
-                <p class="text-xs text-slate-400 mt-1">ACID Relational Engine</p>
-            </div>
-        </div>
+        </section>
 
-        <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl">
-            <h3 class="text-lg font-bold text-white mb-4">Key Industry Verticals (MIS Graduates)</h3>
+        <!-- SECTION 2: Sector Distribution -->
+        <section class="surface-card p-8 md:p-12 space-y-6">
+            <div class="border-b border-[#F4EDE0]/10 pb-4">
+                <h2 class="heading-section">Sector Distribution Across MIS Cohorts</h2>
+                <p class="text-xs text-[#F4EDE0]/60 font-light mt-1">Live aggregation from `/api/v1/analytics` controller endpoint.</p>
+            </div>
             <div id="industry-bars" class="space-y-4">
-                <div class="text-slate-500 text-xs">Loading analytics telemetry...</div>
+                <div class="text-[#F4EDE0]/50 text-xs font-light">Loading analytics telemetry...</div>
             </div>
-        </div>
+        </section>
     </main>
+
+    <footer class="border-t border-[#F4EDE0]/10 py-10 mt-auto">
+        <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60 font-light">
+            <span>© 2026 <strong class="text-[#F4EDE0] font-medium">AlumniIstü (ALUMNI)</strong> • Institutional Analytics</span>
+            <span>Navy <code class="text-[#F4EDE0]">#14213D</code> • Cream <code class="text-[#F4EDE0]">#F4EDE0</code> • Coral <code class="text-[#FF6B58]">#FF6B58</code></span>
+        </div>
+    </footer>
 
     <script>
         fetch('/api/v1/analytics')
@@ -76,7 +188,7 @@
             .then(payload => {
                 const data = payload.data || {};
                 document.getElementById('stat-mentors').textContent = data.active_mentors_count || '3';
-                document.getElementById('stat-source').textContent = (data.source === 'mysql_database') ? 'MySQL 8.0' : 'In-Memory';
+                document.getElementById('stat-source').textContent = (data.source === 'mysql_database') ? 'MySQL 8.0' : 'Standby Memory';
 
                 const industries = data.top_industries || {};
                 const container = document.getElementById('industry-bars');
@@ -85,12 +197,12 @@
                 for (const [ind, count] of Object.entries(industries)) {
                     const row = document.createElement('div');
                     row.innerHTML = `
-                        <div class="flex justify-between text-xs font-semibold mb-1">
-                            <span class="text-slate-300">${ind}</span>
-                            <span class="text-amber-400 font-mono">${count} Alumni</span>
+                        <div class="flex justify-between text-xs font-medium mb-1.5">
+                            <span class="text-[#F4EDE0]">${ind}</span>
+                            <span class="badge-coral">${count} Alumni</span>
                         </div>
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                            <div class="bg-gradient-to-r from-amber-500 to-indigo-500 h-2 rounded-full" style="width: ${count * 25}%"></div>
+                        <div class="w-full bg-[#14213D] border border-[#F4EDE0]/15 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-[#FF6B58] h-full rounded-full" style="width: ${Math.min(100, count * 25)}%"></div>
                         </div>
                     `;
                     container.appendChild(row);

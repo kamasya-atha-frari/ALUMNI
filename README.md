@@ -3,7 +3,10 @@
 ### Intelligent Alumni Career Graph & Engagement Network
 *Designed for graduates, students, and faculty of **Istanbul University Faculty of Economics, Department of Management Information Systems (Yönetim Bilişim Sistemleri - YBS)**.*
 
-> 📘 **Data Design Documentation**: For comprehensive ER diagrams, detailed data dictionaries, schema architectures, and the Forgetting Test protocol, see [**Data Design Documentation (`ddd.md`)**](./ddd.md).
+> 📘 **Core Documentation & Design System**:
+> - 🎨 [**Brand Identity (`brand.md`)**](./brand.md) — High-end dark booking aesthetic with **Navy (`#14213D`)**, **Cream (`#F4EDE0`)**, and **Coral (`#FF6B58`)**
+> - 📐 [**Design System & Token Specifications (`design.md`)**](./design.md) — Surfaces, spacing, pill shapes (`9999px`), card radius (`10px`), and CSS custom properties
+> - 🗄️ [**Data Design Documentation (`ddd.md`)**](./ddd.md) — ER diagrams, detailed data dictionaries, schema architectures, and the Forgetting Test protocol
 
 ---
 
@@ -171,6 +174,8 @@ alumni/
 ├── docker-compose.yml          # Multi-container orchestration (AlumniIstü API + MySQL 8.0)
 ├── AGENTS.md                   # AI Assistant operational context & architectural protocols
 ├── README.md                   # Complete system documentation & quickstart guide
+├── brand.md                    # Brand identity specification (Navy #14213D, Cream #F4EDE0, Coral #FF6B58)
+├── design.md                   # Design system & token specifications (surfaces, shapes, CSS variables)
 ├── ddd.md                      # Data Design Documentation (ERD, data dictionary, persistence)
 ├── .gitignore                  # Git exclusions for OS, containers, and .env files
 ├── .env.example                # Environment variables reference template
@@ -416,5 +421,5 @@ docker compose exec app php database/seed.php --count=20
 - **Faculty**: Faculty of Economics (İktisat Fakültesi)
 - **Department**: Management Information Systems (Yönetim Bilişim Sistemleri - YBS)
 - **Repository**: `github.com/kamasya-atha-frari/ALUMNI`
-- **Documentation**: [ddd.md](./ddd.md)
+- **Documentation**: [`brand.md`](./brand.md) • [`design.md`](./design.md) • [`ddd.md`](./ddd.md)
 - **License**: MIT

@@ -2,16 +2,137 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Swagger API Explorer • AlumniIstü</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlumniIstü (ALUMNI) • API Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
     <style>
-        body { margin: 0; padding: 0; background: #0f172a; font-family: sans-serif; }
-        .swagger-ui { filter: invert(88%) hue-rotate(180deg); }
-        .swagger-ui .topbar { display: none; }
+        :root {
+            --color-navy: #14213D;
+            --color-cream: #F4EDE0;
+            --color-coral: #FF6B58;
+            --color-canvas: #14213D;
+            --color-surface: #1c2a4a;
+            --color-text-main: #F4EDE0;
+            --color-accent: #FF6B58;
+
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', serif;
+            --font-inter: 'Inter', sans-serif;
+            
+            --radius-full: 9999px;
+            --radius-lg: 10px;
+            --page-max-width: 1216px;
+            --section-gap: 160px;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-canvas);
+            color: var(--color-text-main);
+            font-family: var(--font-inter);
+        }
+        .page-container {
+            max-width: var(--page-max-width);
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+        .surface-card {
+            background-color: var(--color-surface);
+            border: 1px solid rgba(244, 237, 224, 0.14);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
+        }
+        .btn-primary-coral {
+            background-color: var(--color-coral);
+            color: var(--color-cream);
+            border: 1px solid var(--color-coral);
+            border-radius: var(--radius-full);
+            padding: 10px 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .nav-link {
+            position: relative;
+            padding-bottom: 6px;
+            color: rgba(244, 237, 224, 0.75);
+            font-weight: 400;
+            transition: color 0.2s ease;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--color-cream);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background-color: var(--color-coral);
+            border-radius: 2px;
+        }
+        .swagger-ui {
+            filter: invert(88%) hue-rotate(180deg);
+        }
+        .swagger-ui .topbar {
+            display: none;
+        }
     </style>
 </head>
-<body>
-    <div id="swagger-ui"></div>
+<body class="min-h-screen flex flex-col">
+    <header class="border-b border-[#F4EDE0]/10 bg-[#14213D]/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="page-container h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-full bg-[#1c2a4a] border border-[#FF6B58] flex items-center justify-center text-[#FF6B58]">
+                    <i class="fa-solid fa-code text-xs"></i>
+                </div>
+                <div>
+                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); font-weight: 500; letter-spacing: 0.03em;">
+                        AlumniIstü
+                    </span>
+                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/60 font-light">
+                        OpenAPI 3.1 Contract
+                    </span>
+                </div>
+            </a>
+            <nav class="hidden md:flex items-center space-x-8 text-sm">
+                <a href="/" class="nav-link">Beranda</a>
+                <a href="/jobs" class="nav-link">Job Board</a>
+                <a href="/analytics" class="nav-link">Career Graph</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/swagger" class="nav-link active">API Explorer</a>
+            </nav>
+            <a href="/openapi.json" target="_blank" class="btn-primary-coral">
+                Raw JSON →
+            </a>
+        </div>
+    </header>
+
+    <main class="page-container py-12 w-full flex-grow space-y-8">
+        <div class="surface-card p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-normal text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">
+                    RESTful API &amp; MVC Endpoint Specification
+                </h1>
+                <p class="text-sm text-[#F4EDE0]/70 font-light mt-1">
+                    Interactive OpenAPI 3.1.0 documentation for Alumni, Job Postings, and Applications.
+                </p>
+            </div>
+            <span class="px-4 py-1.5 rounded-full text-xs font-medium bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/40">
+                OAS 3.1.0 • LIVE
+            </span>
+        </div>
+
+        <div class="surface-card p-4">
+            <div id="swagger-ui"></div>
+        </div>
+    </main>
+
     <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
     <script>
         window.onload = function() {
