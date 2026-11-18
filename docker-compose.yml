@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: alumni_istü_app
+    container_name: alumni_istu_app
     restart: unless-stopped
     ports:
       - "${APP_PORT:-8080}:80"
@@ -13,7 +13,7 @@ services:
       - DOCKER_ENV=true
       - DB_HOST=${DB_HOST:-db}
       - DB_PORT=${DB_PORT:-3306}
-      - DB_NAME=${DB_NAME:-alumni_istü}
+      - DB_NAME=${DB_NAME:-alumni_istu}
       - DB_USER=${DB_USER:-alumni_admin}
       - DB_PASS=${DB_PASS:-alumni_secure_2026}
     depends_on:
@@ -24,12 +24,12 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: alumni_istü_db
+    container_name: alumni_istu_db
     restart: unless-stopped
     env_file:
       - .env
     environment:
-      - MYSQL_DATABASE=${DB_NAME:-alumni_istü}
+      - MYSQL_DATABASE=${DB_NAME:-alumni_istu}
       - MYSQL_USER=${DB_USER:-alumni_admin}
       - MYSQL_PASSWORD=${DB_PASS:-alumni_secure_2026}
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root_secure_2026}
@@ -37,7 +37,7 @@ services:
       - "${DB_PORT:-3306}:3306"
     volumes:
       # Persistent named volume - vital for passing 'The Forgetting Test'
-      - alumni_istü_mysql_data:/var/lib/mysql
+      - alumni_istu_mysql_data:/var/lib/mysql
       # Initial database schema setup
       - ./database/schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
@@ -47,5 +47,5 @@ services:
       retries: 10
 
 volumes:
-  alumni_istü_mysql_data:
+  alumni_istu_mysql_data:
     driver: local
