@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{FULL_NAME}} • AlumniIstü Executive Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #14213D;
+            --color-cream: #F4EDE0;
+            --color-coral: #FF6B58;
+            --surface-onyx-canvas: #14213D;
+            --surface-graphite-card: #1c2a4a;
+            --surface-obsidian-button: #24355c;
+            --surface-deep-vault: #0f1a30;
+            --color-slate-border: rgba(244, 237, 224, 0.12);
+            --color-mist-border: rgba(244, 237, 224, 0.28);
+            --color-ash-text: rgba(244, 237, 224, 0.68);
+            --color-ivory-text: #F4EDE0;
+
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', Georgia, serif;
+            --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+            --page-max-width: 1200px;
+            --card-padding: 32px;
+            --radius-cards: 12px;
+            --radius-buttons: 32px;
+            --radius-nav: 40px;
+            --radius-full: 9999px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--surface-onyx-canvas);
+            color: var(--color-ivory-text);
+            font-family: var(--font-inter);
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        .page-container {
+            max-width: var(--page-max-width);
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+        @keyframes auroraFloat {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(28px, -20px, 0) scale(1.06); }
+        }
+        @keyframes pulseCoralBeacon {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.9); opacity: 0; }
+        }
+        .animate-aurora { animation: auroraFloat 14s ease-in-out infinite; }
+        .beacon-ring { transform-origin: center; animation: pulseCoralBeacon 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+
+        .mercury-display {
+            font-family: var(--font-ivy-presto);
+            font-weight: 400;
+            font-size: clamp(2.25rem, 4.2vw, 3.25rem);
+            line-height: 1.12;
+            letter-spacing: 0.012em;
+        }
+        .mercury-heading-sm {
+            font-family: var(--font-ivy-presto);
+            font-weight: 400;
+            font-size: 1.65rem;
+            line-height: 1.2;
+            letter-spacing: 0.015em;
+        }
+        .mercury-card {
+            background-color: var(--surface-graphite-card);
+            border-radius: var(--radius-cards);
+            padding: var(--card-padding);
+            border: 1px solid var(--color-slate-border);
+        }
+        .mercury-nav-pill {
+            color: var(--color-ash-text);
+            font-size: 15px;
+            border-radius: var(--radius-nav);
+            padding: 8px 18px;
+            transition: all 0.2s ease;
+        }
+        .mercury-nav-pill:hover, .mercury-nav-pill.active {
+            color: var(--color-ivory-text);
+            background-color: rgba(244, 237, 224, 0.08);
+        }
+        .mercury-btn-coral {
+            background-color: var(--color-coral);
+            color: var(--color-ivory-text);
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: var(--radius-buttons);
+            padding: 10px 22px;
+        }
+        .mercury-btn-ghost {
+            background-color: transparent;
+            color: var(--color-ivory-text);
+            border: 1px solid var(--color-mist-border);
+            font-size: 14px;
+            border-radius: var(--radius-nav);
+            padding: 10px 22px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
+
+    <!-- Header Layer -->
+    <header class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/80 backdrop-blur-xl">
+        <div class="page-container h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/30 flex items-center justify-center relative">
+                    <span class="w-4 h-4 rounded-full border-2 border-[#FF6B58] block group-hover:scale-110 transition-transform"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#F4EDE0] absolute"></span>
+                </div>
+                <div>
+                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">
+                        AlumniIstü
+                    </span>
+                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/55">
+                        Executive Dossier
+                    </span>
+                </div>
+            </a>
+
+            <!-- Menu Layer -->
+            <nav class="hidden md:flex items-center space-x-1">
+                <a href="/" class="mercury-nav-pill active">Directory</a>
+                <a href="/jobs" class="mercury-nav-pill">Job Board</a>
+                <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
+                <a href="/about" class="mercury-nav-pill">Faculty</a>
+                <a href="/swagger" class="mercury-nav-pill">API Docs</a>
+            </nav>
+
+            <a href="/" class="mercury-btn-ghost">← All Alumni</a>
+        </div>
+    </header>
+
+    <!-- Main Profile Content -->
+    <main class="flex-grow relative overflow-hidden py-16">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+            <div class="animate-aurora absolute -top-24 left-1/3 w-[480px] h-[480px] rounded-full bg-[#FF6B58]/14 blur-[120px]"></div>
+        </div>
+
+        <div class="page-container relative z-10 space-y-8">
+            <div class="mercury-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="space-y-3">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#24355c] text-xs text-[#F4EDE0]">
+                        <span class="relative flex h-2 w-2">
+                            <span class="beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#FF6B58]"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#FF6B58]"></span>
+                        </span>
+                        <span>VERIFIED FELLOW #{{ALUMNI_ID}} • CLASS OF {{COHORT}}</span>
+                    </div>
+                    <h1 class="mercury-display">{{FULL_NAME}}</h1>
+                    <p class="text-lg text-[#F4EDE0]/80">
+                        {{ROLE}} at <span class="text-[#FF6B58] font-medium">{{COMPANY}}</span>
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <a href="mailto:{{EMAIL}}" class="mercury-btn-coral">
+                        <i class="fa-regular fa-envelope mr-1.5"></i> Contact Fellow
+                    </a>
+                    <a href="/api/v1/alumni/{{ALUMNI_ID}}" target="_blank" class="mercury-btn-ghost">
+                        JSON Payload →
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="mercury-card space-y-2">
+                    <span class="text-xs uppercase tracking-wider text-[#F4EDE0]/55">Academic Department</span>
+                    <p class="mercury-heading-sm">Management Information Systems (YBS)</p>
+                    <p class="text-xs text-[#F4EDE0]/65">Istanbul University Faculty of Economics</p>
+                </div>
+                <div class="mercury-card space-y-2">
+                    <span class="text-xs uppercase tracking-wider text-[#F4EDE0]/55">Industry &amp; Location</span>
+                    <p class="mercury-heading-sm">{{INDUSTRY}}</p>
+                    <p class="text-xs text-[#F4EDE0]/65"><i class="fa-solid fa-location-dot text-[#FF6B58] mr-1"></i> {{LOCATION}}</p>
+                </div>
+                <div class="mercury-card space-y-2">
+                    <span class="text-xs uppercase tracking-wider text-[#F4EDE0]/55">Direct Correspondence</span>
+                    <p class="mercury-heading-sm truncate">{{EMAIL}}</p>
+                    <p class="text-xs text-[#FF6B58]">Verified Institutional Identity</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Skills & Nested Activity from API -->
+            <div class="mercury-card space-y-4">
+                <h2 class="mercury-heading-sm">Domain Competencies &amp; Career Graph Nodes</h2>
+                <div id="profileSkills" class="flex flex-wrap gap-2 pt-1">
+                    <span class="text-xs text-[#F4EDE0]/55">Loading competencies...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Layer -->
+    <footer class="border-t border-[#F4EDE0]/12 bg-[#0f1a30]/70 py-10 mt-auto">
+        <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60">
+            <span>© 2026 <strong class="text-[#F4EDE0]">AlumniIstü (ALUMNI)</strong> • Executive Alumni Profile</span>
+            <span class="text-[#FF6B58] font-mono">Navy #14213D • Cream #F4EDE0 • Coral #FF6B58</span>
+        </div>
+    </footer>
+
+    <script>
+        fetch('/api/v1/alumni/{{ALUMNI_ID}}')
+            .then(r => r.json())
+            .then(res => {
+                const data = res.data || {};
+                const skills = data.skills || [];
+                const container = document.getElementById('profileSkills');
+                if (skills.length === 0) {
+                    container.innerHTML = '<span class="text-xs text-[#F4EDE0]/60">Enterprise Architecture • MIS Leadership</span>';
+                    return;
+                }
+                container.innerHTML = skills.map(s =>
+                    `<span class="px-4 py-1.5 rounded-full text-xs bg-[#24355c] text-[#F4EDE0] border border-[#F4EDE0]/20">${s}</span>`
+                ).join('');
+            });
+    </script>
+</body>
+</html>

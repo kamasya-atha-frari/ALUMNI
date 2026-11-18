@@ -118,7 +118,17 @@ $router->get('/api/swagger', [WebController::class, 'swagger']);
 // Classroom Whiteboard Auto Routes
 $router->get('/ok', [WebController::class, 'ok']);
 
-// Base URL / Backward-compatible route for /alumni
+// Base URL / Backward-compatible route for /alumni & Individual Alumni Profile View
+$router->get('/alumni/{id}', function (string $id): void {
+    $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+    if (str_contains($accept, 'application/json') || isset($_GET['api']) || isset($_GET['json'])) {
+        (new AlumniApiController())->show($id);
+        return;
+    }
+    (new WebController())->profile($id);
+});
+$router->get('/profile/{id}', [WebController::class, 'profile']);
+
 $router->get('/alumni', function (): void {
     $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
     if (str_contains($accept, 'application/json') || isset($_GET['api']) || isset($_GET['json'])) {

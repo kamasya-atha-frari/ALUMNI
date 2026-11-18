@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlumniIstü (ALUMNI) • Istanbul University MIS Network</title>
+    <title>AlumniIstü (ALUMNI) • Executive Career Observatory &amp; Network</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Locked AlumniIstü Brand Colors (Navy, Cream, Coral) */
             --color-navy: #14213D;
             --color-cream: #F4EDE0;
             --color-coral: #FF6B58;
@@ -19,20 +20,44 @@
             --color-text-main: #F4EDE0;
             --color-accent: #FF6B58;
 
-            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', serif;
-            --font-inter: 'Inter', sans-serif;
-            
+            /* Mercury Surface Mapping (Navy Blue-Hour Palette) */
+            --surface-onyx-canvas: #14213D;
+            --surface-graphite-card: #1c2a4a;
+            --surface-obsidian-button: #24355c;
+            --surface-deep-vault: #0f1a30;
+            --color-slate-border: rgba(244, 237, 224, 0.12);
+            --color-mist-border: rgba(244, 237, 224, 0.28);
+            --color-ash-text: rgba(244, 237, 224, 0.68);
+            --color-ivory-text: #F4EDE0;
+
+            /* Typography */
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', Georgia, serif;
+            --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+            /* Mercury Layout & Radii */
+            --page-max-width: 1200px;
+            --section-gap: 112px;
+            --card-padding: 32px;
+            --radius-cards: 12px;
+            --radius-inputs: 32px;
+            --radius-buttons: 32px;
+            --radius-nav: 40px;
+            --radius-tags: 40px;
             --radius-full: 9999px;
-            --radius-lg: 10px;
-            --page-max-width: 1216px;
-            --section-gap: 160px;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--color-canvas);
-            color: var(--color-text-main);
+            background-color: var(--surface-onyx-canvas);
+            color: var(--color-ivory-text);
             font-family: var(--font-inter);
+            font-size: 16px;
+            line-height: 1.5;
             margin: 0;
+            overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -48,326 +73,765 @@
             display: flex;
             flex-direction: column;
             gap: var(--section-gap);
-            padding-top: 80px;
             padding-bottom: 120px;
         }
 
-        /* Typography: Display & Headings (>=28px) Ivy Presto / Playfair Display (400/500) + positive letter-spacing */
-        .heading-hero {
+        /* ==========================================================================
+           LIVING ANIMATIONS & KINETIC KEYFRAMES
+           ========================================================================== */
+        @keyframes auroraFloat {
+            0%, 100% {
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+            33% {
+                transform: translate3d(35px, -25px, 0) scale(1.08);
+            }
+            66% {
+                transform: translate3d(-25px, 20px, 0) scale(0.95);
+            }
+        }
+
+        @keyframes drawTelemetry {
+            0% {
+                stroke-dashoffset: 600;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes pulseCoralBeacon {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.9);
+                opacity: 0;
+            }
+        }
+
+        @keyframes floatSlow {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-7px);
+            }
+        }
+
+        @keyframes marqueeTicker {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes fadeUpReveal {
+            from {
+                opacity: 0;
+                transform: translateY(22px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-aurora-1 {
+            animation: auroraFloat 14s ease-in-out infinite;
+        }
+
+        .animate-aurora-2 {
+            animation: auroraFloat 18s ease-in-out infinite reverse;
+        }
+
+        .animate-float-card {
+            animation: floatSlow 6s ease-in-out infinite;
+        }
+
+        .animate-telemetry-path {
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            animation: drawTelemetry 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .beacon-ring {
+            transform-origin: center;
+            animation: pulseCoralBeacon 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marqueeTicker 32s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        .reveal-item {
+            opacity: 0;
+            animation: fadeUpReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* ==========================================================================
+           MERCURY TYPOGRAPHY (Intermediate Weight 400/500 + Wide-Set Display)
+           ========================================================================== */
+        .mercury-display {
             font-family: var(--font-ivy-presto);
             font-weight: 400;
-            font-size: clamp(2.5rem, 4.5vw, 3.75rem);
-            line-height: 1.14;
-            letter-spacing: 0.02em;
-            color: var(--color-cream);
+            font-size: clamp(2.85rem, 5.5vw, 4.0625rem); /* up to 65px */
+            line-height: 1.1;
+            letter-spacing: 0.012em;
+            color: var(--color-ivory-text);
         }
 
-        .heading-section {
+        .mercury-heading-lg {
             font-family: var(--font-ivy-presto);
-            font-weight: 500;
-            font-size: clamp(1.75rem, 2.8vw, 2.35rem); /* >= 28px */
-            line-height: 1.22;
-            letter-spacing: 0.018em;
-            color: var(--color-cream);
+            font-weight: 400;
+            font-size: clamp(2rem, 3.6vw, 2.625rem); /* 42px */
+            line-height: 1.15;
+            letter-spacing: 0.012em;
+            color: var(--color-ivory-text);
         }
 
-        /* Surfaces & Elevation: #1c2a4a or #14213D with thin border, zero heavy drop shadows */
-        .surface-card {
-            background-color: var(--color-surface);
-            border: 1px solid rgba(244, 237, 224, 0.14);
-            border-radius: var(--radius-lg);
-            box-shadow: none;
+        .mercury-heading-sm {
+            font-family: var(--font-ivy-presto);
+            font-weight: 400;
+            font-size: 1.75rem; /* 28px */
+            line-height: 1.2;
+            letter-spacing: 0.015em;
+            color: var(--color-ivory-text);
+        }
+
+        .mercury-subtext {
+            font-family: var(--font-inter);
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 1.45;
+            color: var(--color-ash-text);
+        }
+
+        /* ==========================================================================
+           MERCURY SURFACES & COMPONENTS (12px Graphite Cards, 32px/40px Pills)
+           ========================================================================== */
+        .mercury-card {
+            background-color: var(--surface-graphite-card);
+            border-radius: var(--radius-cards);
+            padding: var(--card-padding);
+            border: 1px solid var(--color-slate-border);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                        background-color 0.3s ease,
+                        border-color 0.3s ease;
+        }
+
+        .mercury-card-interactive:hover {
+            transform: translateY(-5px);
+            background-color: #213156;
+            border-color: var(--color-mist-border);
+        }
+
+        .mercury-card-vault {
+            background-color: var(--surface-deep-vault);
+            border-radius: var(--radius-cards);
+            padding: 28px;
+            border: 1px solid var(--color-slate-border);
+        }
+
+        /* Primary CTA Button (Coral — Sole Chromatic Action) */
+        .mercury-btn-coral {
+            background-color: var(--color-coral);
+            color: var(--color-ivory-text);
+            font-family: var(--font-inter);
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: var(--radius-buttons);
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+        }
+
+        .mercury-btn-coral:hover {
+            transform: translateY(-1.5px);
+            background-color: #ff7e6d;
+        }
+
+        /* Ghost Outline Button (Ivory/Cream 1px border, 40px radius) */
+        .mercury-btn-ghost {
+            background-color: transparent;
+            color: var(--color-ivory-text);
+            font-family: var(--font-inter);
+            font-size: 15px;
+            font-weight: 400;
+            border: 1px solid var(--color-mist-border);
+            border-radius: var(--radius-nav);
+            padding: 10px 22px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .mercury-btn-ghost:hover,
+        .mercury-btn-ghost.active {
+            border-color: var(--color-coral);
+            color: var(--color-coral);
+            background-color: rgba(255, 107, 88, 0.08);
+        }
+
+        /* Obsidian Secondary Pill Button */
+        .mercury-btn-obsidian {
+            background-color: var(--surface-obsidian-button);
+            color: var(--color-ivory-text);
+            font-family: var(--font-inter);
+            font-size: 13px;
+            font-weight: 400;
+            border: 1px solid transparent;
+            border-radius: var(--radius-tags);
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mercury-btn-obsidian:hover,
+        .mercury-btn-obsidian.active {
+            border-color: var(--color-coral);
+            color: var(--color-coral);
+        }
+
+        /* Mercury Attached Email Capture Input (Left-Half Pill 32px 0 0 32px + Right-Half Coral Button 0 32px 32px 0) */
+        .mercury-attached-input {
+            background-color: rgba(15, 26, 48, 0.65);
+            color: var(--color-ivory-text);
+            border: 1px solid var(--color-ivory-text);
+            border-right: none;
+            border-radius: 32px 0 0 32px;
+            padding: 14px 22px;
+            font-family: var(--font-inter);
+            font-size: 15px;
+            font-weight: 400;
+            outline: none;
             transition: border-color 0.2s ease, background-color 0.2s ease;
         }
 
-        .surface-card:hover {
-            border-color: rgba(244, 237, 224, 0.32);
+        .mercury-attached-input::placeholder {
+            color: var(--color-ash-text);
         }
 
-        .surface-navy-card {
-            background-color: var(--color-navy);
-            border: 1px solid rgba(244, 237, 224, 0.14);
-            border-radius: var(--radius-lg);
-            box-shadow: none;
-        }
-
-        /* Core Components */
-        .btn-primary-coral {
-            background-color: var(--color-coral);
-            color: var(--color-cream);
-            border: 1px solid var(--color-coral);
-            border-radius: var(--radius-full);
-            padding: 10px 20px;
-            font-family: var(--font-inter);
-            font-weight: 500;
-            font-size: 0.875rem;
-            box-shadow: none;
-            transition: opacity 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn-primary-coral:hover {
-            opacity: 0.92;
-            box-shadow: 0 0 18px rgba(255, 107, 88, 0.35);
-        }
-
-        .btn-ghost-cream {
-            background-color: transparent;
-            color: var(--color-cream);
-            border: 1px solid var(--color-cream);
-            border-radius: var(--radius-full);
-            padding: 10px 20px;
-            font-family: var(--font-inter);
-            font-weight: 400;
-            font-size: 0.875rem;
-            box-shadow: none;
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-        }
-
-        .btn-ghost-cream:hover,
-        .btn-ghost-cream.active {
-            background-color: rgba(244, 237, 224, 0.08);
+        .mercury-attached-input:focus {
             border-color: var(--color-coral);
-            color: var(--color-coral);
+            background-color: rgba(15, 26, 48, 0.9);
         }
 
-        .input-pill-cream {
-            background-color: rgba(20, 33, 61, 0.75);
-            color: var(--color-cream);
-            border: 1px solid rgba(244, 237, 224, 0.28);
-            border-radius: var(--radius-full);
-            padding: 10px 20px;
+        .mercury-attached-btn {
+            background-color: var(--color-coral);
+            color: var(--color-ivory-text);
+            border: 1px solid var(--color-coral);
+            border-radius: 0 32px 32px 0;
+            padding: 14px 26px;
             font-family: var(--font-inter);
-            font-size: 0.875rem;
-            box-shadow: none;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background-color 0.2s ease;
+        }
+
+        .mercury-attached-btn:hover {
+            background-color: #ff7e6d;
+        }
+
+        /* Standalone Pill Input (32px radius) */
+        .mercury-input-pill {
+            background-color: var(--surface-deep-vault);
+            color: var(--color-ivory-text);
+            border: 1px solid var(--color-mist-border);
+            border-radius: var(--radius-inputs);
+            padding: 11px 20px;
+            font-family: var(--font-inter);
+            font-size: 14px;
+            outline: none;
             transition: border-color 0.2s ease;
         }
 
-        .input-pill-cream::placeholder {
-            color: rgba(244, 237, 224, 0.50);
+        .mercury-input-pill::placeholder {
+            color: var(--color-ash-text);
         }
 
-        .input-pill-cream:focus {
-            outline: none;
+        .mercury-input-pill:focus {
             border-color: var(--color-coral);
         }
 
-        .badge-pill {
-            border-radius: var(--radius-full);
-            padding: 4px 12px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: 1px solid rgba(244, 237, 224, 0.2);
-            color: var(--color-cream);
-            background-color: rgba(20, 33, 61, 0.6);
-        }
-
-        .badge-coral {
-            border-radius: var(--radius-full);
-            padding: 4px 12px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: 1px solid rgba(255, 107, 88, 0.45);
-            color: var(--color-coral);
-            background-color: rgba(255, 107, 88, 0.12);
-        }
-
-        /* Navigation Underline: 2px radius */
-        .nav-link {
-            position: relative;
-            padding-bottom: 6px;
-            color: rgba(244, 237, 224, 0.75);
+        /* Navigation Pill Link (40px radius) */
+        .mercury-nav-pill {
+            color: var(--color-ash-text);
+            font-size: 15px;
             font-weight: 400;
-            transition: color 0.2s ease;
+            border-radius: var(--radius-nav);
+            padding: 8px 18px;
+            transition: color 0.2s ease, background-color 0.2s ease;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--color-cream);
+        .mercury-nav-pill:hover,
+        .mercury-nav-pill.active {
+            color: var(--color-ivory-text);
+            background-color: rgba(244, 237, 224, 0.08);
         }
 
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 2px;
-            background-color: var(--color-coral);
-            border-radius: 2px;
+        /* Circular Icon Avatar */
+        .mercury-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-full);
+            background-color: var(--surface-obsidian-button);
+            border: 1px solid var(--color-mist-border);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-ivory-text);
+            flex-shrink: 0;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
 
-    <!-- Top Navigation Bar -->
-    <header class="border-b border-[#F4EDE0]/10 bg-[#14213D]/95 backdrop-blur-md sticky top-0 z-50">
+    <!-- ======================================================================= -->
+    <!-- TRANSPARENT FROSTED TOP NAVIGATION BAR (Mercury Style)                  -->
+    <!-- ======================================================================= -->
+    <header id="topNav" class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/80 backdrop-blur-xl transition-all duration-300">
         <div class="page-container h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-full bg-[#1c2a4a] border border-[#FF6B58] flex items-center justify-center text-[#FF6B58]">
-                    <i class="fa-solid fa-compass-drafting text-xs"></i>
+            <!-- Brand Mark with Concentric Circle Icon -->
+            <a href="/" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/30 flex items-center justify-center relative">
+                    <span class="w-4 h-4 rounded-full border-2 border-[#FF6B58] block group-hover:scale-110 transition-transform"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#F4EDE0] absolute"></span>
                 </div>
                 <div>
-                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); font-weight: 500; letter-spacing: 0.03em;">
+                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">
                         AlumniIstü
                     </span>
-                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/60 font-light">
+                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/55">
                         Istanbul University • MIS
                     </span>
                 </div>
             </a>
 
-            <nav class="hidden md:flex items-center space-x-8 text-sm">
-                <a href="/" class="nav-link active">Beranda</a>
-                <a href="/jobs" class="nav-link">Job Board</a>
-                <a href="/analytics" class="nav-link">Career Graph</a>
-                <a href="/about" class="nav-link">About</a>
-                <a href="/swagger" class="nav-link">API Explorer</a>
+            <!-- Centered Navigation Pill Links (40px radius) -->
+            <nav class="hidden md:flex items-center space-x-1">
+                <a href="/" class="mercury-nav-pill active">Directory</a>
+                <a href="/jobs" class="mercury-nav-pill">Job Board</a>
+                <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
+                <a href="/about" class="mercury-nav-pill">Faculty</a>
+                <a href="/swagger" class="mercury-nav-pill">API Docs</a>
             </nav>
 
-            <div class="flex items-center space-x-3">
-                <button onclick="openModal()" class="btn-primary-coral flex items-center gap-2">
-                    <i class="fa-solid fa-plus text-xs"></i> Register Alumni
+            <!-- Right Actions: Log in Link + Coral 'Open profile' Pill Button -->
+            <div class="flex items-center space-x-4">
+                <a href="/swagger" class="text-sm text-[#F4EDE0]/80 hover:text-[#F4EDE0] hidden sm:inline-block transition">
+                    API Explorer
+                </a>
+                <button onclick="openModal()" class="mercury-btn-coral">
+                    <span>Open profile</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Container (Max Width: 1216px, Section Gap: 160px) -->
-    <main class="flex-grow page-container section-stack w-full">
+    <main class="flex-grow">
 
-        <!-- SECTION 1: Hero & Executive Booking Aesthetic -->
-        <section class="surface-card p-8 md:p-14">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                <div class="lg:col-span-8 space-y-6">
-                    <div class="flex flex-wrap items-center gap-3">
-                        <span class="badge-coral">
-                            <i class="fa-solid fa-sparkles mr-1"></i> MIDNIGHT DARK EDITION
+        <!-- ======================================================================= -->
+        <!-- FULL-BLEED BLUE-HOUR HERO SECTION WITH LIVING AURORA & FLOATING UI      -->
+        <!-- ======================================================================= -->
+        <section class="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28 border-b border-[#F4EDE0]/10">
+            <!-- Living Atmospheric Blue-Hour Orbs & Perspective Grid -->
+            <div class="pointer-events-none absolute inset-0 overflow-hidden">
+                <div class="animate-aurora-1 absolute -top-28 left-1/4 w-[480px] h-[480px] rounded-full bg-[#FF6B58]/14 blur-[120px]"></div>
+                <div class="animate-aurora-2 absolute top-32 right-1/4 w-[520px] h-[520px] rounded-full bg-[#24355c]/55 blur-[130px]"></div>
+                <div class="absolute inset-0 opacity-15" style="background-image: radial-gradient(rgba(244, 237, 224, 0.35) 1px, transparent 1px); background-size: 32px 32px;"></div>
+            </div>
+
+            <div class="page-container relative z-10">
+                <!-- Centered Hero Stack (~680px Max-Width per Mercury Spec) -->
+                <div class="max-w-[720px] mx-auto text-center space-y-6">
+                    <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/20 text-xs text-[#F4EDE0]/90">
+                        <span class="relative flex h-2 w-2">
+                            <span class="beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#FF6B58]"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#FF6B58]"></span>
                         </span>
-                        <span class="badge-pill">
-                            İKTİSAT FAKÜLTESİ • YBS
-                        </span>
+                        <span>ISTANBUL UNIVERSITY • FACULTY OF ECONOMICS (MIS / YBS)</span>
                     </div>
 
-                    <h1 class="heading-hero">
-                        Distinguished Alumni Network &amp; <br>
-                        <span class="italic text-[#FF6B58]">Executive Career Concierge</span>
+                    <h1 class="mercury-display">
+                        Career intelligence at <span class="italic text-[#FF6B58]">blue hour.</span>
                     </h1>
 
-                    <p class="text-[#F4EDE0]/80 text-base font-light max-w-2xl leading-relaxed">
-                        Platform eksklusif penghubung lulusan, mentor industri, dan jejaring karier Departemen Management Information Systems (YBS) Universitas Istanbul dalam kanvas malam yang tenang dan presisi.
+                    <p class="mercury-subtext max-w-[560px] mx-auto">
+                        An executive alumni observatory and mentorship concierge engineered for Istanbul University Management Information Systems graduates.
                     </p>
 
-                    <div class="flex flex-wrap items-center gap-4 pt-2">
-                        <button onclick="openModal()" class="btn-primary-coral">
-                            Curate Alumni Profile
+                    <!-- Mercury Inline Attached Email Capture Form (32px 0 0 32px input + 0 32px 32px 0 Coral button) -->
+                    <form onsubmit="event.preventDefault(); openModal();" class="flex items-stretch justify-center max-w-[500px] mx-auto pt-3">
+                        <input
+                            type="email"
+                            id="heroEmailCapture"
+                            placeholder="Enter your @ogr.iu.edu.tr email"
+                            class="mercury-attached-input flex-grow"
+                        >
+                        <button type="submit" class="mercury-attached-btn">
+                            Open profile
                         </button>
-                        <a href="/jobs" class="btn-ghost-cream">
-                            Explore Career Opportunities →
+                    </form>
+                </div>
+
+                <!-- Floating Product UI Observatory Preview (Mercury Graphite Card + Animated Telemetry) -->
+                <div class="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    <!-- Left: Animated Career Velocity Chart Card (7 cols) -->
+                    <div class="lg:col-span-7 mercury-card flex flex-col justify-between space-y-6">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/60 block">Graduate Placement Velocity</span>
+                                <div class="flex items-baseline gap-3 mt-1">
+                                    <span class="text-4xl md:text-5xl font-normal text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">
+                                        96.4%
+                                    </span>
+                                    <span class="text-xs px-2.5 py-0.5 rounded-full bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/35">
+                                        +4.2% YoY • YÖKAK Verified
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="mercury-btn-obsidian active !py-1 !px-3 !text-xs">6M Velocity</span>
+                                <span class="mercury-btn-obsidian !py-1 !px-3 !text-xs">12M Global</span>
+                            </div>
+                        </div>
+
+                        <!-- Self-Drawing Animated SVG Line Chart -->
+                        <div class="mercury-card-vault !p-5">
+                            <svg viewBox="0 0 520 150" class="w-full h-36 overflow-visible">
+                                <defs>
+                                    <linearGradient id="mercuryCoralStroke" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#F4EDE0" stop-opacity="0.4" />
+                                        <stop offset="50%" stop-color="#FF6B58" />
+                                        <stop offset="100%" stop-color="#F4EDE0" />
+                                    </linearGradient>
+                                    <linearGradient id="mercuryAreaFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#FF6B58" stop-opacity="0.26" />
+                                        <stop offset="100%" stop-color="#0f1a30" stop-opacity="0.0" />
+                                    </linearGradient>
+                                </defs>
+                                <line x1="0" y1="30" x2="520" y2="30" stroke="rgba(244,237,224,0.07)" stroke-width="1" />
+                                <line x1="0" y1="75" x2="520" y2="75" stroke="rgba(244,237,224,0.07)" stroke-width="1" />
+                                <line x1="0" y1="120" x2="520" y2="120" stroke="rgba(244,237,224,0.07)" stroke-width="1" />
+
+                                <path d="M0,122 C65,115 110,95 170,86 C230,77 275,48 340,38 C405,28 460,18 520,12 L520,145 L0,145 Z" fill="url(#mercuryAreaFill)" />
+                                <path class="animate-telemetry-path" d="M0,122 C65,115 110,95 170,86 C230,77 275,48 340,38 C405,28 460,18 520,12" fill="none" stroke="url(#mercuryCoralStroke)" stroke-width="3" stroke-linecap="round" />
+
+                                <!-- Pulsing Live Nodes on Curve -->
+                                <circle cx="170" cy="86" r="4" fill="#14213D" stroke="#F4EDE0" stroke-width="2" />
+                                <circle cx="340" cy="38" r="4" fill="#14213D" stroke="#FF6B58" stroke-width="2" />
+                                <g transform="translate(520, 12)">
+                                    <circle r="9" fill="#FF6B58" opacity="0.35" class="beacon-ring" />
+                                    <circle r="4.5" fill="#FF6B58" stroke="#F4EDE0" stroke-width="1.5" />
+                                </g>
+                            </svg>
+                            <div class="flex justify-between text-[11px] text-[#F4EDE0]/50 pt-2">
+                                <span>Cohort '21</span>
+                                <span>Cohort '22</span>
+                                <span>Cohort '23</span>
+                                <span>Cohort '24</span>
+                                <span>Cohort '25–'26</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-4 text-xs text-[#F4EDE0]/70">
+                            <div class="flex items-center gap-6">
+                                <span>Verified Directory Nodes: <strong id="heroNodeCount" class="text-[#F4EDE0]">{{TOTAL_ALUMNI}}</strong></span>
+                                <span>Active Mentors: <strong id="heroMentorCount" class="text-[#FF6B58]">{{TOTAL_MENTORS}}</strong></span>
+                            </div>
+                            <a href="/analytics" class="text-[#F4EDE0] hover:text-[#FF6B58] transition">
+                                Explore Telemetry Observatory →
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right: Floating Live Alumni Placement Feed (5 cols) -->
+                    <div class="lg:col-span-5 mercury-card animate-float-card flex flex-col justify-between space-y-4">
+                        <div class="flex items-center justify-between border-b border-[#F4EDE0]/12 pb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-[#FF6B58]"></span>
+                                <span class="text-xs uppercase tracking-wider text-[#F4EDE0]/80 font-medium">Live Career Stream</span>
+                            </div>
+                            <span class="text-xs text-[#F4EDE0]/55">Real-time MySQL PDO</span>
+                        </div>
+
+                        <div class="divide-y divide-[#F4EDE0]/10">
+                            <div class="py-3 flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="mercury-avatar">TR</span>
+                                    <div class="truncate">
+                                        <p class="text-sm font-medium text-[#F4EDE0] truncate">Trendyol Group</p>
+                                        <p class="text-xs text-[#F4EDE0]/60 truncate">Lead Data &amp; AI Engineer</p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs bg-[#24355c] text-[#F4EDE0]">Class '24</span>
+                            </div>
+
+                            <div class="py-3 flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="mercury-avatar">TK</span>
+                                    <div class="truncate">
+                                        <p class="text-sm font-medium text-[#F4EDE0] truncate">Turkcell Technology</p>
+                                        <p class="text-xs text-[#F4EDE0]/60 truncate">Principal Cloud Architect</p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/30">Mentor</span>
+                            </div>
+
+                            <div class="py-3 flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="mercury-avatar">GB</span>
+                                    <div class="truncate">
+                                        <p class="text-sm font-medium text-[#F4EDE0] truncate">Garanti BBVA Tech</p>
+                                        <p class="text-xs text-[#F4EDE0]/60 truncate">VP of Product Strategy</p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs bg-[#24355c] text-[#F4EDE0]">Class '22</span>
+                            </div>
+
+                            <div class="py-3 flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="mercury-avatar">GT</span>
+                                    <div class="truncate">
+                                        <p class="text-sm font-medium text-[#F4EDE0] truncate">Getir FinTech</p>
+                                        <p class="text-xs text-[#F4EDE0]/60 truncate">Staff Distributed Systems</p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/30">Mentor</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-[#F4EDE0]/12 flex items-center justify-between">
+                            <span class="text-xs text-[#F4EDE0]/60">Updated dynamically via MVC</span>
+                            <a href="/jobs" class="text-xs text-[#FF6B58] font-medium hover:underline">View Open Mandates →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================================= -->
+        <!-- INFINITE KINETIC PARTNER MARQUEE TICKER                                 -->
+        <!-- ======================================================================= -->
+        <section class="border-b border-[#F4EDE0]/10 bg-[#0f1a30]/60 py-5 overflow-hidden">
+            <div class="marquee-track items-center gap-12 text-xs uppercase tracking-widest text-[#F4EDE0]/65">
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Trendyol Tech</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Turkcell Digital</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Garanti BBVA Technology</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Getir FinTech</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Hepsiburada Global</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Aselsan Systems</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Turkish Airlines Tech</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Papara FinTech</span>
+                <!-- Duplicate set for seamless loop -->
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Trendyol Tech</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Turkcell Digital</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Garanti BBVA Technology</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Getir FinTech</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Hepsiburada Global</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Aselsan Systems</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Turkish Airlines Tech</span>
+                <span class="flex items-center gap-2.5"><i class="fa-solid fa-circle text-[6px] text-[#FF6B58]"></i> Papara FinTech</span>
+            </div>
+        </section>
+
+        <!-- ======================================================================= -->
+        <!-- MAIN SECTIONS CONTAINER (1200px Max-Width, 112px Section Gap)           -->
+        <!-- ======================================================================= -->
+        <div class="page-container section-stack pt-24">
+
+            <!-- SECTION 1: LIVE ANIMATED KPI COUNTER CARDS -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="mercury-card mercury-card-interactive">
+                    <span class="text-xs uppercase tracking-wider text-[#F4EDE0]/60">Verified Graduates</span>
+                    <div id="statTotalAlumni" class="mercury-heading-lg mt-2">{{TOTAL_ALUMNI}}</div>
+                    <p class="text-xs text-[#F4EDE0]/65 mt-2">Active MIS directory profiles</p>
+                </div>
+                <div class="mercury-card mercury-card-interactive">
+                    <span class="text-xs uppercase tracking-wider text-[#F4EDE0]/60">Executive Mentors</span>
+                    <div id="statTotalMentors" class="mercury-heading-lg text-[#FF6B58] mt-2">{{TOTAL_MENTORS}}</div>
+                    <p class="text-xs text-[#F4EDE0]/65 mt-2">Available for 1:1 sessions</p>
+                </div>
+                <div class="mercury-card mercury-card-interactive">
+                    <span class="text-xs uppercase tracking-wider text-[#F4EDE0]/60">Placement Velocity</span>
+                    <div class="mercury-heading-lg mt-2">96.4%</div>
+                    <p class="text-xs text-[#F4EDE0]/65 mt-2">Employed within 6 months</p>
+                </div>
+                <div class="mercury-card mercury-card-interactive">
+                    <span class="text-xs uppercase tracking-wider text-[#F4EDE0]/60">Academic Heritage</span>
+                    <div class="mercury-heading-lg mt-2">Est. 1453</div>
+                    <p class="text-xs text-[#F4EDE0]/65 mt-2">Istanbul University Beyazıt</p>
+                </div>
+            </section>
+
+            <!-- SECTION 2: INTERACTIVE ALUMNI DIRECTORY & LEDGER -->
+            <section class="space-y-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div class="space-y-2">
+                        <span class="text-xs uppercase tracking-widest text-[#FF6B58] font-medium">CURATED TALENT OBSERVATORY</span>
+                        <h2 class="mercury-heading-lg">Distinguished Alumni Directory</h2>
+                    </div>
+                    <p class="text-sm text-[#F4EDE0]/70 max-w-md">
+                        Explore verified graduates across cohorts, filter by 1:1 mentorship capacity, or switch between Mercury Graphite cards and dense ledger rows.
+                    </p>
+                </div>
+
+                <!-- Mercury Pill Filter Bar (12px Card with 32px/40px Pill Controls) -->
+                <div class="mercury-card !p-5 flex flex-col lg:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                        <button onclick="filterCohort(null, this)" class="cohort-pill mercury-btn-obsidian active">
+                            All Cohorts
+                        </button>
+                        <button onclick="filterCohort(2024, this)" class="cohort-pill mercury-btn-obsidian">
+                            Class of 2024
+                        </button>
+                        <button onclick="filterCohort(2023, this)" class="cohort-pill mercury-btn-obsidian">
+                            Class of 2023
+                        </button>
+                        <button onclick="filterCohort(2022, this)" class="cohort-pill mercury-btn-obsidian">
+                            Class of 2022
+                        </button>
+                        <button onclick="toggleMentorsOnly()" id="mentor-btn" class="mercury-btn-obsidian flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-[#FF6B58]"></span> Mentors Only
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full lg:w-auto">
+                        <div class="relative flex-grow sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-[#F4EDE0]/45 text-xs"></i>
+                            <input
+                                type="text"
+                                id="searchInput"
+                                oninput="searchAlumni(this.value)"
+                                placeholder="Search fellow, role, skill..."
+                                class="mercury-input-pill w-full !pl-10"
+                            >
+                        </div>
+                        <button onclick="toggleViewMode()" id="viewModeBtn" class="mercury-btn-ghost !py-2.5 !px-4 !text-xs whitespace-nowrap">
+                            <i class="fa-solid fa-table-list"></i> Ledger View
+                        </button>
+                        <button onclick="openModal()" class="mercury-btn-coral !py-2.5 !px-5 !text-xs whitespace-nowrap">
+                            + Add Fellow
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3-Column Mercury Graphite Cards Grid (12px radius, 32px padding) -->
+                <div id="alumniGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="col-span-full mercury-card text-center text-[#F4EDE0]/60 py-14">
+                        Synchronizing alumni directory...
+                    </div>
+                </div>
+
+                <!-- High-Density Table View (Toggleable) -->
+                <div id="alumniTableContainer" class="hidden mercury-card !p-0 overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-[#F4EDE0]/15 text-xs uppercase tracking-wider text-[#F4EDE0]/60">
+                                <th class="py-4 px-6">Fellow</th>
+                                <th class="py-4 px-4">Role &amp; Enterprise</th>
+                                <th class="py-4 px-4">Competencies</th>
+                                <th class="py-4 px-4">Mentorship</th>
+                                <th class="py-4 px-6 text-right">Cohort / Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alumniTableBody" class="divide-y divide-[#F4EDE0]/10 text-sm"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECTION 3: MERCURY 2-COLUMN SPLIT & 3-COLUMN FEATURE CARDS -->
+            <section class="space-y-8">
+                <div class="text-center max-w-2xl mx-auto space-y-3">
+                    <span class="text-xs uppercase tracking-widest text-[#FF6B58] font-medium">ARCHITECTURAL EXCELLENCE</span>
+                    <h2 class="mercury-heading-lg">Built for generational career mobility.</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="mercury-card mercury-card-interactive flex flex-col justify-between space-y-6">
+                        <div class="space-y-3">
+                            <span class="mercury-avatar !border-[#FF6B58]/50 !text-[#FF6B58]">
+                                <i class="fa-solid fa-user-astronaut"></i>
+                            </span>
+                            <h3 class="mercury-heading-sm">1:1 Mentorship Concierge</h3>
+                            <p class="text-sm text-[#F4EDE0]/75 leading-relaxed">
+                                Pair directly with senior Istanbul University MIS alumni serving as Engineering Directors, Product VPs, and FinTech founders.
+                            </p>
+                        </div>
+                        <button onclick="toggleMentorsOnly(); document.getElementById('alumniGrid').scrollIntoView({behavior:'smooth'});" class="mercury-btn-ghost self-start !text-xs !py-2 !px-4">
+                            Filter Active Mentors →
+                        </button>
+                    </div>
+
+                    <div class="mercury-card mercury-card-interactive flex flex-col justify-between space-y-6">
+                        <div class="space-y-3">
+                            <span class="mercury-avatar !border-[#FF6B58]/50 !text-[#FF6B58]">
+                                <i class="fa-solid fa-briefcase"></i>
+                            </span>
+                            <h3 class="mercury-heading-sm">Executive Job Mandates</h3>
+                            <p class="text-sm text-[#F4EDE0]/75 leading-relaxed">
+                                Access curated full-time, remote, and internship positions with direct application review state transitions.
+                            </p>
+                        </div>
+                        <a href="/jobs" class="mercury-btn-ghost self-start !text-xs !py-2 !px-4">
+                            Open Job Board →
+                        </a>
+                    </div>
+
+                    <div class="mercury-card mercury-card-interactive flex flex-col justify-between space-y-6">
+                        <div class="space-y-3">
+                            <span class="mercury-avatar !border-[#FF6B58]/50 !text-[#FF6B58]">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </span>
+                            <h3 class="mercury-heading-sm">Resilient MVC &amp; Guardians</h3>
+                            <p class="text-sm text-[#F4EDE0]/75 leading-relaxed">
+                                Powered by strict PHP 8.2 MVC routing, 404/5xx Guardian middleware, and durable Docker MySQL persistence.
+                            </p>
+                        </div>
+                        <a href="/swagger" class="mercury-btn-ghost self-start !text-xs !py-2 !px-4">
+                            Inspect OpenAPI 3.1 →
                         </a>
                     </div>
                 </div>
+            </section>
 
-                <!-- Telemetry Summary Cards (10px radius) -->
-                <div class="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-                    <div class="surface-navy-card p-6">
-                        <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/60 block font-light">Verified Graduates</span>
-                        <span id="statTotalAlumni" class="heading-section block mt-1">{{TOTAL_ALUMNI}}</span>
-                        <span class="text-xs text-[#FF6B58] mt-1 inline-block">Active Directory Nodes</span>
-                    </div>
-                    <div class="surface-navy-card p-6">
-                        <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/60 block font-light">Executive Mentors</span>
-                        <span id="statTotalMentors" class="heading-section block mt-1">{{TOTAL_MENTORS}}</span>
-                        <span class="text-xs text-[#F4EDE0]/70 mt-1 inline-block">1:1 Mentorship Available</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 2: Directory Explorer, Cohort Filters & Live CRUD Grid -->
-        <section class="space-y-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#F4EDE0]/10 pb-6">
-                <div>
-                    <span class="badge-coral mb-3 inline-block">DIRECTORY &amp; MENTORSHIP GRAPH</span>
-                    <h2 class="heading-section">Curated Alumni Directory</h2>
-                </div>
-                <p class="text-sm text-[#F4EDE0]/70 font-light max-w-md">
-                    Filter berdasarkan angkatan kelulusan, ketersediaan mentor, atau cari keahlian spesifik secara langsung.
-                </p>
-            </div>
-
-            <!-- Controls Bar (10px Card, 9999px Pill Buttons & Search Input) -->
-            <div class="surface-card p-5 flex flex-col lg:flex-row gap-4 items-center justify-between">
-                <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
-                    <button onclick="filterCohort(null, this)" class="cohort-pill btn-ghost-cream active">
-                        All Cohorts
-                    </button>
-                    <button onclick="filterCohort(2024, this)" class="cohort-pill btn-ghost-cream">
-                        Class of 2024
-                    </button>
-                    <button onclick="filterCohort(2023, this)" class="cohort-pill btn-ghost-cream">
-                        Class of 2023
-                    </button>
-                    <button onclick="filterCohort(2022, this)" class="cohort-pill btn-ghost-cream">
-                        Class of 2022
-                    </button>
-                    <button onclick="toggleMentorsOnly()" id="mentor-btn" class="btn-ghost-cream flex items-center gap-2">
-                        <i class="fa-solid fa-circle-check text-[#FF6B58] text-xs"></i> Mentors Only
-                    </button>
-                </div>
-
-                <div class="w-full lg:w-80 relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-[#F4EDE0]/45 text-xs"></i>
-                    <input
-                        type="text"
-                        id="searchInput"
-                        oninput="searchAlumni(this.value)"
-                        placeholder="Search name, company, or skill..."
-                        class="input-pill-cream w-full pl-10"
-                    >
-                </div>
-            </div>
-
-            <!-- Alumni Cards Grid (10px Card Radius) -->
-            <div id="alumniGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="col-span-full surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">
-                    Loading alumni profiles...
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 3: Concierge Email Capture & Network Invitation -->
-        <section class="surface-card p-8 md:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div class="space-y-3 max-w-xl">
-                <span class="badge-coral">PRIVATE DISPATCH</span>
-                <h2 class="heading-section">Join the Executive Alumni Dispatch</h2>
-                <p class="text-sm text-[#F4EDE0]/75 font-light leading-relaxed">
-                    Dapatkan pembaruan eksklusif mengenai kuota mentorship, lowongan kepemimpinan teknologi, dan agenda tahunan fakultas langsung di kotak masuk Anda.
-                </p>
-            </div>
-            <form onsubmit="event.preventDefault(); alert('Thank you! Your academic email has been registered.'); this.reset();" class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                <input
-                    type="email"
-                    required
-                    placeholder="Enter your @ogr.iu.edu.tr email..."
-                    class="input-pill-cream w-full sm:w-72"
-                >
-                <button type="submit" class="btn-primary-coral w-full sm:w-auto whitespace-nowrap">
-                    Request Access
-                </button>
-            </form>
-        </section>
-
+        </div>
     </main>
 
-    <!-- Modal for Create / Edit Alumni (10px Card Surface + 9999px Inputs & Buttons) -->
-    <div id="crudModal" class="fixed inset-0 z-50 hidden bg-[#14213D]/85 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="surface-card max-w-lg w-full p-8 space-y-5">
-            <div class="flex items-center justify-between pb-4 border-b border-[#F4EDE0]/10">
+    <!-- ======================================================================= -->
+    <!-- MODAL FOR CREATE / EDIT ALUMNI (Mercury 12px Graphite Card + 32px Pills)-->
+    <!-- ======================================================================= -->
+    <div id="crudModal" class="fixed inset-0 z-50 hidden bg-[#0f1a30]/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="mercury-card max-w-lg w-full space-y-5">
+            <div class="flex items-center justify-between pb-4 border-b border-[#F4EDE0]/12">
                 <div>
-                    <span class="badge-coral">DIRECTORY CONCIERGE</span>
-                    <h3 id="modalTitle" class="heading-section mt-2">Curate Alumni Profile</h3>
+                    <span class="text-xs uppercase tracking-widest text-[#FF6B58]">DIRECTORY CONCIERGE</span>
+                    <h3 id="modalTitle" class="mercury-heading-sm mt-1">Open Alumni Profile</h3>
                 </div>
-                <button onclick="closeModal()" class="btn-ghost-cream !px-3.5 !py-2">
+                <button onclick="closeModal()" class="mercury-btn-obsidian !px-3 !py-1.5">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -376,46 +840,46 @@
                 <input type="hidden" id="formId" value="">
                 
                 <div>
-                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Full Name *</label>
-                    <input type="text" id="formFullName" required placeholder="e.g. Defne Yıldırım" class="input-pill-cream w-full">
+                    <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Full Name *</label>
+                    <input type="text" id="formFullName" required placeholder="e.g. Defne Yıldırım" class="mercury-input-pill w-full">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
-                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Email Address *</label>
-                        <input type="email" id="formEmail" required placeholder="defne@ogr.iu.edu.tr" class="input-pill-cream w-full">
+                        <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Email Address *</label>
+                        <input type="email" id="formEmail" required placeholder="defne@ogr.iu.edu.tr" class="mercury-input-pill w-full">
                     </div>
                     <div>
-                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Cohort Year</label>
-                        <input type="number" id="formCohort" value="2024" min="1990" max="2030" class="input-pill-cream w-full">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Company</label>
-                        <input type="text" id="formCompany" placeholder="e.g. Trendyol Tech" class="input-pill-cream w-full">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Role / Title</label>
-                        <input type="text" id="formRole" placeholder="e.g. Principal Product Manager" class="input-pill-cream w-full">
+                        <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Cohort Year</label>
+                        <input type="number" id="formCohort" value="2024" min="1990" max="2030" class="mercury-input-pill w-full">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
-                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Industry</label>
-                        <input type="text" id="formIndustry" placeholder="e.g. FinTech & Banking" class="input-pill-cream w-full">
+                        <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Enterprise / Company</label>
+                        <input type="text" id="formCompany" placeholder="e.g. Trendyol Tech" class="mercury-input-pill w-full">
                     </div>
                     <div>
-                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Location</label>
-                        <input type="text" id="formLocation" placeholder="Istanbul, Turkey" class="input-pill-cream w-full">
+                        <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Role / Title</label>
+                        <input type="text" id="formRole" placeholder="e.g. Principal Product Manager" class="mercury-input-pill w-full">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Industry Sector</label>
+                        <input type="text" id="formIndustry" placeholder="e.g. FinTech & Banking" class="mercury-input-pill w-full">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Location</label>
+                        <input type="text" id="formLocation" placeholder="Istanbul, Turkey" class="mercury-input-pill w-full">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Skills (comma-separated)</label>
-                    <input type="text" id="formSkills" placeholder="Python, SQL, Cloud Architecture" class="input-pill-cream w-full">
+                    <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Skills (comma-separated)</label>
+                    <input type="text" id="formSkills" placeholder="Python, SQL, Cloud Architecture" class="mercury-input-pill w-full">
                 </div>
 
                 <div class="flex items-center gap-2.5 pt-1">
@@ -425,11 +889,11 @@
                     </label>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-4 border-t border-[#F4EDE0]/10">
-                    <button type="button" onclick="closeModal()" class="btn-ghost-cream">
+                <div class="flex justify-end gap-3 pt-4 border-t border-[#F4EDE0]/12">
+                    <button type="button" onclick="closeModal()" class="mercury-btn-ghost !py-2.5 !px-5 !text-xs">
                         Cancel
                     </button>
-                    <button type="submit" id="saveBtn" class="btn-primary-coral">
+                    <button type="submit" id="saveBtn" class="mercury-btn-coral !py-2.5 !px-6 !text-xs">
                         Save Profile
                     </button>
                 </div>
@@ -437,11 +901,36 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-[#F4EDE0]/10 py-10 mt-auto">
-        <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60 font-light">
-            <span>© 2026 <strong class="text-[#F4EDE0] font-medium">AlumniIstü (ALUMNI)</strong> • Istanbul University Faculty of Economics (YBS)</span>
-            <span>Navy <code class="text-[#F4EDE0]">#14213D</code> • Cream <code class="text-[#F4EDE0]">#F4EDE0</code> • Coral <code class="text-[#FF6B58]">#FF6B58</code></span>
+    <!-- ======================================================================= -->
+    <!-- MERCURY FOOTER & REGULATORY DISCLAIMER BANNER                           -->
+    <!-- ======================================================================= -->
+    <footer class="border-t border-[#F4EDE0]/12 bg-[#0f1a30]/70 py-14 mt-auto">
+        <div class="page-container space-y-10">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="space-y-1">
+                    <span class="text-lg text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">AlumniIstü (ALUMNI)</span>
+                    <p class="text-xs text-[#F4EDE0]/60">
+                        Istanbul University Faculty of Economics • Department of Management Information Systems (YBS)
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="/" class="mercury-btn-obsidian">Directory</a>
+                    <a href="/jobs" class="mercury-btn-obsidian">Job Board</a>
+                    <a href="/analytics" class="mercury-btn-obsidian">Career Graph</a>
+                    <a href="/about" class="mercury-btn-obsidian">Faculty</a>
+                    <a href="/swagger" class="mercury-btn-obsidian">OpenAPI 3.1</a>
+                </div>
+            </div>
+
+            <!-- Mercury Disclaimer Footnote Strip (12px weight 480 with 0.01em tracking) -->
+            <div class="pt-8 border-t border-[#F4EDE0]/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[12px] text-[#F4EDE0]/55 tracking-[0.01em]">
+                <p>
+                    AlumniIstü is an academic career graph and institutional telemetry platform engineered for Istanbul University MIS. Persistent storage backed by MySQL 8.0 &amp; Docker Compose.
+                </p>
+                <span class="shrink-0 font-mono text-[11px] text-[#FF6B58]">
+                    Navy #14213D • Cream #F4EDE0 • Coral #FF6B58
+                </span>
+            </div>
         </div>
     </footer>
 
@@ -449,6 +938,7 @@
         let allAlumni = [];
         let currentCohort = null;
         let mentorsOnly = false;
+        let isTableView = false;
 
         async function fetchDirectory() {
             try {
@@ -459,15 +949,39 @@
                 renderGrid();
             } catch (err) {
                 document.getElementById('alumniGrid').innerHTML =
-                    '<div class="col-span-full surface-card p-8 text-center text-[#FF6B58] text-sm">Failed to load AlumniIstü directory API.</div>';
+                    '<div class="col-span-full mercury-card text-center text-[#FF6B58] text-sm py-8">Failed to load AlumniIstü directory API.</div>';
             }
         }
 
         function updateHeroStats() {
             const totalEl = document.getElementById('statTotalAlumni');
+            const heroNodeEl = document.getElementById('heroNodeCount');
+            const heroMentorEl = document.getElementById('heroMentorCount');
             const mentorEl = document.getElementById('statTotalMentors');
+            const mentorCount = allAlumni.filter(a => a.is_mentor).length;
+
             if (totalEl) totalEl.textContent = allAlumni.length;
-            if (mentorEl) mentorEl.textContent = allAlumni.filter(a => a.is_mentor).length;
+            if (heroNodeEl) heroNodeEl.textContent = allAlumni.length;
+            if (heroMentorEl) heroMentorEl.textContent = mentorCount;
+            if (mentorEl) mentorEl.textContent = mentorCount;
+        }
+
+        function toggleViewMode() {
+            isTableView = !isTableView;
+            const grid = document.getElementById('alumniGrid');
+            const table = document.getElementById('alumniTableContainer');
+            const btn = document.getElementById('viewModeBtn');
+
+            if (isTableView) {
+                grid.classList.add('hidden');
+                table.classList.remove('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-grip"></i> Card Grid';
+            } else {
+                table.classList.add('hidden');
+                grid.classList.remove('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-table-list"></i> Ledger View';
+            }
+            renderGrid();
         }
 
         function filterCohort(cohort, btnEl) {
@@ -496,23 +1010,28 @@
                 (a.role && a.role.toLowerCase().includes(query)) ||
                 (a.skills && a.skills.some(s => s.toLowerCase().includes(query)))
             );
-            renderCards(filtered);
+            renderViews(filtered);
         }
 
         function renderGrid() {
             let data = allAlumni;
             if (currentCohort) data = data.filter(a => Number(a.cohort) === Number(currentCohort));
             if (mentorsOnly) data = data.filter(a => Boolean(a.is_mentor));
-            renderCards(data);
+            renderViews(data);
+        }
+
+        function renderViews(records) {
+            renderCards(records);
+            renderTable(records);
         }
 
         function renderCards(records) {
             const grid = document.getElementById('alumniGrid');
             if (records.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full surface-card p-12 text-center space-y-4">
-                        <p class="text-[#F4EDE0]/75 text-sm font-light">No alumni profiles match the selected filter.</p>
-                        <button onclick="filterCohort(null, document.querySelector('.cohort-pill'))" class="btn-ghost-cream">
+                    <div class="col-span-full mercury-card text-center py-12 space-y-4">
+                        <p class="text-[#F4EDE0]/75 text-sm">No alumni profiles match the selected filter.</p>
+                        <button onclick="filterCohort(null, document.querySelector('.cohort-pill'))" class="mercury-btn-ghost !text-xs">
                             Reset Filter
                         </button>
                     </div>
@@ -520,38 +1039,44 @@
                 return;
             }
 
-            grid.innerHTML = records.map(item => `
-                <article class="surface-card p-6 flex flex-col justify-between">
+            grid.innerHTML = records.map((item, idx) => {
+                const initials = (item.full_name || 'AF').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+                const delay = Math.min(idx * 45, 360);
+                return `
+                <article class="mercury-card mercury-card-interactive reveal-item flex flex-col justify-between space-y-6" style="animation-delay: ${delay}ms;">
                     <div>
-                        <div class="flex items-start justify-between gap-3 mb-4">
-                            <div>
-                                <h3 class="font-medium text-base text-[#F4EDE0]">
-                                    ${escapeHtml(item.full_name || 'Anonymous Fellow')}
-                                </h3>
-                                <p class="text-xs text-[#F4EDE0]/60 font-light mt-0.5">
-                                    Class of ${item.cohort || '2024'} • ${escapeHtml(item.department || 'MIS')}
-                                </p>
+                        <div class="flex items-start justify-between gap-3 mb-5">
+                            <div class="flex items-center gap-3.5">
+                                <span class="mercury-avatar">${escapeHtml(initials)}</span>
+                                <div>
+                                    <h3 class="font-medium text-base text-[#F4EDE0] leading-snug">
+                                        ${escapeHtml(item.full_name || 'Anonymous Fellow')}
+                                    </h3>
+                                    <span class="text-xs text-[#FF6B58] font-medium">
+                                        Class of ${escapeHtml(String(item.cohort || '2024'))}
+                                    </span>
+                                </div>
                             </div>
                             <div class="flex items-center gap-1.5">
-                                ${item.is_mentor ? '<span class="badge-coral">MENTOR</span>' : ''}
-                                <button onclick="openEditModal(${item.id})" title="Edit Profile" class="btn-ghost-cream !px-2.5 !py-1 text-xs">
+                                ${item.is_mentor ? '<span class="px-2.5 py-0.5 rounded-full text-[11px] bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/40">Mentor</span>' : ''}
+                                <button onclick="openEditModal(${item.id})" title="Edit" class="mercury-btn-obsidian !px-2.5 !py-1 !text-xs">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
-                                <button onclick="deleteAlumniRecord(${item.id})" title="Delete Profile" class="btn-ghost-cream !px-2.5 !py-1 text-xs">
+                                <button onclick="deleteAlumniRecord(${item.id})" title="Delete" class="mercury-btn-obsidian !px-2.5 !py-1 !text-xs">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="space-y-1.5 mb-5">
-                            <p class="text-sm font-medium text-[#F4EDE0]">
+                        <div class="space-y-1.5">
+                            <p class="text-base font-medium text-[#F4EDE0]">
                                 ${escapeHtml(item.role || 'Technology Professional')}
                             </p>
-                            <p class="text-xs text-[#F4EDE0]/75 font-light flex items-center gap-2">
+                            <p class="text-xs text-[#F4EDE0]/70 flex items-center gap-2">
                                 <i class="fa-regular fa-building text-[#FF6B58] w-3.5"></i>
-                                <span>${escapeHtml(item.company || 'Enterprise')}</span>
+                                <span>${escapeHtml(item.company || 'Enterprise Partner')}</span>
                             </p>
-                            <p class="text-xs text-[#F4EDE0]/60 font-light flex items-center gap-2">
+                            <p class="text-xs text-[#F4EDE0]/55 flex items-center gap-2">
                                 <i class="fa-solid fa-location-dot text-[#F4EDE0]/45 w-3.5"></i>
                                 <span>${escapeHtml(item.location || 'Istanbul, Turkey')}</span>
                             </p>
@@ -559,30 +1084,76 @@
                     </div>
 
                     <div>
-                        <div class="flex flex-wrap gap-1.5 pt-4 border-t border-[#F4EDE0]/10 mb-4">
+                        <div class="flex flex-wrap gap-1.5 pt-4 border-t border-[#F4EDE0]/12 mb-4">
                             ${(item.skills || []).map(skill => `
-                                <span class="badge-pill">${escapeHtml(skill)}</span>
+                                <span class="px-3 py-1 rounded-full text-[11px] bg-[#24355c] text-[#F4EDE0]/90">${escapeHtml(skill)}</span>
                             `).join('')}
                         </div>
 
-                        <div class="flex items-center justify-between text-xs pt-1">
-                            <span class="text-[#F4EDE0]/65 font-light truncate max-w-[180px]" title="${escapeHtml(item.email || '')}">
-                                <i class="fa-regular fa-envelope mr-1"></i>${escapeHtml(item.email || '')}
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-[#F4EDE0]/60 truncate max-w-[160px]" title="${escapeHtml(item.email || '')}">
+                                ${escapeHtml(item.email || '')}
                             </span>
-                            <button onclick="openEditModal(${item.id})" class="btn-primary-coral !py-1.5 !px-3.5 !text-xs">
-                                Inspect →
-                            </button>
+                            <div class="flex items-center gap-3">
+                                <button onclick="openEditModal(${item.id})" class="text-[#F4EDE0]/70 hover:text-[#F4EDE0]">Edit</button>
+                                <a href="/alumni/${item.id}" class="text-[#FF6B58] font-medium hover:underline">
+                                    Profile →
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </article>
-            `).join('');
+            `}).join('');
+        }
+
+        function renderTable(records) {
+            const tbody = document.getElementById('alumniTableBody');
+            if (!tbody) return;
+            if (records.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-[#F4EDE0]/60 text-sm">No records found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = records.map(item => {
+                const initials = (item.full_name || 'AF').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+                return `
+                <tr class="hover:bg-[#24355c]/40 transition">
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-3">
+                            <span class="mercury-avatar">${escapeHtml(initials)}</span>
+                            <div>
+                                <div class="font-medium text-[#F4EDE0]">${escapeHtml(item.full_name)}</div>
+                                <div class="text-xs text-[#F4EDE0]/55">${escapeHtml(item.email)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="text-[#F4EDE0]">${escapeHtml(item.role || 'Fellow')}</div>
+                        <div class="text-xs text-[#F4EDE0]/60">${escapeHtml(item.company || 'Enterprise')} • ${escapeHtml(item.location || 'Istanbul')}</div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="flex flex-wrap gap-1.5">
+                            ${(item.skills || []).slice(0, 3).map(s => `<span class="px-2.5 py-0.5 rounded-full text-[11px] bg-[#24355c] text-[#F4EDE0]">${escapeHtml(s)}</span>`).join('')}
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        ${item.is_mentor ? '<span class="px-3 py-1 rounded-full text-xs bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/40">Active Mentor</span>' : '<span class="text-xs text-[#F4EDE0]/55">Member</span>'}
+                    </td>
+                    <td class="py-4 px-6 text-right whitespace-nowrap">
+                        <span class="text-[#F4EDE0]/70 font-medium mr-3">'${escapeHtml(String(item.cohort || '2024').slice(-2))}</span>
+                        <button onclick="openEditModal(${item.id})" class="mercury-btn-obsidian !py-1 !px-3 !text-xs mr-1">Edit</button>
+                        <button onclick="deleteAlumniRecord(${item.id})" class="mercury-btn-obsidian !py-1 !px-3 !text-xs text-[#FF6B58]">×</button>
+                    </td>
+                </tr>
+            `}).join('');
         }
 
         function openModal() {
-            document.getElementById('modalTitle').innerText = 'Curate Alumni Profile';
+            const heroEmail = document.getElementById('heroEmailCapture')?.value || '';
+            document.getElementById('modalTitle').innerText = 'Open Alumni Profile';
             document.getElementById('formId').value = '';
             document.getElementById('formFullName').value = '';
-            document.getElementById('formEmail').value = '';
+            document.getElementById('formEmail').value = heroEmail;
             document.getElementById('formCohort').value = '2024';
             document.getElementById('formCompany').value = '';
             document.getElementById('formRole').value = '';

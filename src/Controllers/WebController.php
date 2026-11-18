@@ -60,6 +60,27 @@ class WebController {
         Response::html(__DIR__ . '/../../templates/jobs.html');
     }
 
+    public function profile(string $id): void {
+        $alumni = $this->service->getById((int)$id);
+        if (!$alumni) {
+            Response::html(__DIR__ . '/../../templates/404.html', [
+                'PATH' => "/alumni/{$id}",
+                'REASON' => "Alumni profile #{$id} was not found in the directory."
+            ], 404);
+            return;
+        }
+        Response::html(__DIR__ . '/../../templates/profile.html', [
+            'ALUMNI_ID' => (string)((int)$id),
+            'FULL_NAME' => htmlspecialchars((string)($alumni['full_name'] ?? 'Fellow')),
+            'ROLE'      => htmlspecialchars((string)($alumni['role'] ?? 'Technology Professional')),
+            'COMPANY'   => htmlspecialchars((string)($alumni['company'] ?? 'Enterprise Partner')),
+            'COHORT'    => htmlspecialchars((string)($alumni['cohort'] ?? '2024')),
+            'EMAIL'     => htmlspecialchars((string)($alumni['email'] ?? '')),
+            'LOCATION'  => htmlspecialchars((string)($alumni['location'] ?? 'Istanbul, Turkey')),
+            'INDUSTRY'  => htmlspecialchars((string)($alumni['industry'] ?? 'Technology & MIS')),
+        ]);
+    }
+
     public function hello(): void {
         header('Content-Type: text/plain; charset=utf-8');
         echo "Hello, World!";
