@@ -47,8 +47,9 @@ if (!$pdo) {
     exit(1);
 }
 
-$stmt = $pdo->prepare('SELECT id, username, email, role, is_active FROM users WHERE LOWER(email) = :id OR LOWER(username) = :id LIMIT 1');
-$stmt->execute(['id' => strtolower($identifier)]);
+$stmt = $pdo->prepare('SELECT id, username, email, role, is_active FROM users WHERE LOWER(email) = :email_id OR LOWER(username) = :user_id LIMIT 1');
+$lowerId = strtolower($identifier);
+$stmt->execute(['email_id' => $lowerId, 'user_id' => $lowerId]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
