@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlumniIstü (ALUMNI) • Faculty &amp; Department Heritage</title>
+    <link rel="stylesheet" href="/css/app.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -119,24 +120,20 @@
 </head>
 <body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
 
-    <header class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/80 backdrop-blur-xl">
-        <div class="page-container h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/30 flex items-center justify-center relative">
-                    <span class="w-4 h-4 rounded-full border-2 border-[#FF6B58] block group-hover:scale-110 transition-transform"></span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#F4EDE0] absolute"></span>
-                </div>
-                <div>
-                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">
-                        AlumniIstü
-                    </span>
-                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/55">
-                        Istanbul University • MIS
-                    </span>
-                </div>
+    <header class="site-header">
+        <div class="page-container site-header-inner">
+            <a href="/" class="brand-link group">
+                <span class="brand-mark">
+                    <span class="brand-mark-ring group-hover:scale-110 transition-transform"></span>
+                    <span class="brand-mark-dot"></span>
+                </span>
+                <span>
+                    <span class="brand-title">AlumniIstü</span>
+                    <span class="brand-subtitle">Istanbul University • MIS</span>
+                </span>
             </a>
 
-            <nav data-auth-nav-links class="hidden md:flex items-center space-x-1">
+            <nav data-auth-nav-links class="flex flex-wrap items-center gap-1">
                 <a href="/" class="mercury-nav-pill">Directory</a>
                 <a href="/jobs" class="mercury-nav-pill">Job Board</a>
                 <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
@@ -144,7 +141,7 @@
                 <a href="/swagger" class="mercury-nav-pill">API Docs</a>
             </nav>
 
-            <div data-auth-nav-actions class="flex items-center space-x-2"></div>
+            <div data-auth-nav-actions class="flex flex-wrap items-center gap-2"></div>
         </div>
     </header>
 

@@ -3,353 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlumniIstü (ALUMNI) • Career Graph &amp; Telemetry</title>
-    <title>AlumniIstü (ALUMNI) • Career Graph &amp; Telemetry Observatory</title>
+    <title>AlumniIstü (ALUMNI) • Career Telemetry Observatory</title>
+    <link rel="stylesheet" href="/css/app.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --color-navy: #14213D;
-            --color-cream: #F4EDE0;
-            --color-coral: #FF6B58;
-            --color-canvas: #14213D;
-            --color-surface: #1c2a4a;
-            --color-text-main: #F4EDE0;
-            --color-accent: #FF6B58;
-            --surface-onyx-canvas: #14213D;
-            --surface-graphite-card: #1c2a4a;
-            --surface-obsidian-button: #24355c;
-            --surface-deep-vault: #0f1a30;
-            --color-slate-border: rgba(244, 237, 224, 0.12);
-            --color-mist-border: rgba(244, 237, 224, 0.28);
-            --color-ash-text: rgba(244, 237, 224, 0.68);
-            --color-ivory-text: #F4EDE0;
-
-            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', serif;
-            --font-inter: 'Inter', sans-serif;
-            
-            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', Georgia, serif;
-            --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-
-            --page-max-width: 1200px;
-            --card-padding: 32px;
-            --radius-cards: 12px;
-            --radius-buttons: 32px;
-            --radius-nav: 40px;
-            --radius-full: 9999px;
-            --radius-lg: 10px;
-            --page-max-width: 1216px;
-            --section-gap: 160px;
-        }
-        * { box-sizing: border-box; }
-        body {
-            background-color: var(--color-canvas);
-            color: var(--color-text-main);
-            background-color: var(--surface-onyx-canvas);
-            color: var(--color-ivory-text);
-            font-family: var(--font-inter);
-            font-size: 16px;
-            line-height: 1.5;
-            margin: 0;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-        .page-container {
-            max-width: var(--page-max-width);
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 24px;
-            padding-right: 24px;
-        }
-        .section-stack {
-            display: flex;
-            flex-direction: column;
-            gap: var(--section-gap);
-            padding-top: 80px;
-            padding-bottom: 120px;
         @keyframes auroraFloat {
             0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-            50% { transform: translate3d(30px, -22px, 0) scale(1.07); }
+            50% { transform: translate3d(-24px, 20px, 0) scale(1.06); }
         }
-        .heading-hero {
         @keyframes pulseCoralBeacon {
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.9); opacity: 0; }
         }
-        @keyframes growBar {
-            from { width: 0%; }
-        }
-        .animate-aurora { animation: auroraFloat 14s ease-in-out infinite; }
+        .animate-aurora { animation: auroraFloat 15s ease-in-out infinite; }
         .beacon-ring { transform-origin: center; animation: pulseCoralBeacon 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
-        .animate-bar { animation: growBar 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        .mercury-display {
-            font-family: var(--font-ivy-presto);
-            font-weight: 400;
-            font-size: clamp(2.35rem, 4vw, 3.25rem);
-            line-height: 1.15;
-            letter-spacing: 0.02em;
-            color: var(--color-cream);
-            font-size: clamp(2.4rem, 4.8vw, 3.6rem);
-            line-height: 1.1;
-            letter-spacing: 0.012em;
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 9999px;
+            background-color: #0f1a30;
+            overflow: hidden;
+            border: 1px solid rgba(244, 237, 224, 0.08);
         }
-        .heading-section {
-        .mercury-heading-lg {
-            font-family: var(--font-ivy-presto);
-            font-weight: 500;
-            font-size: 1.75rem;
-            line-height: 1.24;
-            letter-spacing: 0.018em;
-            color: var(--color-cream);
-            font-weight: 400;
-            font-size: clamp(1.85rem, 3vw, 2.35rem);
-            line-height: 1.15;
-            letter-spacing: 0.012em;
-        }
-        .surface-card {
-            background-color: var(--color-surface);
-            border: 1px solid rgba(244, 237, 224, 0.14);
-            border-radius: var(--radius-lg);
-            box-shadow: none;
-        .mercury-card {
-            background-color: var(--surface-graphite-card);
-            border-radius: var(--radius-cards);
-            padding: var(--card-padding);
-            border: 1px solid var(--color-slate-border);
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-        }
-        .badge-coral {
-            border-radius: var(--radius-full);
-            padding: 4px 12px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: 1px solid rgba(255, 107, 88, 0.45);
-            color: var(--color-coral);
-            background-color: rgba(255, 107, 88, 0.12);
-        .mercury-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--color-mist-border);
-        }
-        .nav-link {
-            position: relative;
-            padding-bottom: 6px;
-            color: rgba(244, 237, 224, 0.75);
-        .mercury-nav-pill {
-            color: var(--color-ash-text);
-            font-size: 15px;
-            font-weight: 400;
-            transition: color 0.2s ease;
-            border-radius: var(--radius-nav);
-            padding: 8px 18px;
-            transition: all 0.2s ease;
-        }
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--color-cream);
-        .mercury-nav-pill:hover, .mercury-nav-pill.active {
-            color: var(--color-ivory-text);
-            background-color: rgba(244, 237, 224, 0.08);
-        }
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 2px;
-        .mercury-btn-coral {
-            background-color: var(--color-coral);
-            border-radius: 2px;
-            color: var(--color-ivory-text);
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: var(--radius-buttons);
-            padding: 10px 22px;
+        .progress-fill {
+            height: 100%;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #FF6B58 0%, #F4EDE0 100%);
+            transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
-    <header class="border-b border-[#F4EDE0]/10 bg-[#14213D]/95 backdrop-blur-md sticky top-0 z-50">
-    <header class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/80 backdrop-blur-xl">
-        <div class="page-container h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-full bg-[#1c2a4a] border border-[#FF6B58] flex items-center justify-center text-[#FF6B58]">
-                    <i class="fa-solid fa-chart-line text-xs"></i>
-            <a href="/" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/30 flex items-center justify-center relative">
-                    <span class="w-4 h-4 rounded-full border-2 border-[#FF6B58] block group-hover:scale-110 transition-transform"></span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#F4EDE0] absolute"></span>
-                </div>
-                <div>
-                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); font-weight: 500; letter-spacing: 0.03em;">
-                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">
-                        AlumniIstü
-                    </span>
-                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/60 font-light">
-                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/55">
-                        Institutional Telemetry
-                    </span>
-                </div>
+
+    <header class="site-header">
+        <div class="page-container site-header-inner">
+            <a href="/" class="brand-link group">
+                <span class="brand-mark">
+                    <span class="brand-mark-ring group-hover:scale-110 transition-transform"></span>
+                    <span class="brand-mark-dot"></span>
+                </span>
+                <span>
+                    <span class="brand-title">AlumniIstü</span>
+                    <span class="brand-subtitle">Istanbul University • MIS</span>
+                </span>
             </a>
-            <nav class="hidden md:flex items-center space-x-8 text-sm">
-                <a href="/" class="nav-link">Directory</a>
-                <a href="/jobs" class="nav-link">Job Board</a>
-                <a href="/analytics" class="nav-link active">Career Graph</a>
-                <a href="/about" class="nav-link">Faculty</a>
-                <a href="/swagger" class="nav-link">API Ledger</a>
-            <nav class="hidden md:flex items-center space-x-1">
+
+            <nav data-auth-nav-links class="flex flex-wrap items-center gap-1">
                 <a href="/" class="mercury-nav-pill">Directory</a>
                 <a href="/jobs" class="mercury-nav-pill">Job Board</a>
                 <a href="/analytics" class="mercury-nav-pill active">Career Graph</a>
                 <a href="/about" class="mercury-nav-pill">Faculty</a>
                 <a href="/swagger" class="mercury-nav-pill">API Docs</a>
             </nav>
-            <a href="/api/v1/analytics" target="_blank" class="mercury-btn-coral">Live JSON →</a>
+
+            <div data-auth-nav-actions class="flex flex-wrap items-center gap-2"></div>
         </div>
     </header>
 
-    <main class="flex-grow page-container section-stack w-full">
-        <!-- SECTION 1: Hero & KPI Cards -->
-        <section class="space-y-8">
-            <div class="surface-card p-8 md:p-12 space-y-4">
-                <span class="badge-coral inline-block">YÖKAK &amp; AACSB ACCREDITATION TELEMETRY</span>
-                <h1 class="heading-hero">Graduate Mobility &amp; <span class="italic text-[#FF6B58]">Institutional KPIs</span></h1>
-                <p class="text-[#F4EDE0]/75 text-base font-light max-w-2xl">
-                    Empirical career mobility telemetry and curriculum alignment metrics for Istanbul University Management Information Systems (MIS / YBS) graduates.
-                </p>
     <main class="flex-grow">
-        <section class="relative overflow-hidden pt-16 pb-16 border-b border-[#F4EDE0]/10">
+        <section class="relative overflow-hidden py-14 border-b border-[#F4EDE0]/10">
             <div class="pointer-events-none absolute inset-0 overflow-hidden">
-                <div class="animate-aurora absolute -top-24 left-1/3 w-[480px] h-[480px] rounded-full bg-[#FF6B58]/14 blur-[120px]"></div>
+                <div class="animate-aurora absolute -top-24 left-1/3 w-[440px] h-[440px] rounded-full bg-[#FF6B58]/14 blur-[120px]"></div>
             </div>
-            <div class="page-container relative z-10 text-center max-w-[700px] mx-auto space-y-5">
-                <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/20 text-xs text-[#F4EDE0]/90">
-                    <span class="relative flex h-2 w-2">
-                        <span class="beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#FF6B58]"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-[#FF6B58]"></span>
-                    </span>
-                    <span>YÖKAK &amp; AACSB ACCREDITATION TELEMETRY</span>
-                </div>
-                <h1 class="mercury-display">Graduate mobility &amp; <span class="italic text-[#FF6B58]">institutional KPIs.</span></h1>
-                <p class="text-[#F4EDE0]/70 text-lg">Empirical career trajectory metrics and sector alignment for Istanbul University Management Information Systems (MIS / YBS).</p>
-            </div>
-        </section>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="surface-card p-6">
-                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Employment Index</p>
-                    <p class="heading-section text-[#FF6B58] mt-2">96.4%</p>
-                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">Placed within 6 months</p>
-        <div class="page-container py-16 space-y-12">
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="mercury-card">
-                    <p class="text-xs text-[#F4EDE0]/55 uppercase tracking-wider">Employment Index</p>
-                    <p class="mercury-heading-lg text-[#FF6B58] mt-2">96.4%</p>
-                    <p class="text-xs text-[#F4EDE0]/65 mt-1">Placed within 6 months</p>
-                </div>
-                <div class="surface-card p-6">
-                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Active Mentors</p>
-                    <p class="heading-section text-[#F4EDE0] mt-2" id="stat-mentors">--</p>
-                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">1:1 Concierge available</p>
-                <div class="mercury-card">
-                    <p class="text-xs text-[#F4EDE0]/55 uppercase tracking-wider">Active Mentors</p>
-                    <p class="mercury-heading-lg text-[#F4EDE0] mt-2" id="stat-mentors">--</p>
-                    <p class="text-xs text-[#F4EDE0]/65 mt-1">1:1 Concierge available</p>
-                </div>
-                <div class="surface-card p-6">
-                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Global Mobility</p>
-                    <p class="heading-section text-[#F4EDE0] mt-2">24.5%</p>
-                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">EU, UK &amp; North America</p>
-                <div class="mercury-card">
-                    <p class="text-xs text-[#F4EDE0]/55 uppercase tracking-wider">Global Mobility</p>
-                    <p class="mercury-heading-lg text-[#F4EDE0] mt-2">24.5%</p>
-                    <p class="text-xs text-[#F4EDE0]/65 mt-1">EU, UK &amp; North America</p>
-                </div>
-                <div class="surface-card p-6">
-                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Persistence Engine</p>
-                    <p class="heading-section text-[#FF6B58] mt-2" id="stat-source">MySQL</p>
-                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">PDO Prepared Statements</p>
-                <div class="mercury-card">
-                    <p class="text-xs text-[#F4EDE0]/55 uppercase tracking-wider">Persistence Engine</p>
-                    <p class="mercury-heading-lg text-[#FF6B58] mt-2" id="stat-source">MySQL 8.0</p>
-                    <p class="text-xs text-[#F4EDE0]/65 mt-1">PDO Prepared Statements</p>
-                </div>
-            </div>
-        </section>
-            </section>
-
-        <!-- SECTION 2: Sector Distribution -->
-        <section class="surface-card p-8 md:p-12 space-y-6">
-            <div class="border-b border-[#F4EDE0]/10 pb-4">
-                <h2 class="heading-section">Sector Distribution Across MIS Cohorts</h2>
-                <p class="text-xs text-[#F4EDE0]/60 font-light mt-1">Live aggregation from `/api/v1/analytics` controller endpoint.</p>
-            </div>
-            <div id="industry-bars" class="space-y-4">
-                <div class="text-[#F4EDE0]/50 text-xs font-light">Loading analytics telemetry...</div>
-            </div>
-        </section>
-            <section class="mercury-card space-y-6">
-                <div class="border-b border-[#F4EDE0]/12 pb-4 flex items-center justify-between">
-                    <div>
-                        <h2 class="mercury-heading-lg">Sector Distribution Across MIS Cohorts</h2>
-                        <p class="text-xs text-[#F4EDE0]/60 mt-1">Live kinetic aggregation from `/api/v1/analytics` controller endpoint.</p>
+            <div class="page-container relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div class="space-y-4 max-w-2xl">
+                    <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/20 text-xs text-[#F4EDE0]/90">
+                        <span class="relative flex h-2 w-2">
+                            <span class="beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#FF6B58]"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#FF6B58]"></span>
+                        </span>
+                        <span>LIVE CAREER GRAPH TELEMETRY</span>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-xs bg-[#24355c] text-[#F4EDE0]">Real-Time</span>
+                    <h1 class="mercury-display">
+                        Graduate Mobility &amp; <span class="italic text-[#FF6B58]">Sector Observatory</span>
+                    </h1>
+                    <p class="text-[#F4EDE0]/70 text-base">
+                        Real-time career sector distributions, mentor availability, and network analytics streamed from MySQL PDO.
+                    </p>
                 </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="/" class="mercury-btn-ghost">← Directory</a>
+                    <a href="/jobs" class="mercury-btn-coral">Explore Job Board →</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="page-container py-12 space-y-10">
+            <!-- KPI Strip -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="mercury-card">
+                    <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/55 block">Total Tracked Alumni</span>
+                    <span id="stat-total" class="text-4xl font-normal text-[#F4EDE0] mt-2 block" style="font-family: var(--font-ivy-presto);">—</span>
+                </div>
+                <div class="mercury-card">
+                    <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/55 block">Active Executive Mentors</span>
+                    <span id="stat-mentors" class="text-4xl font-normal text-[#FF6B58] mt-2 block" style="font-family: var(--font-ivy-presto);">—</span>
+                </div>
+                <div class="mercury-card">
+                    <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/55 block">Live Telemetry Engine</span>
+                    <span id="stat-source" class="text-xl font-normal text-[#F4EDE0] mt-3 block" style="font-family: var(--font-ivy-presto);">Connecting...</span>
+                </div>
+            </div>
+
+            <!-- Sector Distribution -->
+            <div class="mercury-card space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[#F4EDE0]/10 pb-4">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-[#FF6B58] block mb-1">Sector Intelligence</span>
+                        <h2 class="mercury-heading-sm">Alumni Industry Footprint</h2>
+                    </div>
+                    <span class="text-xs text-[#F4EDE0]/55">Aggregated via <code class="text-[#FF6B58]">GET /api/v1/analytics</code></span>
+                </div>
+
                 <div id="industry-bars" class="space-y-5">
-                    <div class="text-[#F4EDE0]/50 text-xs">Loading analytics telemetry...</div>
+                    <p class="text-sm text-[#F4EDE0]/60">Loading live sector distribution...</p>
                 </div>
-            </section>
+            </div>
         </div>
     </main>
 
-    <footer class="border-t border-[#F4EDE0]/10 py-10 mt-auto">
-        <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60 font-light">
-            <span>© 2026 <strong class="text-[#F4EDE0] font-medium">AlumniIstü (ALUMNI)</strong> • Institutional Analytics</span>
-            <span>Navy <code class="text-[#F4EDE0]">#14213D</code> • Cream <code class="text-[#F4EDE0]">#F4EDE0</code> • Coral <code class="text-[#FF6B58]">#FF6B58</code></span>
-    <footer class="border-t border-[#F4EDE0]/12 bg-[#0f1a30]/70 py-10 mt-auto">
+    <footer class="border-t border-[#F4EDE0]/12 bg-[#0f1a30]/75 py-8 mt-auto">
         <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60">
-            <span>© 2026 <strong class="text-[#F4EDE0]">AlumniIstü (ALUMNI)</strong> • Institutional Analytics</span>
-            <span class="text-[#FF6B58] font-mono">Navy #14213D • Cream #F4EDE0 • Coral #FF6B58</span>
+            <span>© 2026 <strong class="text-[#F4EDE0]">AlumniIstü (ALUMNI)</strong> • Career Graph Telemetry</span>
+            <span class="text-[#FF6B58] font-mono">GET /api/v1/analytics</span>
         </div>
     </footer>
 
     <script>
-        fetch('/api/v1/analytics')
-            .then(res => res.json())
-            .then(payload => {
-                const data = payload.data || {};
-                document.getElementById('stat-mentors').textContent = data.active_mentors_count || '3';
-                document.getElementById('stat-mentors').textContent = data.active_mentors_count || '13';
-                document.getElementById('stat-source').textContent = (data.source === 'mysql_database') ? 'MySQL 8.0' : 'Standby Memory';
+        function escapeHtml(str) {
+            return String(str || '').replace(/[&<>"']/g, (m) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[m]));
+        }
 
-                const industries = data.top_industries || {};
-                const container = document.getElementById('industry-bars');
-                container.innerHTML = '';
+        async function loadAnalytics() {
+            const container = document.getElementById('industry-bars');
+            try {
+                const res = await fetch('/api/v1/analytics', { headers: { 'Accept': 'application/json' } });
+                const payload = await res.json();
+                const d = payload.data || {};
+                const total = Number(d.total_alumni || 0);
+                const mentors = Number(d.total_mentors || 0);
 
-                for (const [ind, count] of Object.entries(industries)) {
-                    const pct = Math.min(100, count * 18);
-                    const row = document.createElement('div');
-                    row.innerHTML = `
-                        <div class="flex justify-between text-xs font-medium mb-1.5">
-                        <div class="flex justify-between text-sm font-medium mb-2">
-                            <span class="text-[#F4EDE0]">${ind}</span>
-                            <span class="badge-coral">${count} Alumni</span>
-                            <span class="px-3 py-0.5 rounded-full text-xs bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/35">${count} Alumni</span>
-                        </div>
-                        <div class="w-full bg-[#14213D] border border-[#F4EDE0]/15 h-2.5 rounded-full overflow-hidden">
-                            <div class="bg-[#FF6B58] h-full rounded-full" style="width: ${Math.min(100, count * 25)}%"></div>
-                        <div class="w-full bg-[#0f1a30] border border-[#F4EDE0]/15 h-3 rounded-full overflow-hidden">
-                            <div class="bg-[#FF6B58] h-full rounded-full animate-bar" style="width: ${pct}%"></div>
+                document.getElementById('stat-total').textContent = String(total);
+                document.getElementById('stat-mentors').textContent = String(mentors);
+                document.getElementById('stat-source').textContent = d.source || 'MySQL PDO';
+
+                const dist = d.industry_distribution || {};
+                const entries = Object.entries(dist).sort((a, b) => Number(b[1]) - Number(a[1]));
+
+                if (entries.length === 0) {
+                    container.innerHTML = '<p class="text-sm text-[#F4EDE0]/60">No sector distribution data recorded yet.</p>';
+                    return;
+                }
+
+                container.innerHTML = entries.map(([sector, count]) => {
+                    const num = Number(count || 0);
+                    const pct = total > 0 ? Math.round((num / total) * 100) : 0;
+                    return `
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-[#F4EDE0] font-medium">${escapeHtml(sector)}</span>
+                                <span class="text-xs text-[#F4EDE0]/70">${num} alumni • <strong class="text-[#FF6B58]">${pct}%</strong></span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: ${pct}%;"></div>
+                            </div>
                         </div>
                     `;
-                    container.appendChild(row);
-                }
-            });
+                }).join('');
+            } catch (err) {
+                document.getElementById('stat-source').textContent = 'Unavailable';
+                container.innerHTML = `<p class="text-sm text-[#FF6B58]">Could not load analytics telemetry: ${escapeHtml(err.message)}</p>`;
+            }
+        }
+
+        loadAnalytics();
     </script>
+    <script src="/js/auth-nav.js"></script>
 </body>
 </html>

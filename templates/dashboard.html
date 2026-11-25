@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlumniIstü (ALUMNI) • Executive Career Observatory &amp; Network</title>
+    <link rel="stylesheet" href="/css/app.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -411,26 +412,22 @@
     <!-- ======================================================================= -->
     <!-- TRANSPARENT FROSTED TOP NAVIGATION BAR (Mercury Style)                  -->
     <!-- ======================================================================= -->
-    <header id="topNav" class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/80 backdrop-blur-xl transition-all duration-300">
-        <div class="page-container h-20 flex items-center justify-between">
+    <header id="topNav" class="site-header transition-all duration-300">
+        <div class="page-container site-header-inner">
             <!-- Brand Mark with Concentric Circle Icon -->
-            <a href="/" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/30 flex items-center justify-center relative">
-                    <span class="w-4 h-4 rounded-full border-2 border-[#FF6B58] block group-hover:scale-110 transition-transform"></span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#F4EDE0] absolute"></span>
-                </div>
-                <div>
-                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">
-                        AlumniIstü
-                    </span>
-                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/55">
-                        Istanbul University • MIS
-                    </span>
-                </div>
+            <a href="/" class="brand-link group">
+                <span class="brand-mark">
+                    <span class="brand-mark-ring group-hover:scale-110 transition-transform"></span>
+                    <span class="brand-mark-dot"></span>
+                </span>
+                <span>
+                    <span class="brand-title">AlumniIstü</span>
+                    <span class="brand-subtitle">Istanbul University • MIS</span>
+                </span>
             </a>
 
             <!-- Centered Dynamic Role-Aware Navigation (powered by /js/auth-nav.js + GET /api/auth/me) -->
-            <nav data-auth-nav-links class="hidden md:flex items-center space-x-1">
+            <nav data-auth-nav-links class="flex flex-wrap items-center gap-1">
                 <a href="/" class="mercury-nav-pill active">Directory</a>
                 <a href="/jobs" class="mercury-nav-pill">Job Board</a>
                 <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
@@ -439,9 +436,9 @@
             </nav>
 
             <!-- Right Actions: Dynamic Auth Controls (Guest: Login/Register | User: @user/Logout | Admin: +Admin) -->
-            <div class="flex items-center space-x-3">
-                <div data-auth-nav-actions class="flex items-center space-x-2"></div>
-                <button onclick="openModal()" class="mercury-btn-coral hidden sm:inline-flex">
+            <div class="header-right-group">
+                <div data-auth-nav-actions class="flex flex-wrap items-center gap-2"></div>
+                <button type="button" onclick="openModal()" class="mercury-btn-coral hidden sm:inline-flex">
                     <span>Open profile</span>
                     <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
@@ -519,7 +516,7 @@
 
                         <!-- Self-Drawing Animated SVG Line Chart -->
                         <div class="mercury-card-vault !p-5">
-                            <svg viewBox="0 0 520 150" class="w-full h-36 overflow-visible">
+                            <svg width="520" height="150" viewBox="0 0 520 150" class="telemetry-chart-svg w-full h-36 overflow-visible">
                                 <defs>
                                     <linearGradient id="mercuryCoralStroke" x1="0%" y1="0%" x2="100%" y2="0%">
                                         <stop offset="0%" stop-color="#F4EDE0" stop-opacity="0.4" />

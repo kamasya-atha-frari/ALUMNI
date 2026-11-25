@@ -26,3 +26,27 @@ File: /var/www/html/tests/run_tests.php:353
 Trace:
 #0 {main}
 --------------------------------------------------------------------------------
+[2026-11-25 12:43:43] [500] [ID:err_7209487b] [GET /alumni/14]
+Error: Error: Call to undefined method AlumniIstü\Services\AlumniService::getById()
+File: /var/www/html/src/Controllers/WebController.php:80
+Trace:
+#0 /var/www/html/public/index.php(148): AlumniIstü\Controllers\WebController->profile('14')
+#1 [internal function]: {closure}('14')
+#2 /var/www/html/src/Core/Router.php(120): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/src/Core/Router.php(159): AlumniIstü\Core\Router->AlumniIstü\Core\{closure}()
+#4 /var/www/html/src/Core/Router.php(208): AlumniIstü\Core\Router->dispatch('GET', '/alumni/14', true)
+#5 /var/www/html/public/index.php(395): AlumniIstü\Core\Router->resolve('GET', '/alumni/14')
+#6 {main}
+--------------------------------------------------------------------------------
+[2026-11-25 12:43:54] [500] [ID:err_c254fa05] [GET /alumni/8]
+Error: Error: Call to undefined method AlumniIstü\Services\AlumniService::getById()
+File: /var/www/html/src/Controllers/WebController.php:80
+Trace:
+#0 /var/www/html/public/index.php(148): AlumniIstü\Controllers\WebController->profile('8')
+#1 [internal function]: {closure}('8')
+#2 /var/www/html/src/Core/Router.php(120): call_user_func_array(Object(Closure), Array)
+#3 /var/www/html/src/Core/Router.php(159): AlumniIstü\Core\Router->AlumniIstü\Core\{closure}()
+#4 /var/www/html/src/Core/Router.php(208): AlumniIstü\Core\Router->dispatch('GET', '/alumni/8', true)
+#5 /var/www/html/public/index.php(395): AlumniIstü\Core\Router->resolve('GET', '/alumni/8')
+#6 {main}
+--------------------------------------------------------------------------------

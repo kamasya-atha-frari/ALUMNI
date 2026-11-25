@@ -4,30 +4,25 @@
  * Queries GET /api/auth/me (protected by AuthMiddleware) on page load so navigation
  * reflects the authoritative server authentication state and user role:
  *   - Guest (unauthenticated / expired / invalid / revoked token):
- *       Home / Directory, Job Board, Career Graph, Faculty, API Docs + Login & Register
+ *       Directory, Job Board, Career Graph, Faculty, API Docs + Login & Register
  *   - Regular Authenticated User (alumni / student / employer / faculty / moderator):
- *       Home / Directory, Job Board, Career Graph, My Profile, Faculty, API Docs + @user badge & Logout
+ *       Directory, Job Board, Career Graph, My Profile, Faculty, API Docs + @user badge & Logout
  *   - Admin (role === 'admin'):
  *       All regular user links PLUS Admin Panel (/admin) link & Logout
  *
- * Unauthorized users never see admin-only links in the DOM, and expired/invalid tokens
- * automatically clear localStorage and reset navigation cleanly to guest state.
+ * Always generates root-relative paths (/jobs, /analytics, /about, /swagger,
+ * /my-profile, /admin, /login, /register) regardless of current route (e.g. /alumni/1),
+ * clears existing static nav items before rendering to prevent duplicates, and
+ * keeps menu items wrap-safe and compact so nothing overflows the header.
  */
 (function () {
     const TOKEN_KEY = 'alumni_istu_access_token';
     const USER_KEY = 'alumni_istu_user';
-    const BASE_PATH = window.location.pathname.toLowerCase().startsWith('/alumni/') ? '/alumni' : '';
-
-    function withBase(path) {
-        return `${BASE_PATH}${path}`;
-    }
 
     function normalizedPath() {
-        let p = window.location.pathname || '/';
-        if (BASE_PATH && p.toLowerCase().startsWith(BASE_PATH)) {
-            p = p.slice(BASE_PATH.length) || '/';
-        }
-        return p.replace(/\/+$/, '') || '/';
+        const raw = window.location.pathname || '/';
+        const cleaned = raw.replace(/\/+$/, '');
+        return cleaned === '' ? '/' : cleaned;
     }
 
     function escapeHtml(str) {
@@ -43,9 +38,20 @@
         } catch (_) {}
     }
 
-    function buildLink(href, label, currentPath, styleClass, extraClass = '') {
-        const active = currentPath === href ? ' active' : '';
-        return `<a href="${withBase(href)}" class="${styleClass}${active} ${extraClass}">${label}</a>`;
+    function isLinkActive(href, currentPath) {
+        if (href === '/') {
+            return currentPath === '/' || currentPath.startsWith('/alumni/');
+        }
+        if (href === '/my-profile') {
+            return currentPath === '/my-profile' || currentPath === '/dashboard' || currentPath === '/profile';
+        }
+        return currentPath === href;
+    }
+
+    function buildLink(href, label, currentPath, styleClass, extraClass) {
+        const active = isLinkActive(href, currentPath) ? ' active' : '';
+        const extra = extraClass ? ` ${extraClass}` : '';
+        return `<a href="${href}" class="${styleClass}${active}${extra}">${label}</a>`;
     }
 
     function renderMenus(state) {
@@ -59,65 +65,59 @@
         document.querySelectorAll('[data-auth-nav-links]').forEach((navEl) => {
             const linkClass = navEl.getAttribute('data-link-class') || 'mercury-nav-pill';
             const links = [
-                buildLink('/', 'Directory', current, linkClass),
-                buildLink('/jobs', 'Job Board', current, linkClass),
-                buildLink('/analytics', 'Career Graph', current, linkClass),
+                buildLink('/', 'Directory', current, linkClass, ''),
+                buildLink('/jobs', 'Job Board', current, linkClass, ''),
+                buildLink('/analytics', 'Career Graph', current, linkClass, ''),
             ];
 
             if (isAuth) {
-                const isProfileActive = current === '/my-profile' || current === '/dashboard' || current === '/profile';
-                const activeCls = isProfileActive ? ' active' : '';
-                links.push(`<a href="${withBase('/my-profile')}" class="${linkClass}${activeCls}">My Profile</a>`);
+                links.push(buildLink('/my-profile', 'My Profile', current, linkClass, ''));
             }
 
-            links.push(buildLink('/about', 'Faculty', current, linkClass));
-            links.push(buildLink('/swagger', 'API Docs', current, linkClass));
+            links.push(buildLink('/about', 'Faculty', current, linkClass, ''));
+            links.push(buildLink('/swagger', 'API Docs', current, linkClass, ''));
 
             if (isAdmin) {
                 links.push(
                     buildLink(
                         '/admin',
-                        '<i class="fa-solid fa-shield-halved text-[#FF6B58] mr-1 text-xs"></i>Admin Panel',
+                        '<i class="fa-solid fa-shield-halved text-xs" aria-hidden="true"></i><span>Admin Panel</span>',
                         current,
                         linkClass,
-                        'border border-[#FF6B58]/40 text-[#FF6B58]'
+                        'nav-admin-link'
                     )
                 );
             }
 
+            // Clear/replace any pre-existing static links to prevent duplication
+            navEl.replaceChildren();
             navEl.innerHTML = links.join('');
         });
 
         // 2. Right-side auth action controls container(s): [data-auth-nav-actions]
         document.querySelectorAll('[data-auth-nav-actions]').forEach((actionsEl) => {
+            actionsEl.replaceChildren();
+
             if (!isAuth) {
                 actionsEl.innerHTML = `
-                    <a href="${withBase('/login')}" class="text-sm text-[#F4EDE0]/85 hover:text-[#FF6B58] transition px-3 py-1.5 rounded-full">
-                        Login
-                    </a>
-                    <a href="${withBase('/register')}" class="text-sm font-medium px-4 py-2 rounded-full bg-[#FF6B58] text-[#F4EDE0] hover:bg-[#ff7e6d] transition inline-flex items-center gap-1.5">
-                        <span>Register</span>
-                    </a>
+                    <a href="/login" class="auth-nav-login">Login</a>
+                    <a href="/register" class="auth-nav-register">Register</a>
                 `;
                 return;
             }
 
-            const adminPill = isAdmin
-                ? `<a href="${withBase('/admin')}" class="text-xs font-medium px-3 py-1.5 rounded-full bg-[#FF6B58]/20 border border-[#FF6B58]/50 text-[#FF6B58] hover:bg-[#FF6B58]/30 transition inline-flex items-center gap-1.5">
-                        <i class="fa-solid fa-shield-halved text-[11px]"></i>
-                        <span>Admin</span>
-                   </a>`
-                : '';
+            const handle = escapeHtml(user.username || user.full_name || 'user');
+            const roleEsc = escapeHtml(role);
+            const titleEsc = escapeHtml(`Signed in as ${user.email || user.username} (${role})`);
 
             actionsEl.innerHTML = `
-                ${adminPill}
-                <a href="${withBase('/my-profile')}" class="text-xs px-3 py-1.5 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/20 text-[#F4EDE0]/90 hover:border-[#FF6B58] transition inline-flex items-center gap-1.5" title="Signed in as ${escapeHtml(user.email || user.username)} (${escapeHtml(role)})">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    <span>@${escapeHtml(user.username || user.full_name || 'user')}</span>
-                    <span class="text-[10px] uppercase tracking-wider text-[#F4EDE0]/55">${escapeHtml(role)}</span>
+                <a href="/my-profile" class="auth-nav-user-pill" title="${titleEsc}">
+                    <span class="auth-nav-dot" aria-hidden="true"></span>
+                    <span>@${handle}</span>
+                    <span class="auth-nav-role-tag">${roleEsc}</span>
                 </a>
-                <button type="button" data-auth-logout-btn class="text-xs px-3 py-1.5 rounded-full border border-[#FF6B58]/50 text-[#FF6B58] hover:bg-[#FF6B58]/15 transition cursor-pointer inline-flex items-center gap-1">
-                    <i class="fa-solid fa-right-from-bracket text-[11px]"></i>
+                <button type="button" data-auth-logout-btn class="auth-nav-logout">
+                    <i class="fa-solid fa-right-from-bracket text-[11px]" aria-hidden="true"></i>
                     <span>Logout</span>
                 </button>
             `;
@@ -142,7 +142,7 @@
         }
 
         try {
-            await fetch(withBase('/api/auth/logout'), {
+            await fetch('/api/auth/logout', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers
@@ -154,12 +154,12 @@
 
         const current = normalizedPath();
         if (current === '/admin' || current === '/my-profile' || current === '/dashboard' || current === '/profile') {
-            window.location.href = withBase('/login');
+            window.location.href = '/login';
         }
     }
 
     async function refresh() {
-        // Render safe guest state first so admin links can never flash for unauthorized users
+        // Render safe guest state first so admin links never flash for unauthorized users
         renderMenus({ authenticated: false, user: null });
 
         const token = localStorage.getItem(TOKEN_KEY) || '';
@@ -169,7 +169,7 @@
         }
 
         try {
-            const res = await fetch(withBase('/api/auth/me'), {
+            const res = await fetch('/api/auth/me', {
                 method: 'GET',
                 credentials: 'same-origin',
                 cache: 'no-store',

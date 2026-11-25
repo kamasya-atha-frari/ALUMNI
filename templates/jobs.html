@@ -1,1451 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlumniIstü (ALUMNI) • Job Board &amp; Applications</title>
-    <title>AlumniIstü (ALUMNI) • Career Observatory &amp; Job Mandates</title>
+    <title>AlumniIstü (ALUMNI) • Executive Job Board &amp; Applications Pipeline</title>
+    <link rel="stylesheet" href="/css/app.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --color-navy: #14213D;
-            --color-cream: #F4EDE0;
-            --color-coral: #FF6B58;
-            --color-canvas: #14213D;
-            --color-surface: #1c2a4a;
-            --color-text-main: #F4EDE0;
-            --color-accent: #FF6B58;
-            --surface-onyx-canvas: #14213D;
-            --surface-graphite-card: #1c2a4a;
-            --surface-obsidian-button: #24355c;
-            --surface-deep-vault: #0f1a30;
-            --color-slate-border: rgba(244, 237, 224, 0.12);
-            --color-mist-border: rgba(244, 237, 224, 0.28);
-            --color-ash-text: rgba(244, 237, 224, 0.68);
-            --color-ivory-text: #F4EDE0;
-
-            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', serif;
-            --font-inter: 'Inter', sans-serif;
-
-            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', Georgia, serif;
-            --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-
-            --page-max-width: 1200px;
-            --section-gap: 96px;
-            --card-padding: 32px;
-            --radius-cards: 12px;
-            --radius-inputs: 32px;
-            --radius-buttons: 32px;
-            --radius-nav: 40px;
-            --radius-tags: 40px;
-            --radius-full: 9999px;
-            --radius-lg: 10px;
-            --page-max-width: 1216px;
-            --section-gap: 160px;
+        @keyframes auroraFloat {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(28px, -18px, 0) scale(1.06); }
         }
-
-        * {
-            box-sizing: border-box;
+        @keyframes pulseCoralBeacon {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.9); opacity: 0; }
         }
-
-        body {
-            background-color: var(--color-canvas);
-            color: var(--color-text-main);
-            background-color: var(--surface-onyx-canvas);
-            color: var(--color-ivory-text);
-            font-family: var(--font-inter);
-            font-size: 16px;
-            line-height: 1.5;
-            margin: 0;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+        .animate-aurora { animation: auroraFloat 16s ease-in-out infinite; }
+        .beacon-ring { transform-origin: center; animation: pulseCoralBeacon 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
-
-        .page-container {
-            max-width: var(--page-max-width);
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 24px;
-            padding-right: 24px;
+        .modal-card {
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background-color: #1c2a4a;
+            border: 1px solid rgba(244, 237, 224, 0.20);
+            border-radius: 16px;
+            padding: 28px;
         }
-
-        .section-stack {
-            display: flex;
-            flex-direction: column;
-            gap: var(--section-gap);
-            padding-top: 80px;
-            padding-bottom: 120px;
-
-            @keyframes auroraFloat {
-
-                0%,
-                100% {
-                    transform: translate3d(0, 0, 0) scale(1);
-                }
-
-                33% {
-                    transform: translate3d(30px, -20px, 0) scale(1.06);
-                }
-
-                66% {
-                    transform: translate3d(-20px, 18px, 0) scale(0.96);
-                }
-            }
-
-            .heading-hero {
-                @keyframes pulseCoralBeacon {
-
-                    0%,
-                    100% {
-                        transform: scale(1);
-                        opacity: 1;
-                    }
-
-                    50% {
-                        transform: scale(1.9);
-                        opacity: 0;
-                    }
-                }
-
-                @keyframes fadeUpReveal {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-
-                .animate-aurora-1 {
-                    animation: auroraFloat 15s ease-in-out infinite;
-                }
-
-                .animate-aurora-2 {
-                    animation: auroraFloat 19s ease-in-out infinite reverse;
-                }
-
-                .beacon-ring {
-                    transform-origin: center;
-                    animation: pulseCoralBeacon 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-                }
-
-                .reveal-item {
-                    opacity: 0;
-                    animation: fadeUpReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-                }
-
-                .mercury-display {
-                    font-family: var(--font-ivy-presto);
-                    font-weight: 400;
-                    font-size: clamp(2.35rem, 4.2vw, 3.5rem);
-                    line-height: 1.14;
-                    letter-spacing: 0.02em;
-                    color: var(--color-cream);
-                    font-size: clamp(2.5rem, 5vw, 3.75rem);
-                    line-height: 1.1;
-                    letter-spacing: 0.012em;
-                    color: var(--color-ivory-text);
-                }
-
-                .heading-section {
-                    .mercury-heading-lg {
-                        font-family: var(--font-ivy-presto);
-                        font-weight: 500;
-                        font-size: clamp(1.75rem, 2.8vw, 2.25rem);
-                        line-height: 1.22;
-                        letter-spacing: 0.018em;
-                        color: var(--color-cream);
-                        font-weight: 400;
-                        font-size: clamp(1.85rem, 3.2vw, 2.5rem);
-                        line-height: 1.15;
-                        letter-spacing: 0.012em;
-                        color: var(--color-ivory-text);
-                    }
-
-                    .surface-card {
-                        background-color: var(--color-surface);
-                        border: 1px solid rgba(244, 237, 224, 0.14);
-                        border-radius: var(--radius-lg);
-                        box-shadow: none;
-                        transition: border-color 0.2s ease;
-
-                        .mercury-heading-sm {
-                            font-family: var(--font-ivy-presto);
-                            font-weight: 400;
-                            font-size: 1.65rem;
-                            line-height: 1.2;
-                            letter-spacing: 0.015em;
-                            color: var(--color-ivory-text);
-                        }
-
-                        .surface-card:hover {
-                            border-color: rgba(244, 237, 224, 0.32);
-
-                            .mercury-card {
-                                background-color: var(--surface-graphite-card);
-                                border-radius: var(--radius-cards);
-                                padding: var(--card-padding);
-                                border: 1px solid var(--color-slate-border);
-                                transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, border-color 0.3s ease;
-                            }
-
-                            .surface-navy-card {
-                                background-color: var(--color-navy);
-                                border: 1px solid rgba(244, 237, 224, 0.14);
-                                border-radius: var(--radius-lg);
-                                box-shadow: none;
-
-                                .mercury-card-interactive:hover {
-                                    transform: translateY(-5px);
-                                    background-color: #213156;
-                                    border-color: var(--color-mist-border);
-                                }
-
-                                .btn-primary-coral {
-                                    .mercury-card-vault {
-                                        background-color: var(--surface-deep-vault);
-                                        border-radius: var(--radius-cards);
-                                        padding: 20px;
-                                        border: 1px solid var(--color-slate-border);
-                                    }
-
-                                    .mercury-btn-coral {
-                                        background-color: var(--color-coral);
-                                        color: var(--color-cream);
-                                        border: 1px solid var(--color-coral);
-                                        border-radius: var(--radius-full);
-                                        padding: 10px 20px;
-                                        color: var(--color-ivory-text);
-                                        font-family: var(--font-inter);
-                                        font-size: 15px;
-                                        font-weight: 500;
-                                        font-size: 0.875rem;
-                                        box-shadow: none;
-                                        transition: opacity 0.2s ease, box-shadow 0.2s ease;
-                                        border-radius: var(--radius-buttons);
-                                        padding: 12px 24px;
-                                        border: none;
-                                        cursor: pointer;
-                                        display: inline-flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        gap: 8px;
-                                        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
-                                    }
-
-                                    .btn-primary-coral:hover {
-                                        opacity: 0.92;
-                                        box-shadow: 0 0 18px rgba(255, 107, 88, 0.35);
-
-                                        .mercury-btn-coral:hover {
-                                            transform: translateY(-1.5px);
-                                            background-color: #ff7e6d;
-                                        }
-
-                                        .btn-ghost-cream {
-                                            .mercury-btn-ghost {
-                                                background-color: transparent;
-                                                color: var(--color-cream);
-                                                border: 1px solid var(--color-cream);
-                                                border-radius: var(--radius-full);
-                                                padding: 10px 20px;
-                                                color: var(--color-ivory-text);
-                                                font-family: var(--font-inter);
-                                                font-size: 14px;
-                                                font-weight: 400;
-                                                font-size: 0.875rem;
-                                                box-shadow: none;
-                                                transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-                                                border: 1px solid var(--color-mist-border);
-                                                border-radius: var(--radius-nav);
-                                                padding: 10px 22px;
-                                                cursor: pointer;
-                                                display: inline-flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                gap: 8px;
-                                                transition: all 0.25s ease;
-                                            }
-
-                                            .btn-ghost-cream:hover,
-                                            .btn-ghost-cream.active {
-                                                background-color: rgba(244, 237, 224, 0.08);
-
-                                                .mercury-btn-ghost:hover,
-                                                .mercury-btn-ghost.active {
-                                                    border-color: var(--color-coral);
-                                                    color: var(--color-coral);
-                                                    background-color: rgba(255, 107, 88, 0.08);
-                                                }
-
-                                                .input-pill-cream {
-                                                    background-color: rgba(20, 33, 61, 0.75);
-                                                    color: var(--color-cream);
-                                                    border: 1px solid rgba(244, 237, 224, 0.28);
-                                                    border-radius: var(--radius-full);
-                                                    padding: 10px 20px;
-
-                                                    .mercury-btn-obsidian {
-                                                        background-color: var(--surface-obsidian-button);
-                                                        color: var(--color-ivory-text);
-                                                        font-family: var(--font-inter);
-                                                        font-size: 0.875rem;
-                                                        box-shadow: none;
-                                                        transition: border-color 0.2s ease;
-                                                        font-size: 13px;
-                                                        font-weight: 400;
-                                                        border: 1px solid transparent;
-                                                        border-radius: var(--radius-tags);
-                                                        padding: 8px 16px;
-                                                        cursor: pointer;
-                                                        transition: all 0.2s ease;
-                                                    }
-
-                                                    .input-pill-cream::placeholder {
-                                                        color: rgba(244, 237, 224, 0.50);
-
-                                                        .mercury-btn-obsidian:hover,
-                                                        .mercury-btn-obsidian.active {
-                                                            border-color: var(--color-coral);
-                                                            color: var(--color-coral);
-                                                        }
-
-                                                        .input-pill-cream:focus {
-                                                            .mercury-attached-input {
-                                                                background-color: rgba(15, 26, 48, 0.65);
-                                                                color: var(--color-ivory-text);
-                                                                border: 1px solid var(--color-ivory-text);
-                                                                border-right: none;
-                                                                border-radius: 32px 0 0 32px;
-                                                                padding: 13px 22px;
-                                                                font-family: var(--font-inter);
-                                                                font-size: 15px;
-                                                                outline: none;
-                                                                border-color: var(--color-coral);
-                                                            }
-
-                                                            .textarea-cream {
-                                                                background-color: rgba(20, 33, 61, 0.75);
-                                                                color: var(--color-cream);
-                                                                border: 1px solid rgba(244, 237, 224, 0.28);
-                                                                border-radius: var(--radius-lg);
-                                                                padding: 12px 18px;
-
-                                                                .mercury-attached-input::placeholder {
-                                                                    color: var(--color-ash-text);
-                                                                }
-
-                                                                .mercury-attached-input:focus {
-                                                                    border-color: var(--color-coral);
-                                                                }
-
-                                                                .mercury-attached-btn {
-                                                                    background-color: var(--color-coral);
-                                                                    color: var(--color-ivory-text);
-                                                                    border: 1px solid var(--color-coral);
-                                                                    border-radius: 0 32px 32px 0;
-                                                                    padding: 13px 26px;
-                                                                    font-family: var(--font-inter);
-                                                                    font-size: 0.875rem;
-                                                                    box-shadow: none;
-                                                                    font-size: 15px;
-                                                                    font-weight: 500;
-                                                                    cursor: pointer;
-                                                                    white-space: nowrap;
-                                                                }
-
-                                                                .textarea-cream:focus {
-                                                                    .mercury-input-pill {
-                                                                        background-color: var(--surface-deep-vault);
-                                                                        color: var(--color-ivory-text);
-                                                                        border: 1px solid var(--color-mist-border);
-                                                                        border-radius: var(--radius-inputs);
-                                                                        padding: 11px 20px;
-                                                                        font-family: var(--font-inter);
-                                                                        font-size: 14px;
-                                                                        outline: none;
-                                                                        border-color: var(--color-coral);
-                                                                        transition: border-color 0.2s ease;
-                                                                    }
-
-                                                                    .badge-pill {
-                                                                        border-radius: var(--radius-full);
-                                                                        padding: 4px 12px;
-                                                                        font-size: 0.75rem;
-                                                                        font-weight: 500;
-                                                                        border: 1px solid rgba(244, 237, 224, 0.2);
-                                                                        color: var(--color-cream);
-                                                                        background-color: rgba(20, 33, 61, 0.6);
-                                                                    }
-
-                                                                    .mercury-input-pill:focus {
-                                                                        border-color: var(--color-coral);
-                                                                    }
-
-                                                                    .badge-coral {
-                                                                        border-radius: var(--radius-full);
-                                                                        padding: 4px 12px;
-                                                                        font-size: 0.75rem;
-                                                                        font-weight: 500;
-                                                                        border: 1px solid rgba(255, 107, 88, 0.45);
-                                                                        color: var(--color-coral);
-                                                                        background-color: rgba(255, 107, 88, 0.12);
-
-                                                                        .mercury-textarea {
-                                                                            background-color: var(--surface-deep-vault);
-                                                                            color: var(--color-ivory-text);
-                                                                            border: 1px solid var(--color-mist-border);
-                                                                            border-radius: 16px;
-                                                                            padding: 12px 18px;
-                                                                            font-family: var(--font-inter);
-                                                                            font-size: 14px;
-                                                                            outline: none;
-                                                                        }
-
-                                                                        .nav-link {
-                                                                            position: relative;
-                                                                            padding-bottom: 6px;
-                                                                            color: rgba(244, 237, 224, 0.75);
-
-                                                                            .mercury-textarea:focus {
-                                                                                border-color: var(--color-coral);
-                                                                            }
-
-                                                                            .mercury-nav-pill {
-                                                                                color: var(--color-ash-text);
-                                                                                font-size: 15px;
-                                                                                font-weight: 400;
-                                                                                transition: color 0.2s ease;
-                                                                                border-radius: var(--radius-nav);
-                                                                                padding: 8px 18px;
-                                                                                transition: color 0.2s ease, background-color 0.2s ease;
-                                                                            }
-
-                                                                            .nav-link:hover,
-                                                                            .nav-link.active {
-                                                                                color: var(--color-cream);
-
-                                                                                .mercury-nav-pill:hover,
-                                                                                .mercury-nav-pill.active {
-                                                                                    color: var(--color-ivory-text);
-                                                                                    background-color: rgba(244, 237, 224, 0.08);
-                                                                                }
-
-                                                                                .nav-link.active::after {
-                                                                                    content: '';
-                                                                                    position: absolute;
-                                                                                    left: 0;
-                                                                                    right: 0;
-                                                                                    bottom: 0;
-                                                                                    height: 2px;
-                                                                                    background-color: var(--color-coral);
-                                                                                    border-radius: 2px;
-
-                                                                                    .mercury-avatar {
-                                                                                        width: 38px;
-                                                                                        height: 38px;
-                                                                                        border-radius: var(--radius-full);
-                                                                                        background-color: var(--surface-obsidian-button);
-                                                                                        border: 1px solid var(--color-mist-border);
-                                                                                        display: inline-flex;
-                                                                                        align-items: center;
-                                                                                        justify-content: center;
-                                                                                        font-size: 13px;
-                                                                                        font-weight: 500;
-                                                                                        color: var(--color-ivory-text);
-                                                                                        flex-shrink: 0;
-                                                                                    }
     </style>
 </head>
-
 <body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
 
-    <!-- Top Navigation Bar -->
-    <header class="border-b border-[#F4EDE0]/10 bg-[#14213D]/95 backdrop-blur-md sticky top-0 z-50">
-        <!-- Frosted Top Navigation -->
-        <header class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/80 backdrop-blur-xl">
-            <div class="page-container h-20 flex items-center justify-between">
-                <a href="/" class="flex items-center space-x-3">
-                    <div
-                        class="w-9 h-9 rounded-full bg-[#1c2a4a] border border-[#FF6B58] flex items-center justify-center text-[#FF6B58]">
-                        <i class="fa-solid fa-compass-drafting text-xs"></i>
-                        <a href="/" class="flex items-center space-x-3 group">
-                            <div
-                                class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/30 flex items-center justify-center relative">
-                                <span
-                                    class="w-4 h-4 rounded-full border-2 border-[#FF6B58] block group-hover:scale-110 transition-transform"></span>
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#F4EDE0] absolute"></span>
-                            </div>
-                            <div>
-                                <span class="text-xl tracking-wide text-[#F4EDE0]"
-                                    style="font-family: var(--font-ivy-presto); font-weight: 500; letter-spacing: 0.03em;">
-                                    <span class="text-xl tracking-wide text-[#F4EDE0]"
-                                        style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">
-                                        AlumniIstü
-                                    </span>
-                                    <span
-                                        class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/60 font-light">
-                                        <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/55">
-                                            Istanbul University • MIS
-                                        </span>
-                            </div>
-                        </a>
+    <header class="site-header">
+        <div class="page-container site-header-inner">
+            <a href="/" class="brand-link group">
+                <span class="brand-mark">
+                    <span class="brand-mark-ring group-hover:scale-110 transition-transform"></span>
+                    <span class="brand-mark-dot"></span>
+                </span>
+                <span>
+                    <span class="brand-title">AlumniIstü</span>
+                    <span class="brand-subtitle">Istanbul University • MIS</span>
+                </span>
+            </a>
 
-                        <nav class="hidden md:flex items-center space-x-8 text-sm">
-                            <a href="/" class="nav-link">Directory</a>
-                            <a href="/jobs" class="nav-link active">Job Board</a>
-                            <a href="/analytics" class="nav-link">Career Graph</a>
-                            <a href="/about" class="nav-link">Faculty</a>
-                            <a href="/swagger" class="nav-link">API Ledger</a>
-                            <nav class="hidden md:flex items-center space-x-1">
-                                <a href="/" class="mercury-nav-pill">Directory</a>
-                                <a href="/jobs" class="mercury-nav-pill active">Job Board</a>
-                                <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
-                                <a href="/about" class="mercury-nav-pill">Faculty</a>
-                                <a href="/swagger" class="mercury-nav-pill">API Docs</a>
-                            </nav>
+            <nav data-auth-nav-links class="flex flex-wrap items-center gap-1">
+                <a href="/" class="mercury-nav-pill">Directory</a>
+                <a href="/jobs" class="mercury-nav-pill active">Job Board</a>
+                <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
+                <a href="/about" class="mercury-nav-pill">Faculty</a>
+                <a href="/swagger" class="mercury-nav-pill">API Docs</a>
+            </nav>
 
-                            <div class="flex items-center space-x-3">
-                                <button onclick="openJobModal()" class="btn-primary-coral flex items-center gap-2">
-                                    <i class="fa-solid fa-plus text-xs"></i> Post Opportunity
-                                    <div class="flex items-center space-x-4">
-                                        <button onclick="openJobModal()" class="mercury-btn-coral">
-                                            <span>Publish Mandate</span>
-                                            <i class="fa-solid fa-plus text-xs"></i>
-                                        </button>
-                                    </div>
-                            </div>
-        </header>
+            <div class="header-right-group">
+                <div data-auth-nav-actions class="flex flex-wrap items-center gap-2"></div>
+            </div>
+        </div>
+    </header>
 
-        <main class="flex-grow page-container section-stack w-full">
-
-            <!-- SECTION 1: Hero & KPIs -->
-            <section class="surface-card p-8 md:p-14">
-                <div class="max-w-3xl space-y-5">
-                    <span class="badge-coral">
-                        <i class="fa-solid fa-briefcase mr-1"></i> CAREER CONCIERGE &amp; PLACEMENT
-                    </span>
-                    <h1 class="heading-hero">
-                        Graduate Career Mandates &amp; <br>
-                        <span class="italic text-[#FF6B58]">Application Pipeline</span>
-                    </h1>
-                    <p class="text-[#F4EDE0]/80 text-base font-light leading-relaxed">
-                        Curated technology career mandates published by Istanbul University Management Information
-                        Systems (MIS / YBS) alumni fellows and enterprise hiring partners.
-                    </p>
-                    <main class="flex-grow">
-                        <!-- Blue-Hour Hero with Aurora & Attached Search Form -->
-                        <section class="relative overflow-hidden pt-14 pb-16 border-b border-[#F4EDE0]/10">
-                            <div class="pointer-events-none absolute inset-0 overflow-hidden">
-                                <div
-                                    class="animate-aurora-1 absolute -top-24 left-1/3 w-[440px] h-[440px] rounded-full bg-[#FF6B58]/14 blur-[120px]">
-                                </div>
-                                <div
-                                    class="animate-aurora-2 absolute top-20 right-1/4 w-[480px] h-[480px] rounded-full bg-[#24355c]/55 blur-[125px]">
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 pt-8 border-t border-[#F4EDE0]/10">
-                                <div class="surface-navy-card p-5">
-                                    <p class="text-xs text-[#F4EDE0]/60 uppercase font-light">Active Postings</p>
-                                    <p id="stat-active-jobs" class="heading-section mt-1">--</p>
-                                    <div class="page-container relative z-10 space-y-10">
-                                        <div class="max-w-[680px] mx-auto text-center space-y-5">
-                                            <div
-                                                class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/20 text-xs text-[#F4EDE0]/90">
-                                                <span class="relative flex h-2 w-2">
-                                                    <span
-                                                        class="beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#FF6B58]"></span>
-                                                    <span
-                                                        class="relative inline-flex rounded-full h-2 w-2 bg-[#FF6B58]"></span>
-                                                </span>
-                                                <span>CAREER CONCIERGE &amp; PLACEMENT LEDGER</span>
-                                            </div>
-
-                                            <h1 class="mercury-display">
-                                                Curated career mandates &amp; <span
-                                                    class="italic text-[#FF6B58]">referral pipeline.</span>
-                                            </h1>
-
-                                            <p class="text-[#F4EDE0]/70 text-lg font-normal max-w-[540px] mx-auto">
-                                                Direct technology roles published by Istanbul University MIS alumni
-                                                fellows and enterprise partners.
-                                            </p>
-
-                                            <!-- Mercury Attached Search Input + Button -->
-                                            <div class="flex items-stretch justify-center max-w-[500px] mx-auto pt-2">
-                                                <input type="text" id="jobSearchInput" oninput="searchJobs(this.value)"
-                                                    placeholder="Search mandate title, company, or stack..."
-                                                    class="mercury-attached-input flex-grow">
-                                                <button type="button" onclick="openJobModal()"
-                                                    class="mercury-attached-btn">
-                                                    + Post Role
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="surface-navy-card p-5">
-                                            <p class="text-xs text-[#F4EDE0]/60 uppercase font-light">Hiring Companies
-                                            </p>
-                                            <p id="stat-companies" class="heading-section mt-1">--</p>
-
-                                            <!-- 4 Mercury Graphite KPI Cards -->
-                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-                                                <div class="mercury-card mercury-card-interactive !p-6">
-                                                    <p class="text-xs text-[#F4EDE0]/60 uppercase tracking-wider">Active
-                                                        Mandates</p>
-                                                    <p id="stat-active-jobs" class="mercury-heading-lg mt-2">--</p>
-                                                </div>
-                                                <div class="mercury-card mercury-card-interactive !p-6">
-                                                    <p class="text-xs text-[#F4EDE0]/60 uppercase tracking-wider">Hiring
-                                                        Enterprises</p>
-                                                    <p id="stat-companies" class="mercury-heading-lg mt-2">--</p>
-                                                </div>
-                                                <div class="mercury-card mercury-card-interactive !p-6">
-                                                    <p class="text-xs text-[#F4EDE0]/60 uppercase tracking-wider">
-                                                        Submitted Dossiers</p>
-                                                    <p id="stat-applications"
-                                                        class="mercury-heading-lg text-[#FF6B58] mt-2">--</p>
-                                                </div>
-                                                <div class="mercury-card mercury-card-interactive !p-6">
-                                                    <p class="text-xs text-[#F4EDE0]/60 uppercase tracking-wider">
-                                                        Placement Velocity</p>
-                                                    <p class="mercury-heading-lg mt-2">94.8%</p>
-                                                </div>
-                                            </div>
-                                            <div class="surface-navy-card p-5">
-                                                <p class="text-xs text-[#F4EDE0]/60 uppercase font-light">Applications
-                                                </p>
-                                                <p id="stat-applications" class="heading-section mt-1">--</p>
-                                            </div>
-                                            <div class="surface-navy-card p-5">
-                                                <p class="text-xs text-[#F4EDE0]/60 uppercase font-light">Placement
-                                                    Velocity</p>
-                                                <p class="heading-section text-[#FF6B58] mt-1">94.8%</p>
-                                            </div>
-                                        </div>
-                        </section>
-
-                        <!-- SECTION 2: Interactive Job Board & Applications Ledger -->
-                        <section class="space-y-8">
-                            <div
-                                class="flex flex-wrap items-center justify-between gap-4 border-b border-[#F4EDE0]/10 pb-5">
-                                <!-- Main Job Board & Applications Pipeline -->
-                                <div class="page-container py-16 space-y-8">
-                                    <div
-                                        class="flex flex-wrap items-center justify-between gap-4 border-b border-[#F4EDE0]/12 pb-5">
-                                        <div class="flex items-center gap-3">
-                                            <button id="btnTabJobs" onclick="switchTab('jobs')"
-                                                class="btn-primary-coral flex items-center gap-2">
-                                                <i class="fa-solid fa-list-check"></i> Job Postings
-                                                <button id="btnTabJobs" onclick="switchTab('jobs')"
-                                                    class="mercury-btn-coral !py-2.5 !px-6 !text-sm">
-                                                    <i class="fa-solid fa-list-check"></i> Open Positions
-                                                </button>
-                                                <button id="btnTabApps" onclick="switchTab('apps')"
-                                                    class="btn-ghost-cream flex items-center gap-2">
-                                                    <i class="fa-solid fa-file-signature"></i> Applications
-                                                    <span id="apps-count-pill" class="badge-coral ml-1">0</span>
-                                                    <button id="btnTabApps" onclick="switchTab('apps')"
-                                                        class="mercury-btn-ghost !py-2.5 !px-6 !text-sm">
-                                                        <i class="fa-solid fa-file-signature"></i> Candidate Dossiers
-                                                        <span id="apps-count-pill"
-                                                            class="px-2.5 py-0.5 rounded-full text-xs bg-[#FF6B58]/20 text-[#FF6B58] ml-1">0</span>
-                                                    </button>
-                                        </div>
-
-                                        <button onclick="refreshData()" class="btn-ghost-cream flex items-center gap-2"
-                                            title="Refresh">
-                                            <i class="fa-solid fa-arrow-rotate-right"></i> Sync
-                                            <button onclick="refreshData()"
-                                                class="mercury-btn-obsidian flex items-center gap-2">
-                                                <i class="fa-solid fa-arrow-rotate-right"></i> Sync Ledger
-                                            </button>
-                                    </div>
-
-                                    <!-- VIEW 1: JOB POSTINGS BOARD -->
-                                    <div id="viewJobs" class="space-y-6">
-                                        <div
-                                            class="surface-card p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
-                                            <div class="flex flex-wrap gap-2.5 w-full md:w-auto">
-                                                <button onclick="filterType(null, this)"
-                                                    class="type-filter-btn btn-ghost-cream active">All
-                                                    Modalities</button>
-                                                <button onclick="filterType('full-time', this)"
-                                                    class="type-filter-btn btn-ghost-cream">Full-Time</button>
-                                                <button onclick="filterType('remote', this)"
-                                                    class="type-filter-btn btn-ghost-cream">Remote</button>
-                                                <button onclick="filterType('internship', this)"
-                                                    class="type-filter-btn btn-ghost-cream">Internship</button>
-                                            </div>
-
-                                            <div class="w-full md:w-80 relative">
-                                                <i
-                                                    class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-[#F4EDE0]/45 text-xs"></i>
-                                                <input type="text" id="jobSearchInput" oninput="searchJobs(this.value)"
-                                                    placeholder="Search role, company, skill..."
-                                                    class="input-pill-cream w-full pl-10">
-                                            </div>
-                                            <div class="flex flex-wrap items-center gap-2">
-                                                <button onclick="filterType(null, this)"
-                                                    class="type-filter-btn mercury-btn-obsidian active">All
-                                                    Modalities</button>
-                                                <button onclick="filterType('full-time', this)"
-                                                    class="type-filter-btn mercury-btn-obsidian">Full-Time</button>
-                                                <button onclick="filterType('remote', this)"
-                                                    class="type-filter-btn mercury-btn-obsidian">Remote</button>
-                                                <button onclick="filterType('internship', this)"
-                                                    class="type-filter-btn mercury-btn-obsidian">Internship</button>
-                                            </div>
-
-                                            <div id="jobsGrid"
-                                                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                                <div
-                                                    class="col-span-full surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">
-                                                    Loading job postings...</div>
-                                                <div
-                                                    class="col-span-full mercury-card text-center text-[#F4EDE0]/60 py-14">
-                                                    Loading career mandates...</div>
-                                            </div>
-                                        </div>
-
-                                        <!-- VIEW 2: APPLICATIONS PIPELINE -->
-                                        <div id="viewApps" class="space-y-6 hidden">
-                                            <div
-                                                class="surface-card p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
-                                                <div class="flex flex-wrap gap-2.5">
-                                                    <button onclick="filterAppStatus(null, this)"
-                                                        class="app-status-btn btn-ghost-cream active">All
-                                                        Statuses</button>
-                                                    <button onclick="filterAppStatus('submitted', this)"
-                                                        class="app-status-btn btn-ghost-cream">Submitted</button>
-                                                    <button onclick="filterAppStatus('under_review', this)"
-                                                        class="app-status-btn btn-ghost-cream">Under Review</button>
-                                                    <button onclick="filterAppStatus('interview', this)"
-                                                        class="app-status-btn btn-ghost-cream">Interview</button>
-                                                    <button onclick="filterAppStatus('accepted', this)"
-                                                        class="app-status-btn btn-ghost-cream">Accepted</button>
-                                                    <div
-                                                        class="mercury-card !p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
-                                                        <div class="flex flex-wrap gap-2">
-                                                            <button onclick="filterAppStatus(null, this)"
-                                                                class="app-status-btn mercury-btn-obsidian active">All
-                                                                Statuses</button>
-                                                            <button onclick="filterAppStatus('submitted', this)"
-                                                                class="app-status-btn mercury-btn-obsidian">Submitted</button>
-                                                            <button onclick="filterAppStatus('under_review', this)"
-                                                                class="app-status-btn mercury-btn-obsidian">Under
-                                                                Review</button>
-                                                            <button onclick="filterAppStatus('interview', this)"
-                                                                class="app-status-btn mercury-btn-obsidian">Interview</button>
-                                                            <button onclick="filterAppStatus('accepted', this)"
-                                                                class="app-status-btn mercury-btn-obsidian">Accepted</button>
-                                                        </div>
-                                                        <span class="text-xs text-[#F4EDE0]/60 font-light">Status
-                                                            changes persist immediately</span>
-                                                        <span class="text-xs text-[#F4EDE0]/60">State transitions
-                                                            persist immediately via PATCH</span>
-                                                    </div>
-
-                                                    <div id="appsContainer" class="space-y-4">
-                                                        <div
-                                                            class="surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">
-                                                            Loading applications...</div>
-                                                        <div class="mercury-card text-center text-[#F4EDE0]/60 py-14">
-                                                            Loading candidate dossiers...</div>
-                                                    </div>
-                                                </div>
-                        </section>
-                </div>
-        </main>
-
-        <!-- MODAL: POST NEW JOB -->
-        <div id="jobModal"
-            class="fixed inset-0 z-50 hidden bg-[#14213D]/85 backdrop-blur-sm flex items-center justify-center p-4">
-            <div class="surface-card max-w-xl w-full p-8 space-y-5 max-h-[90vh] overflow-y-auto">
-                <div class="flex items-center justify-between pb-4 border-b border-[#F4EDE0]/10">
-                    <div id="jobModal"
-                        class="fixed inset-0 z-50 hidden bg-[#0f1a30]/85 backdrop-blur-md flex items-center justify-center p-4">
-                        <div class="mercury-card max-w-xl w-full space-y-5 max-h-[90vh] overflow-y-auto">
-                            <div class="flex items-center justify-between pb-4 border-b border-[#F4EDE0]/12">
-                                <div>
-                                    <span class="badge-coral">EMPLOYER CONCIERGE</span>
-                                    <h3 class="heading-section mt-2">Publish Opportunity</h3>
-                                    <span class="text-xs uppercase tracking-widest text-[#FF6B58]">EMPLOYER
-                                        CONCIERGE</span>
-                                    <h3 class="mercury-heading-sm mt-1">Publish Career Mandate</h3>
-                                </div>
-                                <button onclick="closeJobModal()" class="btn-ghost-cream !px-3.5 !py-2"><i
-                                        class="fa-solid fa-xmark"></i></button>
-                                <button onclick="closeJobModal()" class="mercury-btn-obsidian !px-3 !py-1.5"><i
-                                        class="fa-solid fa-xmark"></i></button>
-                            </div>
-
-                            <form id="jobForm" onsubmit="handleJobSubmit(event)" class="space-y-4">
-                                <div>
-                                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Job Title *</label>
-                                    <input type="text" id="jobTitle" required
-                                        placeholder="e.g. Senior Cloud & Data Engineer" class="input-pill-cream w-full">
-                                    <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Job Title *</label>
-                                    <input type="text" id="jobTitle" required
-                                        placeholder="e.g. Senior Cloud & Data Engineer"
-                                        class="mercury-input-pill w-full">
-                                </div>
-
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                                    <div>
-                                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Company Name *</label>
-                                        <input type="text" id="jobCompanyName" required
-                                            placeholder="e.g. Trendyol Group" class="input-pill-cream w-full">
-                                        <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Company Name *</label>
-                                        <input type="text" id="jobCompanyName" required
-                                            placeholder="e.g. Trendyol Group" class="mercury-input-pill w-full">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Location</label>
-                                        <input type="text" id="jobLocation" placeholder="e.g. Istanbul, Turkey"
-                                            class="input-pill-cream w-full">
-                                        <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Location</label>
-                                        <input type="text" id="jobLocation" placeholder="e.g. Istanbul, Turkey"
-                                            class="mercury-input-pill w-full">
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                                    <div>
-                                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Employment Type</label>
-                                        <select id="jobType" class="input-pill-cream w-full">
-                                            <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Employment
-                                                Type</label>
-                                            <select id="jobType" class="mercury-input-pill w-full">
-                                                <option value="full-time">Full-Time</option>
-                                                <option value="remote">Remote</option>
-                                                <option value="internship">Internship</option>
-                                                <option value="part-time">Part-Time</option>
-                                                <option value="contract">Contract</option>
-                                            </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Experience</label>
-                                        <select id="jobExp" class="input-pill-cream w-full">
-                                            <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Seniority</label>
-                                            <select id="jobExp" class="mercury-input-pill w-full">
-                                                <option value="Entry">Entry-Level</option>
-                                                <option value="Mid-Level" selected>Mid-Level</option>
-                                                <option value="Senior">Senior</option>
-                                                <option value="Lead">Lead / Architect</option>
-                                            </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Salary Band</label>
-                                        <input type="text" id="jobSalary" placeholder="₺75,000 - ₺110,000"
-                                            class="input-pill-cream w-full">
-                                        <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Salary Band</label>
-                                        <input type="text" id="jobSalary" placeholder="₺75,000 - ₺110,000"
-                                            class="mercury-input-pill w-full">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Description *</label>
-                                    <textarea id="jobDesc" rows="3" required
-                                        placeholder="Describe core deliverables and team mission..."
-                                        class="textarea-cream w-full"></textarea>
-                                    <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Description *</label>
-                                    <textarea id="jobDesc" rows="3" required
-                                        placeholder="Describe core deliverables and architecture mission..."
-                                        class="mercury-textarea w-full"></textarea>
-                                </div>
-
-                                <div>
-                                    <label class="block text-xs text-[#F4EDE0]/80 mb-1.5">Requirements</label>
-                                    <textarea id="jobReq" rows="2"
-                                        placeholder="Required degrees, technical competencies..."
-                                        class="textarea-cream w-full"></textarea>
-                                    <label class="block text-xs text-[#F4EDE0]/75 mb-1.5">Qualifications</label>
-                                    <textarea id="jobReq" rows="2"
-                                        placeholder="Required degrees, technical competencies..."
-                                        class="mercury-textarea w-full"></textarea>
-                                </div>
-
-                                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-[#F4EDE0]/10">
-                                    <button type="button" onclick="closeJobModal()"
-                                        class="btn-ghost-cream">Cancel</button>
-                                    <button type="submit" class="btn-primary-coral">Publish Opportunity</button>
-                                    <div
-                                        class="flex items-center justify-end space-x-3 pt-4 border-t border-[#F4EDE0]/12">
-                                        <button type="button" onclick="closeJobModal()"
-                                            class="mercury-btn-ghost !py-2.5 !px-5 !text-xs">Cancel</button>
-                                        <button type="submit" class="mercury-btn-coral !py-2.5 !px-6 !text-xs">Publish
-                                            Mandate</button>
-                                    </div>
-                            </form>
-                        </div>
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden py-14 border-b border-[#F4EDE0]/10">
+            <div class="pointer-events-none absolute inset-0 overflow-hidden">
+                <div class="animate-aurora absolute -top-24 right-1/4 w-[440px] h-[440px] rounded-full bg-[#FF6B58]/14 blur-[120px]"></div>
+            </div>
+            <div class="page-container relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div class="space-y-4 max-w-2xl">
+                    <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/20 text-xs text-[#F4EDE0]/90">
+                        <span class="relative flex h-2 w-2">
+                            <span class="beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#FF6B58]"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#FF6B58]"></span>
+                        </span>
+                        <span>CAREER MANDATES &amp; CANDIDATE PIPELINE</span>
                     </div>
+                    <h1 class="mercury-display">
+                        Executive <span class="italic text-[#FF6B58]">Job Board</span>
+                    </h1>
+                    <p class="text-[#F4EDE0]/70 text-base">
+                        Explore active opportunities shared by Istanbul University MIS alumni and manage live candidate applications via REST API v1.
+                    </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button type="button" onclick="refreshData()" class="mercury-btn-ghost">
+                        <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                        <span>Refresh</span>
+                    </button>
+                    <button type="button" onclick="openJobModal()" class="mercury-btn-coral">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span>Post Mandate</span>
+                    </button>
+                </div>
+            </div>
+        </section>
 
-                    <!-- MODAL: VIEW JOB DETAILS & DIRECT APPLY -->
-                    <div id="detailModal"
-                        class="fixed inset-0 z-50 hidden bg-[#14213D]/85 backdrop-blur-sm flex items-center justify-center p-4">
-                        <div class="surface-card max-w-2xl w-full p-8 space-y-5 max-h-[90vh] overflow-y-auto">
-                            <div class="flex items-start justify-between pb-4 border-b border-[#F4EDE0]/10">
-                                <div id="detailModal"
-                                    class="fixed inset-0 z-50 hidden bg-[#0f1a30]/85 backdrop-blur-md flex items-center justify-center p-4">
-                                    <div class="mercury-card max-w-2xl w-full space-y-5 max-h-[90vh] overflow-y-auto">
-                                        <div class="flex items-start justify-between pb-4 border-b border-[#F4EDE0]/12">
-                                            <div>
-                                                <span id="detailBadge" class="badge-coral uppercase">FULL-TIME</span>
-                                                <h2 id="detailTitle" class="heading-section mt-2">Senior Cloud &amp;
-                                                    Data Engineer</h2>
-                                                <span id="detailBadge"
-                                                    class="px-3 py-1 rounded-full text-xs bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/40 uppercase">FULL-TIME</span>
-                                                <h2 id="detailTitle" class="mercury-heading-sm mt-2">Senior Cloud &amp;
-                                                    Data Engineer</h2>
-                                                <p id="detailCompany" class="text-xs text-[#F4EDE0]/70 mt-1"></p>
-                                            </div>
-                                            <button onclick="closeDetailModal()"
-                                                class="btn-ghost-cream !px-3.5 !py-2"><i
-                                                    class="fa-solid fa-xmark"></i></button>
-                                            <button onclick="closeDetailModal()"
-                                                class="mercury-btn-obsidian !px-3 !py-1.5"><i
-                                                    class="fa-solid fa-xmark"></i></button>
-                                        </div>
+        <div class="page-container py-10 space-y-8">
+            <!-- KPI Strip -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="mercury-card">
+                    <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/55 block">Active Job Postings</span>
+                    <span id="stat-active-jobs" class="text-4xl font-normal text-[#F4EDE0] mt-2 block" style="font-family: var(--font-ivy-presto);">0</span>
+                </div>
+                <div class="mercury-card">
+                    <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/55 block">Hiring Partners</span>
+                    <span id="stat-companies" class="text-4xl font-normal text-[#FF6B58] mt-2 block" style="font-family: var(--font-ivy-presto);">0</span>
+                </div>
+                <div class="mercury-card">
+                    <span class="text-xs uppercase tracking-widest text-[#F4EDE0]/55 block">Submitted Applications</span>
+                    <span id="stat-applications" class="text-4xl font-normal text-[#F4EDE0] mt-2 block" style="font-family: var(--font-ivy-presto);">0</span>
+                </div>
+            </div>
 
-                                        <div class="grid grid-cols-3 gap-3 surface-navy-card p-4 text-xs">
-                                            <div class="grid grid-cols-3 gap-3 mercury-card-vault text-xs">
-                                                <div>
-                                                    <span class="text-[#F4EDE0]/55 block">Experience</span>
-                                                    <span id="detailExp"
-                                                        class="font-medium text-[#F4EDE0] mt-0.5 block">Senior</span>
-                                                </div>
-                                                <div>
-                                                    <span class="text-[#F4EDE0]/55 block">Salary Range</span>
-                                                    <span class="text-[#F4EDE0]/55 block">Compensation</span>
-                                                    <span id="detailSalary"
-                                                        class="font-medium text-[#FF6B58] mt-0.5 block">₺95,000 -
-                                                        ₺130,000</span>
-                                                </div>
-                                                <div>
-                                                    <span class="text-[#F4EDE0]/55 block">Applications</span>
-                                                    <span id="detailAppsCount"
-                                                        class="font-medium text-[#F4EDE0] mt-0.5 block">3
-                                                        Received</span>
-                                                </div>
-                                            </div>
+            <!-- Section Tabs & Search -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#F4EDE0]/12 pb-4">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button id="btnTabJobs" type="button" onclick="switchTab('jobs')" class="tab-btn active">
+                        <i class="fa-solid fa-briefcase text-xs"></i>
+                        <span>Job Postings</span>
+                    </button>
+                    <button id="btnTabApps" type="button" onclick="switchTab('applications')" class="tab-btn">
+                        <i class="fa-solid fa-inbox text-xs"></i>
+                        <span>Applications Pipeline</span>
+                        <span id="apps-count-pill" class="px-2 py-0.5 rounded-full text-[11px] bg-[#0f1a30] border border-[#F4EDE0]/15 text-[#F4EDE0]">0</span>
+                    </button>
+                </div>
 
-                                            <div class="space-y-1.5 text-sm font-light">
-                                                <h4
-                                                    class="text-xs uppercase tracking-wider text-[#F4EDE0]/60 font-medium">
-                                                    Role Description</h4>
-                                                <div class="space-y-1.5 text-sm">
-                                                    <h4 class="text-xs uppercase tracking-wider text-[#F4EDE0]/60">Role
-                                                        Charter</h4>
-                                                    <p id="detailDesc" class="text-[#F4EDE0]/85 leading-relaxed"></p>
-                                                </div>
+                <div class="w-full md:w-72">
+                    <input
+                        id="jobSearchInput"
+                        type="search"
+                        oninput="searchJobs(this.value)"
+                        placeholder="Filter by title, company, or skill..."
+                        class="mercury-input-pill"
+                    >
+                </div>
+            </div>
 
-                                                <div class="space-y-1.5 text-sm font-light">
-                                                    <h4
-                                                        class="text-xs uppercase tracking-wider text-[#F4EDE0]/60 font-medium">
-                                                        Qualifications</h4>
-                                                    <div class="space-y-1.5 text-sm">
-                                                        <h4 class="text-xs uppercase tracking-wider text-[#F4EDE0]/60">
-                                                            Qualifications</h4>
-                                                        <p id="detailReq" class="text-[#F4EDE0]/85 leading-relaxed"></p>
-                                                    </div>
+            <!-- JOBS PANEL -->
+            <section id="tabJobs" class="space-y-6">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="filterType('', this)" class="type-filter-btn mercury-btn-obsidian active">All Roles</button>
+                    <button type="button" onclick="filterType('full-time', this)" class="type-filter-btn mercury-btn-obsidian">Full-Time</button>
+                    <button type="button" onclick="filterType('remote', this)" class="type-filter-btn mercury-btn-obsidian">Remote</button>
+                    <button type="button" onclick="filterType('internship', this)" class="type-filter-btn mercury-btn-obsidian">Internship</button>
+                    <button type="button" onclick="filterType('part-time', this)" class="type-filter-btn mercury-btn-obsidian">Part-Time</button>
+                    <button type="button" onclick="filterType('contract', this)" class="type-filter-btn mercury-btn-obsidian">Contract</button>
+                </div>
 
-                                                    <div class="surface-navy-card p-6 space-y-4">
-                                                        <div class="mercury-card-vault space-y-4">
-                                                            <h4
-                                                                class="text-sm font-medium text-[#F4EDE0] flex items-center gap-2">
-                                                                <i class="fa-solid fa-paper-plane text-[#FF6B58]"></i>
-                                                                Submit Application
-                                                                <i class="fa-solid fa-paper-plane text-[#FF6B58]"></i>
-                                                                Submit Candidate Dossier
-                                                            </h4>
+                <div id="jobsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="mercury-card text-sm text-[#F4EDE0]/60">Loading job postings...</div>
+                </div>
+            </section>
 
-                                                            <form id="applyForm"
-                                                                onsubmit="handleApplicationSubmit(event)"
-                                                                class="space-y-3.5">
-                                                                <input type="hidden" id="applyJobId" value="">
+            <!-- APPLICATIONS PANEL -->
+            <section id="tabApps" class="hidden space-y-6">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="filterAppStatus('', this)" class="app-status-btn mercury-btn-obsidian active">All</button>
+                    <button type="button" onclick="filterAppStatus('submitted', this)" class="app-status-btn mercury-btn-obsidian">Submitted</button>
+                    <button type="button" onclick="filterAppStatus('under_review', this)" class="app-status-btn mercury-btn-obsidian">Under Review</button>
+                    <button type="button" onclick="filterAppStatus('interview', this)" class="app-status-btn mercury-btn-obsidian">Interview</button>
+                    <button type="button" onclick="filterAppStatus('accepted', this)" class="app-status-btn mercury-btn-obsidian">Accepted</button>
+                    <button type="button" onclick="filterAppStatus('rejected', this)" class="app-status-btn mercury-btn-obsidian">Rejected</button>
+                </div>
 
-                                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                                    <div>
-                                                                        <label
-                                                                            class="block text-xs text-[#F4EDE0]/75 mb-1">Full
-                                                                            Name *</label>
-                                                                        <input type="text" id="applyName" required
-                                                                            placeholder="e.g. Zeynep Aydın"
-                                                                            class="input-pill-cream w-full">
-                                                                        <input type="text" id="applyName" required
-                                                                            placeholder="e.g. Zeynep Aydın"
-                                                                            class="mercury-input-pill w-full">
-                                                                    </div>
-                                                                    <div>
-                                                                        <label
-                                                                            class="block text-xs text-[#F4EDE0]/75 mb-1">Email
-                                                                            Address *</label>
-                                                                        <input type="email" id="applyEmail" required
-                                                                            placeholder="zeynep.aydin@ogr.iu.edu.tr"
-                                                                            class="input-pill-cream w-full">
-                                                                        <input type="email" id="applyEmail" required
-                                                                            placeholder="zeynep.aydin@ogr.iu.edu.tr"
-                                                                            class="mercury-input-pill w-full">
-                                                                    </div>
-                                                                </div>
+                <div id="appsContainer" class="space-y-4">
+                    <div class="mercury-card text-sm text-[#F4EDE0]/60">Loading applications...</div>
+                </div>
+            </section>
+        </div>
+    </main>
 
-                                                                <div>
-                                                                    <label
-                                                                        class="block text-xs text-[#F4EDE0]/75 mb-1">Resume
-                                                                        / Portfolio URL</label>
-                                                                    <input type="url" id="applyResume"
-                                                                        placeholder="https://linkedin.com/in/your-profile"
-                                                                        class="input-pill-cream w-full">
-                                                                    <input type="url" id="applyResume"
-                                                                        placeholder="https://linkedin.com/in/your-profile"
-                                                                        class="mercury-input-pill w-full">
-                                                                </div>
+    <!-- POST JOB MODAL -->
+    <div id="jobModal" class="hidden modal-backdrop">
+        <div class="modal-card space-y-6">
+            <div class="flex items-center justify-between border-b border-[#F4EDE0]/12 pb-4">
+                <div>
+                    <h2 class="mercury-heading-sm">Publish New Job Mandate</h2>
+                    <p class="text-xs text-[#F4EDE0]/60 mt-1">Creates a posting via <code class="text-[#FF6B58]">POST /api/v1/job-postings</code></p>
+                </div>
+                <button type="button" onclick="closeJobModal()" class="mercury-btn-ghost !px-3 !py-1.5" aria-label="Close modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
-                                                                <div>
-                                                                    <label
-                                                                        class="block text-xs text-[#F4EDE0]/75 mb-1">Cover
-                                                                        Note</label>
-                                                                    <textarea id="applyLetter" rows="2"
-                                                                        placeholder="Highlight relevant coursework or domain experience..."
-                                                                        class="textarea-cream w-full"></textarea>
-                                                                    <textarea id="applyLetter" rows="2"
-                                                                        placeholder="Highlight relevant MIS coursework or engineering projects..."
-                                                                        class="mercury-textarea w-full"></textarea>
-                                                                </div>
+            <form id="jobForm" onsubmit="handleJobSubmit(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="jobTitle" class="block text-xs text-[#F4EDE0]/75 mb-1">Role Title *</label>
+                        <input id="jobTitle" type="text" required placeholder="Senior Backend Engineer" class="field-input">
+                    </div>
+                    <div>
+                        <label for="jobCompanyName" class="block text-xs text-[#F4EDE0]/75 mb-1">Company *</label>
+                        <input id="jobCompanyName" type="text" required placeholder="Trendyol Group" class="field-input">
+                    </div>
+                </div>
 
-                                                                <div class="flex justify-end pt-1">
-                                                                    <button type="submit" class="btn-primary-coral">
-                                                                        Submit Application →
-                                                                        <button type="submit"
-                                                                            class="mercury-btn-coral !py-2.5 !px-6 !text-xs">
-                                                                            Transmit Application →
-                                                                        </button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label for="jobLocation" class="block text-xs text-[#F4EDE0]/75 mb-1">Location</label>
+                        <input id="jobLocation" type="text" placeholder="Istanbul / Hybrid" class="field-input">
+                    </div>
+                    <div>
+                        <label for="jobType" class="block text-xs text-[#F4EDE0]/75 mb-1">Job Type</label>
+                        <select id="jobType" class="field-input">
+                            <option value="full-time">Full-Time</option>
+                            <option value="remote">Remote</option>
+                            <option value="internship">Internship</option>
+                            <option value="part-time">Part-Time</option>
+                            <option value="contract">Contract</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="jobExp" class="block text-xs text-[#F4EDE0]/75 mb-1">Experience Level</label>
+                        <input id="jobExp" type="text" placeholder="Mid / Senior" class="field-input">
+                    </div>
+                </div>
 
-                                                <footer class="border-t border-[#F4EDE0]/10 py-10 mt-auto">
-                                                    <div
-                                                        class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60 font-light">
-                                                        <span>© 2026 <strong
-                                                                class="text-[#F4EDE0] font-medium">AlumniIstü
-                                                                (ALUMNI)</strong> • Career Concierge</span>
-                                                        <span>Navy <code class="text-[#F4EDE0]">#14213D</code> • Cream
-                                                            <code class="text-[#F4EDE0]">#F4EDE0</code> • Coral <code
-                                                                class="text-[#FF6B58]">#FF6B58</code></span>
-                                                        <footer
-                                                            class="border-t border-[#F4EDE0]/12 bg-[#0f1a30]/70 py-10 mt-auto">
-                                                            <div
-                                                                class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60">
-                                                                <span>© 2026 <strong class="text-[#F4EDE0]">AlumniIstü
-                                                                        (ALUMNI)</strong> • Career Observatory</span>
-                                                                <span class="text-[#FF6B58] font-mono">Navy #14213D •
-                                                                    Cream #F4EDE0 • Coral #FF6B58</span>
-                                                            </div>
-                                                        </footer>
+                <div>
+                    <label for="jobSalary" class="block text-xs text-[#F4EDE0]/75 mb-1">Compensation Range</label>
+                    <input id="jobSalary" type="text" placeholder="Competitive / ₺120k–₺160k" class="field-input">
+                </div>
 
-                                                        <script>
-                                                            let allJobs = [];
-                                                            let allApps = [];
-                                                            let selectedJob = null;
-                                                            let currentTypeFilter = null;
-                                                            let currentAppStatusFilter = null;
+                <div>
+                    <label for="jobDesc" class="block text-xs text-[#F4EDE0]/75 mb-1">Role Overview *</label>
+                    <textarea id="jobDesc" rows="3" required placeholder="Describe responsibilities, tech stack, and mission..." class="field-input"></textarea>
+                </div>
 
-                                                            document.addEventListener('DOMContentLoaded', () => {
-                                                                loadJobs();
-                                                                loadApplications();
-                                                            });
+                <div>
+                    <label for="jobReq" class="block text-xs text-[#F4EDE0]/75 mb-1">Requirements</label>
+                    <textarea id="jobReq" rows="2" placeholder="PHP 8.2, MySQL, Distributed Systems, MIS/CS background..." class="field-input"></textarea>
+                </div>
 
-                                                            function switchTab(tab) {
-                                                                const viewJobs = document.getElementById('viewJobs');
-                                                                const viewApps = document.getElementById('viewApps');
-                                                                const btnJobs = document.getElementById('btnTabJobs');
-                                                                const btnApps = document.getElementById('btnTabApps');
+                <div class="flex items-center justify-end gap-3 pt-2 border-t border-[#F4EDE0]/12">
+                    <button type="button" onclick="closeJobModal()" class="mercury-btn-ghost">Cancel</button>
+                    <button type="submit" class="mercury-btn-coral">Publish Posting</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                                                                if (tab === 'jobs') {
-                                                                    viewJobs.classList.remove('hidden');
-                                                                    viewApps.classList.add('hidden');
-                                                                    btnJobs.className = 'btn-primary-coral flex items-center gap-2';
-                                                                    btnApps.className = 'btn-ghost-cream flex items-center gap-2';
-                                                                    btnJobs.className = 'mercury-btn-coral !py-2.5 !px-6 !text-sm';
-                                                                    btnApps.className = 'mercury-btn-ghost !py-2.5 !px-6 !text-sm';
-                                                                } else {
-                                                                    viewJobs.classList.add('hidden');
-                                                                    viewApps.classList.remove('hidden');
-                                                                    btnApps.className = 'btn-primary-coral flex items-center gap-2';
-                                                                    btnJobs.className = 'btn-ghost-cream flex items-center gap-2';
-                                                                    btnApps.className = 'mercury-btn-coral !py-2.5 !px-6 !text-sm';
-                                                                    btnJobs.className = 'mercury-btn-ghost !py-2.5 !px-6 !text-sm';
-                                                                }
-                                                            }
+    <!-- JOB DETAIL & APPLY MODAL -->
+    <div id="detailModal" class="hidden modal-backdrop">
+        <div class="modal-card space-y-6">
+            <div class="flex items-start justify-between gap-4 border-b border-[#F4EDE0]/12 pb-4">
+                <div class="space-y-1.5">
+                    <span id="detailBadge" class="inline-block px-3 py-0.5 rounded-full text-[11px] uppercase tracking-wider bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/35">full-time</span>
+                    <h2 id="detailTitle" class="mercury-heading-sm">Job Title</h2>
+                    <p id="detailCompany" class="text-xs text-[#F4EDE0]/70"></p>
+                </div>
+                <button type="button" onclick="closeDetailModal()" class="mercury-btn-ghost !px-3 !py-1.5" aria-label="Close detail modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
-                                                            async function loadJobs() {
-                                                                try {
-                                                                    const res = await fetch('/api/v1/job-postings');
-                                                                    const data = await res.json();
-                                                                    if (data.status === 'success') {
-                                                                        allJobs = data.data;
-                                                                        renderJobs(allJobs);
-                                                                        updateJobStats();
-                                                                    }
-                                                                } catch (err) {
-                                                                    console.error('Failed to load jobs:', err);
-                                                                }
-                                                            }
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div class="mercury-card-vault !p-3">
+                    <span class="text-[#F4EDE0]/55 block">Experience</span>
+                    <strong id="detailExp" class="text-[#F4EDE0] mt-1 block">Mid-Level</strong>
+                </div>
+                <div class="mercury-card-vault !p-3">
+                    <span class="text-[#F4EDE0]/55 block">Compensation</span>
+                    <strong id="detailSalary" class="text-[#F4EDE0] mt-1 block">Competitive</strong>
+                </div>
+                <div class="mercury-card-vault !p-3">
+                    <span class="text-[#F4EDE0]/55 block">Applications</span>
+                    <strong id="detailAppsCount" class="text-[#FF6B58] mt-1 block">0 Received</strong>
+                </div>
+            </div>
 
-                                                            async function loadApplications() {
-                                                                try {
-                                                                    const res = await fetch('/api/v1/applications');
-                                                                    const data = await res.json();
-                                                                    if (data.status === 'success') {
-                                                                        allApps = data.data;
-                                                                        renderApplications(allApps);
-                                                                        document.getElementById('apps-count-pill').textContent = allApps.length;
-                                                                        document.getElementById('stat-applications').textContent = allApps.length;
-                                                                    }
-                                                                } catch (err) {
-                                                                    console.error('Failed to load applications:', err);
-                                                                }
-                                                            }
+            <div class="space-y-3 text-sm text-[#F4EDE0]/80">
+                <div>
+                    <h3 class="text-xs uppercase tracking-wider text-[#F4EDE0]/55 mb-1">Description</h3>
+                    <p id="detailDesc" class="leading-relaxed"></p>
+                </div>
+                <div>
+                    <h3 class="text-xs uppercase tracking-wider text-[#F4EDE0]/55 mb-1">Requirements</h3>
+                    <p id="detailReq" class="leading-relaxed"></p>
+                </div>
+            </div>
 
-                                                            function updateJobStats() {
-                                                                const activeCount = allJobs.filter(j => j.status === 'active').length;
-                                                                document.getElementById('stat-active-jobs').textContent = activeCount;
-                                                                const uniqueCompanies = new Set(allJobs.map(j => j.company_name));
-                                                                document.getElementById('stat-companies').textContent = uniqueCompanies.size;
-                                                            }
+            <form id="applyForm" onsubmit="handleApplicationSubmit(event)" class="mercury-card-vault space-y-4">
+                <h3 class="text-sm font-medium text-[#F4EDE0]">Submit Application</h3>
+                <input type="hidden" id="applyJobId" value="">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="applyName" class="block text-xs text-[#F4EDE0]/70 mb-1">Full Name *</label>
+                        <input id="applyName" type="text" required placeholder="Ayşe Yılmaz" class="field-input">
+                    </div>
+                    <div>
+                        <label for="applyEmail" class="block text-xs text-[#F4EDE0]/70 mb-1">Email *</label>
+                        <input id="applyEmail" type="email" required placeholder="ayse@ogr.iu.edu.tr" class="field-input">
+                    </div>
+                </div>
+                <div>
+                    <label for="applyResume" class="block text-xs text-[#F4EDE0]/70 mb-1">Resume / Portfolio URL</label>
+                    <input id="applyResume" type="url" placeholder="https://linkedin.com/in/..." class="field-input">
+                </div>
+                <div>
+                    <label for="applyLetter" class="block text-xs text-[#F4EDE0]/70 mb-1">Cover Note</label>
+                    <textarea id="applyLetter" rows="2" placeholder="Briefly share your background and interest..." class="field-input"></textarea>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeDetailModal()" class="mercury-btn-ghost">Close</button>
+                    <button type="submit" class="mercury-btn-coral">Submit Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                                                            function renderJobs(list) {
-                                                                const grid = document.getElementById('jobsGrid');
-                                                                if (!list || list.length === 0) {
-                                                                    grid.innerHTML = '<div class="col-span-full surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">No job postings found matching criteria.</div>';
-                                                                    grid.innerHTML = '<div class="col-span-full mercury-card text-center text-[#F4EDE0]/60 py-14">No job mandates found matching criteria.</div>';
-                                                                    return;
-                                                                }
+    <footer class="border-t border-[#F4EDE0]/12 bg-[#0f1a30]/75 py-8 mt-auto">
+        <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60">
+            <span>© 2026 <strong class="text-[#F4EDE0]">AlumniIstü (ALUMNI)</strong> • Career &amp; Applications Engine</span>
+            <span class="text-[#FF6B58] font-mono">REST v1 • /api/v1/job-postings</span>
+        </div>
+    </footer>
 
-                                                                grid.innerHTML = list.map(job => `
-                <article class="surface-card p-6 flex flex-col justify-between space-y-5">
-            grid.innerHTML = list.map((job, idx) => {
-                const delay = Math.min(idx * 50, 350);
-                const initials = (job.company_name || 'CO').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-                return `
-                                                                    < article class= "mercury-card mercury-card-interactive reveal-item flex flex-col justify-between space-y-6" style = "animation-delay: ${delay}ms;" >
-                                                                    <div>
-                                                                        <div class="flex items-start justify-between gap-3">
-                                                                            <div>
-                                                                                <span class="badge-coral uppercase">${escapeHtml(job.job_type)}</span>
-                                                                                <h3 class="text-base font-medium text-[#F4EDE0] mt-3">${escapeHtml(job.title)}</h3>
-                                                                                <p class="text-xs text-[#F4EDE0]/70 font-light flex items-center gap-1.5 mt-1">
-                                                                                    <i class="fa-regular fa-building text-[#FF6B58]"></i> ${escapeHtml(job.company_name)}
-                                                                                </p>
-                                                                                <div class="flex items-center gap-3">
-                                                                                    <span class="mercury-avatar">${escapeHtml(initials)}</span>
-                                                                                    <div>
-                                                                                        <span class="text-[11px] uppercase tracking-wider text-[#FF6B58] font-medium">${escapeHtml(job.job_type)}</span>
-                                                                                        <h3 class="text-base font-medium text-[#F4EDE0] leading-snug">${escapeHtml(job.title)}</h3>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <span class="badge-pill uppercase">
-                                                                                    <span class="px-2.5 py-0.5 rounded-full text-[11px] bg-[#24355c] text-[#F4EDE0]/80 uppercase">
-                                                                                        ${escapeHtml(job.status)}
-                                                                                    </span>
-                                                                            </div>
+    <script>
+        const TOKEN_KEY = 'alumni_istu_access_token';
+        let allJobs = [];
+        let allApps = [];
+        let selectedJob = null;
+        let currentTypeFilter = '';
+        let currentAppStatusFilter = '';
 
-                                                                            <p class="text-xs text-[#F4EDE0]/70 font-light line-clamp-3 mt-3.5 leading-relaxed">
-                                                                                <p class="text-xs text-[#F4EDE0]/75 mt-3 flex items-center gap-1.5">
-                                                                                    <i class="fa-regular fa-building text-[#FF6B58]"></i> ${escapeHtml(job.company_name)}
-                                                                                </p>
-
-                                                                                <p class="text-xs text-[#F4EDE0]/65 line-clamp-3 mt-3 leading-relaxed">
-                                                                                    ${escapeHtml(job.description)}
-                                                                                </p>
-                                                                        </div>
-
-                                                                        <div class="space-y-3 pt-4 border-t border-[#F4EDE0]/10">
-                                                                            <div class="space-y-3 pt-4 border-t border-[#F4EDE0]/12">
-                                                                                <div class="flex items-center justify-between text-xs">
-                                                                                    <span class="text-[#F4EDE0]/65 font-light flex items-center gap-1.5">
-                                                                                        <span class="text-[#F4EDE0]/65 flex items-center gap-1.5">
-                                                                                            <i class="fa-solid fa-location-dot text-[#F4EDE0]/45"></i> ${escapeHtml(job.location || 'Istanbul')}
-                                                                                        </span>
-                                                                                        ${job.salary_range ? `<span class="text-[#FF6B58] font-medium">${escapeHtml(job.salary_range)}</span>` : ''}
-                                                                                </div>
-
-                                                                                <div class="flex items-center justify-between pt-1">
-                                                                                    <span class="text-xs text-[#F4EDE0]/55 font-light">
-                                                                                        <i class="fa-solid fa-user-group mr-1"></i> ${job.applications_count || 0} applicants
-                                                                                        <span class="text-xs text-[#F4EDE0]/55">
-                                                                                            <i class="fa-solid fa-user-group mr-1"></i> ${job.applications_count || 0} dossiers
-                                                                                        </span>
-                                                                                        <div class="flex items-center space-x-2">
-                                                                                            <button onclick="deleteJob(${job.id})" class="btn-ghost-cream !px-3 !py-1.5 text-xs" title="Delete posting">
-                                                                                                <button onclick="deleteJob(${job.id})" class="mercury-btn-obsidian !px-3 !py-1.5 text-xs" title="Delete posting">
-                                                                                                    <i class="fa-regular fa-trash-can"></i>
-                                                                                                </button>
-                                                                                                <button onclick="openDetailModal(${job.id})" class="btn-primary-coral !py-1.5 !px-4 !text-xs flex items-center gap-1.5">
-                                                                                                    Apply <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                                                                                                    <button onclick="openDetailModal(${job.id})" class="mercury-btn-coral !py-1.5 !px-4 !text-xs">
-                                                                                                        Inspect &amp; Apply →
-                                                                                                    </button>
-                                                                                                </div>
-                                                                                        </div>
-                                                                                </div>
-                                                                            </article>
-                                                                            `).join('');
-            `}).join('');
-        }
-
-                                                                            function renderApplications(list) {
-            const container = document.getElementById('appsContainer');
-                                                                            if (!list || list.length === 0) {
-                                                                                container.innerHTML = '<div class="surface-card p-12 text-center text-[#F4EDE0]/60 text-sm font-light">No applications submitted yet.</div>';
-                                                                            container.innerHTML = '<div class="mercury-card text-center text-[#F4EDE0]/60 py-14">No candidate dossiers submitted yet.</div>';
-                                                                            return;
-            }
-
-            container.innerHTML = list.map(app => `
-                                                                            <div class="surface-card p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            container.innerHTML = list.map((app, idx) => {
-                const delay = Math.min(idx * 45, 300);
-                                                                                return `
-                                                                                <div class="mercury-card !p-6 reveal-item flex flex-col md:flex-row items-start md:items-center justify-between gap-4" style="animation-delay: ${delay}ms;">
-                                                                                    <div class="space-y-1">
-                                                                                        <div class="flex items-center gap-2.5">
-                                                                                            <h4 class="text-sm font-medium text-[#F4EDE0]">${escapeHtml(app.applicant_name)}</h4>
-                                                                                            <span class="text-xs text-[#F4EDE0]/55 font-light">(${escapeHtml(app.applicant_email)})</span>
-                                                                                            <h4 class="text-base font-medium text-[#F4EDE0]">${escapeHtml(app.applicant_name)}</h4>
-                                                                                            <span class="text-xs text-[#F4EDE0]/55">(${escapeHtml(app.applicant_email)})</span>
-                                                                                        </div>
-                                                                                        <p class="text-xs text-[#F4EDE0]/75 font-light">
-                                                                                            Applied for: <span class="font-medium text-[#FF6B58]">${escapeHtml(app.job_title || 'Position #' + app.job_posting_id)}</span>
-                                                                                            <p class="text-xs text-[#F4EDE0]/75">
-                                                                                                Mandate: <span class="font-medium text-[#FF6B58]">${escapeHtml(app.job_title || 'Position #' + app.job_posting_id)}</span>
-                                                                                                ${app.company_name ? `• <span class="text-[#F4EDE0]">${escapeHtml(app.company_name)}</span>` : ''}
-                                                                                            </p>
-                                                                                            ${app.cover_letter ? `<p class="text-xs text-[#F4EDE0]/60 italic font-light line-clamp-2 max-w-2xl mt-1">"${escapeHtml(app.cover_letter)}"</p>` : ''}
-                                                                                            ${app.cover_letter ? `<p class="text-xs text-[#F4EDE0]/60 italic line-clamp-2 max-w-2xl mt-1">"${escapeHtml(app.cover_letter)}"</p>` : ''}
-                                                                                    </div>
-
-                                                                                    <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
-                                                                                        ${app.resume_url ? `
-                            <a href="${escapeHtml(app.resume_url)}" target="_blank" class="btn-ghost-cream !py-1.5 !px-3.5 !text-xs flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-lines text-[#FF6B58]"></i> Resume
-                            <a href="${escapeHtml(app.resume_url)}" target="_blank" class="mercury-btn-obsidian flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-lines text-[#FF6B58]"></i> Dossier
-                            </a>
-                        ` : ''}
-
-                                                                                        <select onchange="updateAppStatus(${app.id}, this.value)" class="input-pill-cream !py-1.5 !px-4 !text-xs">
-                                                                                            <select onchange="updateAppStatus(${app.id}, this.value)" class="mercury-input-pill !py-1.5 !px-4 !text-xs">
-                                                                                                <option value="submitted" ${app.status === 'submitted' ? 'selected' : ''}>Submitted</option>
-                                                                                                <option value="under_review" ${app.status === 'under_review' ? 'selected' : ''}>Under Review</option>
-                                                                                                <option value="interview" ${app.status === 'interview' ? 'selected' : ''}>Interview</option>
-                                                                                                <option value="accepted" ${app.status === 'accepted' ? 'selected' : ''}>Accepted</option>
-                                                                                                <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rejected</option>
-                                                                                            </select>
-
-                                                                                            <button onclick="deleteApp(${app.id})" class="btn-ghost-cream !px-3 !py-1.5 text-xs" title="Delete">
-                                                                                                <button onclick="deleteApp(${app.id})" class="mercury-btn-obsidian !px-3 !py-1.5 text-xs" title="Delete">
-                                                                                                    <i class="fa-regular fa-trash-can"></i>
-                                                                                                </button>
-                                                                                            </div>
-                                                                                    </div>
-                                                                                    `).join('');
-            `}).join('');
-        }
-
-                                                                                    function filterType(type, btnEl) {
-                                                                                        currentTypeFilter = type;
-            document.querySelectorAll('.type-filter-btn').forEach(b => b.classList.remove('active'));
-                                                                                    if (btnEl) btnEl.classList.add('active');
-                                                                                    applyJobFilters();
-        }
-
-                                                                                    function searchJobs(query) {
-                                                                                        applyJobFilters(query);
-        }
-
-                                                                                    function applyJobFilters(searchVal = null) {
-                                                                                        let res = allJobs;
-                                                                                    if (currentTypeFilter) {
-                                                                                        res = res.filter(j => j.job_type === currentTypeFilter);
-            }
-                                                                                    const query = searchVal !== null ? searchVal : (document.getElementById('jobSearchInput')?.value || '');
-                                                                                    if (query.trim() !== '') {
-                const q = query.toLowerCase();
-                res = res.filter(j =>
-                                                                                    j.title.toLowerCase().includes(q) ||
-                                                                                    j.company_name.toLowerCase().includes(q) ||
-                                                                                    (j.description && j.description.toLowerCase().includes(q))
-                                                                                    );
-            }
-                                                                                    renderJobs(res);
-        }
-
-                                                                                    function filterAppStatus(status, btnEl) {
-                                                                                        currentAppStatusFilter = status;
-            document.querySelectorAll('.app-status-btn').forEach(b => b.classList.remove('active'));
-                                                                                    if (btnEl) btnEl.classList.add('active');
-                                                                                    if (!status) {
-                                                                                        renderApplications(allApps);
-            } else {
-                                                                                        renderApplications(allApps.filter(a => a.status === status));
-            }
-        }
-
-                                                                                    function openJobModal() {
-                                                                                        document.getElementById('jobForm').reset();
-                                                                                    document.getElementById('jobModal').classList.remove('hidden');
-        }
-
-                                                                                    function closeJobModal() {
-                                                                                        document.getElementById('jobModal').classList.add('hidden');
-        }
-
-                                                                                    async function handleJobSubmit(e) {
-                                                                                        e.preventDefault();
-                                                                                    const payload = {
-                                                                                        title: document.getElementById('jobTitle').value,
-                                                                                    company_name: document.getElementById('jobCompanyName').value,
-                                                                                    location: document.getElementById('jobLocation').value,
-                                                                                    job_type: document.getElementById('jobType').value,
-                                                                                    experience_level: document.getElementById('jobExp').value,
-                                                                                    salary_range: document.getElementById('jobSalary').value,
-                                                                                    description: document.getElementById('jobDesc').value,
-                                                                                    requirements: document.getElementById('jobReq').value,
-                                                                                    status: 'active'
-            };
-
-                                                                                    try {
-                const res = await fetch('/api/v1/job-postings', {
-                                                                                        method: 'POST',
-                                                                                    headers: {'Content-Type': 'application/json'},
-                                                                                    body: JSON.stringify(payload)
-                });
-                                                                                    const data = await res.json();
-                                                                                    if (data.status === 'success') {
-                                                                                        closeJobModal();
-                                                                                    await loadJobs();
-                } else {
-                                                                                        alert('Error: ' + (data.message || 'Could not create job'));
-                }
-            } catch (err) {
-                                                                                        alert('Network error while publishing job');
-            }
-        }
-
-                                                                                    function openDetailModal(jobId) {
-                                                                                        selectedJob = allJobs.find(j => Number(j.id) === Number(jobId));
-                                                                                    if (!selectedJob) return;
-
-                                                                                    document.getElementById('detailBadge').textContent = selectedJob.job_type;
-                                                                                    document.getElementById('detailTitle').textContent = selectedJob.title;
-                                                                                    document.getElementById('detailCompany').innerHTML = `<i class="fa-regular fa-building text-[#FF6B58] mr-1"></i> ${escapeHtml(selectedJob.company_name)} • ${escapeHtml(selectedJob.location || 'Istanbul')}`;
-                                                                                    document.getElementById('detailExp').textContent = selectedJob.experience_level || 'Mid-Level';
-                                                                                    document.getElementById('detailSalary').textContent = selectedJob.salary_range || 'Competitive';
-                                                                                    document.getElementById('detailAppsCount').textContent = (selectedJob.applications_count || 0) + ' Received';
-                                                                                    document.getElementById('detailDesc').textContent = selectedJob.description || 'No description provided.';
-                                                                                    document.getElementById('detailReq').textContent = selectedJob.requirements || 'No explicit prerequisites specified.';
-
-                                                                                    document.getElementById('applyJobId').value = selectedJob.id;
-                                                                                    document.getElementById('applyForm').reset();
-                                                                                    document.getElementById('detailModal').classList.remove('hidden');
-        }
-
-                                                                                    function closeDetailModal() {
-                                                                                        document.getElementById('detailModal').classList.add('hidden');
-        }
-
-                                                                                    async function handleApplicationSubmit(e) {
-                                                                                        e.preventDefault();
-                                                                                    const jobId = document.getElementById('applyJobId').value;
-                                                                                    const payload = {
-                                                                                        job_posting_id: parseInt(jobId),
-                                                                                    applicant_name: document.getElementById('applyName').value,
-                                                                                    applicant_email: document.getElementById('applyEmail').value,
-                                                                                    resume_url: document.getElementById('applyResume').value,
-                                                                                    cover_letter: document.getElementById('applyLetter').value,
-                                                                                    status: 'submitted'
-            };
-
-                                                                                    try {
-                const res = await fetch(`/api/v1/job-postings/${jobId}/applications`, {
-                                                                                        method: 'POST',
-                                                                                    headers: {'Content-Type': 'application/json'},
-                                                                                    body: JSON.stringify(payload)
-                });
-                                                                                    const data = await res.json();
-                                                                                    if (data.status === 'success') {
-                                                                                        closeDetailModal();
-                                                                                    await loadApplications();
-                                                                                    await loadJobs();
-                } else {
-                                                                                        alert('Error: ' + (data.message || 'Submission failed'));
-                }
-            } catch (err) {
-                                                                                        alert('Network error submitting application');
-            }
-        }
-
-                                                                                    async function updateAppStatus(appId, status) {
+        function authHeaders(extra = {}) {
+            const headers = { 'Accept': 'application/json', ...extra };
             try {
-                const res = await fetch(`/api/v1/applications/${appId}`, {
-                                                                                        method: 'PATCH',
-                                                                                    headers: {'Content-Type': 'application/json'},
-                                                                                    body: JSON.stringify({status})
-                });
-                                                                                    const data = await res.json();
-                                                                                    if (data.status === 'success') {
-                                                                                        await loadApplications();
-                }
-            } catch (err) {
-                                                                                        console.error('Status update failed:', err);
-            }
-        }
-
-                                                                                    async function deleteJob(id) {
-            if (!confirm(`Delete job posting #${id}?`)) return;
-                                                                                    try {
-                const res = await fetch(`/api/v1/job-postings/${id}`, {method: 'DELETE' });
-                                                                                    const data = await res.json();
-                                                                                    if (data.status === 'success') {
-                                                                                        await loadJobs();
-                }
-            } catch (err) {
-                                                                                        alert('Failed to delete job posting');
-            }
-        }
-
-                                                                                    async function deleteApp(id) {
-            if (!confirm(`Delete application #${id}?`)) return;
-                                                                                    try {
-                const res = await fetch(`/api/v1/applications/${id}`, { method: 'DELETE' });
-                const data = await res.json();
-                if (data.status === 'success') {
-                    await loadApplications();
-                }
-            } catch (err) {
-                alert('Failed to delete application');
-            }
-        }
-
-        function refreshData() {
-            loadJobs();
-            loadApplications();
+                const tok = localStorage.getItem(TOKEN_KEY);
+                if (tok) headers['Authorization'] = `Bearer ${tok}`;
+            } catch (_) {}
+            return headers;
         }
 
         function escapeHtml(str) {
@@ -1457,7 +350,357 @@
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
         }
-                                                        </script>
-</body>
 
+        function switchTab(tab) {
+            const tabJobs = document.getElementById('tabJobs');
+            const tabApps = document.getElementById('tabApps');
+            const btnJobs = document.getElementById('btnTabJobs');
+            const btnApps = document.getElementById('btnTabApps');
+
+            if (tab === 'jobs') {
+                tabJobs.classList.remove('hidden');
+                tabApps.classList.add('hidden');
+                btnJobs.classList.add('active');
+                btnApps.classList.remove('active');
+            } else {
+                tabJobs.classList.add('hidden');
+                tabApps.classList.remove('hidden');
+                btnJobs.classList.remove('active');
+                btnApps.classList.add('active');
+            }
+        }
+
+        async function loadJobs() {
+            const container = document.getElementById('jobsContainer');
+            try {
+                const res = await fetch('/api/v1/job-postings', { headers: authHeaders() });
+                const payload = await res.json();
+                allJobs = Array.isArray(payload.data) ? payload.data : [];
+
+                const activeJobs = allJobs.filter(j => (j.status || 'active') === 'active');
+                const companies = new Set(allJobs.map(j => (j.company_name || '').trim()).filter(Boolean));
+
+                document.getElementById('stat-active-jobs').textContent = String(activeJobs.length);
+                document.getElementById('stat-companies').textContent = String(companies.size);
+
+                applyJobFilters();
+            } catch (err) {
+                container.innerHTML = `<div class="mercury-card text-sm text-[#FF6B58]">Failed to load job postings: ${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        async function loadApplications() {
+            const container = document.getElementById('appsContainer');
+            try {
+                const res = await fetch('/api/v1/applications', { headers: authHeaders() });
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    allApps = [];
+                    document.getElementById('stat-applications').textContent = '0';
+                    document.getElementById('apps-count-pill').textContent = '0';
+                    container.innerHTML = `<div class="mercury-card text-sm text-[#F4EDE0]/70">${escapeHtml(errData.message || 'Sign in to view applications pipeline.')}</div>`;
+                    return;
+                }
+                const payload = await res.json();
+                allApps = Array.isArray(payload.data) ? payload.data : [];
+                document.getElementById('stat-applications').textContent = String(allApps.length);
+                document.getElementById('apps-count-pill').textContent = String(allApps.length);
+
+                if (currentAppStatusFilter) {
+                    renderApplications(allApps.filter(a => a.status === currentAppStatusFilter));
+                } else {
+                    renderApplications(allApps);
+                }
+            } catch (err) {
+                container.innerHTML = `<div class="mercury-card text-sm text-[#FF6B58]">Failed to load applications: ${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        function renderJobs(list) {
+            const container = document.getElementById('jobsContainer');
+            if (!list || list.length === 0) {
+                container.innerHTML = '<div class="mercury-card text-sm text-[#F4EDE0]/65">No matching job postings found.</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(job => `
+                <article class="mercury-card-interactive flex flex-col justify-between gap-5">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="px-3 py-0.5 rounded-full text-[11px] uppercase tracking-wider bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/35">
+                                ${escapeHtml(job.job_type || 'full-time')}
+                            </span>
+                            <span class="text-xs text-[#F4EDE0]/55">${escapeHtml(job.experience_level || 'Mid-Level')}</span>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-medium text-[#F4EDE0]">${escapeHtml(job.title)}</h3>
+                            <p class="text-xs text-[#F4EDE0]/70 mt-1">
+                                <i class="fa-regular fa-building text-[#FF6B58] mr-1"></i>
+                                ${escapeHtml(job.company_name)} • ${escapeHtml(job.location || 'Istanbul')}
+                            </p>
+                        </div>
+
+                        <p class="text-xs text-[#F4EDE0]/70 line-clamp-2 leading-relaxed">
+                            ${escapeHtml(job.description || 'Explore role details and apply directly via AlumniIstü.')}
+                        </p>
+                    </div>
+
+                    <div class="pt-4 border-t border-[#F4EDE0]/10 flex items-center justify-between gap-2">
+                        <span class="text-xs text-[#F4EDE0]/75 font-medium">${escapeHtml(job.salary_range || 'Competitive')}</span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="openDetailModal(${Number(job.id)})" class="mercury-btn-coral !py-1.5 !px-3.5 !text-xs">
+                                View &amp; Apply
+                            </button>
+                            <button type="button" onclick="deleteJob(${Number(job.id)})" class="mercury-btn-obsidian !px-2.5 !py-1.5 text-xs" title="Delete posting">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function renderApplications(list) {
+            const container = document.getElementById('appsContainer');
+            if (!list || list.length === 0) {
+                container.innerHTML = '<div class="mercury-card text-sm text-[#F4EDE0]/65">No applications in this stage yet.</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(app => `
+                <div class="mercury-card flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h4 class="text-base font-medium text-[#F4EDE0]">${escapeHtml(app.applicant_name)}</h4>
+                            <span class="text-xs text-[#F4EDE0]/55">(${escapeHtml(app.applicant_email)})</span>
+                        </div>
+                        <p class="text-xs text-[#F4EDE0]/75">
+                            Mandate: <span class="font-medium text-[#FF6B58]">${escapeHtml(app.job_title || ('Position #' + app.job_posting_id))}</span>
+                            ${app.company_name ? `• <span class="text-[#F4EDE0]">${escapeHtml(app.company_name)}</span>` : ''}
+                        </p>
+                        ${app.cover_letter ? `<p class="text-xs text-[#F4EDE0]/60 italic line-clamp-2 mt-1">"${escapeHtml(app.cover_letter)}"</p>` : ''}
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        ${app.resume_url ? `
+                            <a href="${escapeHtml(app.resume_url)}" target="_blank" rel="noopener" class="mercury-btn-obsidian">
+                                <i class="fa-solid fa-file-lines text-[#FF6B58]"></i>
+                                <span>Resume</span>
+                            </a>
+                        ` : ''}
+
+                        <select onchange="updateAppStatus(${Number(app.id)}, this.value)" class="mercury-input-pill !w-auto !py-1.5 !px-3.5 !text-xs">
+                            <option value="submitted" ${app.status === 'submitted' ? 'selected' : ''}>Submitted</option>
+                            <option value="under_review" ${app.status === 'under_review' ? 'selected' : ''}>Under Review</option>
+                            <option value="interview" ${app.status === 'interview' ? 'selected' : ''}>Interview</option>
+                            <option value="accepted" ${app.status === 'accepted' ? 'selected' : ''}>Accepted</option>
+                            <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                        </select>
+
+                        <button type="button" onclick="deleteApp(${Number(app.id)})" class="mercury-btn-obsidian !px-3 !py-1.5 text-xs" title="Delete application">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterType(type, btnEl) {
+            currentTypeFilter = type;
+            document.querySelectorAll('.type-filter-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            applyJobFilters();
+        }
+
+        function searchJobs(query) {
+            applyJobFilters(query);
+        }
+
+        function applyJobFilters(searchVal = null) {
+            let res = allJobs;
+            if (currentTypeFilter) {
+                res = res.filter(j => (j.job_type || '').toLowerCase() === currentTypeFilter.toLowerCase());
+            }
+            const query = searchVal !== null ? searchVal : (document.getElementById('jobSearchInput')?.value || '');
+            if (query.trim() !== '') {
+                const q = query.toLowerCase();
+                res = res.filter(j =>
+                    (j.title || '').toLowerCase().includes(q) ||
+                    (j.company_name || '').toLowerCase().includes(q) ||
+                    (j.description || '').toLowerCase().includes(q)
+                );
+            }
+            renderJobs(res);
+        }
+
+        function filterAppStatus(status, btnEl) {
+            currentAppStatusFilter = status;
+            document.querySelectorAll('.app-status-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            if (!status) {
+                renderApplications(allApps);
+            } else {
+                renderApplications(allApps.filter(a => a.status === status));
+            }
+        }
+
+        function openJobModal() {
+            document.getElementById('jobForm').reset();
+            document.getElementById('jobModal').classList.remove('hidden');
+        }
+
+        function closeJobModal() {
+            document.getElementById('jobModal').classList.add('hidden');
+        }
+
+        async function handleJobSubmit(e) {
+            e.preventDefault();
+            const payload = {
+                title: document.getElementById('jobTitle').value,
+                company_name: document.getElementById('jobCompanyName').value,
+                location: document.getElementById('jobLocation').value,
+                job_type: document.getElementById('jobType').value,
+                experience_level: document.getElementById('jobExp').value,
+                salary_range: document.getElementById('jobSalary').value,
+                description: document.getElementById('jobDesc').value,
+                requirements: document.getElementById('jobReq').value,
+                status: 'active'
+            };
+
+            try {
+                const res = await fetch('/api/v1/job-postings', {
+                    method: 'POST',
+                    headers: authHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    closeJobModal();
+                    await loadJobs();
+                } else {
+                    alert('Error: ' + (data.message || 'Could not create job posting'));
+                }
+            } catch (err) {
+                alert('Network error while publishing job posting');
+            }
+        }
+
+        function openDetailModal(jobId) {
+            selectedJob = allJobs.find(j => Number(j.id) === Number(jobId));
+            if (!selectedJob) return;
+
+            document.getElementById('detailBadge').textContent = selectedJob.job_type || 'full-time';
+            document.getElementById('detailTitle').textContent = selectedJob.title || '';
+            document.getElementById('detailCompany').innerHTML =
+                `<i class="fa-regular fa-building text-[#FF6B58] mr-1"></i> ${escapeHtml(selectedJob.company_name)} • ${escapeHtml(selectedJob.location || 'Istanbul')}`;
+            document.getElementById('detailExp').textContent = selectedJob.experience_level || 'Mid-Level';
+            document.getElementById('detailSalary').textContent = selectedJob.salary_range || 'Competitive';
+            document.getElementById('detailAppsCount').textContent = (selectedJob.applications_count || 0) + ' Received';
+            document.getElementById('detailDesc').textContent = selectedJob.description || 'No description provided.';
+            document.getElementById('detailReq').textContent = selectedJob.requirements || 'No explicit prerequisites specified.';
+
+            document.getElementById('applyForm').reset();
+            document.getElementById('applyJobId').value = selectedJob.id;
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        async function handleApplicationSubmit(e) {
+            e.preventDefault();
+            const jobId = document.getElementById('applyJobId').value;
+            const payload = {
+                job_posting_id: parseInt(jobId, 10),
+                applicant_name: document.getElementById('applyName').value,
+                applicant_email: document.getElementById('applyEmail').value,
+                resume_url: document.getElementById('applyResume').value,
+                cover_letter: document.getElementById('applyLetter').value,
+                status: 'submitted'
+            };
+
+            try {
+                const res = await fetch(`/api/v1/job-postings/${jobId}/applications`, {
+                    method: 'POST',
+                    headers: authHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    closeDetailModal();
+                    await loadApplications();
+                    await loadJobs();
+                } else {
+                    alert('Error: ' + (data.message || 'Submission failed'));
+                }
+            } catch (err) {
+                alert('Network error submitting application');
+            }
+        }
+
+        async function updateAppStatus(appId, status) {
+            try {
+                const res = await fetch(`/api/v1/applications/${appId}`, {
+                    method: 'PATCH',
+                    headers: authHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ status })
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    await loadApplications();
+                } else {
+                    alert('Error: ' + (data.message || 'Status update failed'));
+                }
+            } catch (err) {
+                console.error('Status update failed:', err);
+            }
+        }
+
+        async function deleteJob(id) {
+            if (!confirm(`Delete job posting #${id}?`)) return;
+            try {
+                const res = await fetch(`/api/v1/job-postings/${id}`, {
+                    method: 'DELETE',
+                    headers: authHeaders()
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    await loadJobs();
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to delete job posting'));
+                }
+            } catch (err) {
+                alert('Failed to delete job posting');
+            }
+        }
+
+        async function deleteApp(id) {
+            if (!confirm(`Delete application #${id}?`)) return;
+            try {
+                const res = await fetch(`/api/v1/applications/${id}`, {
+                    method: 'DELETE',
+                    headers: authHeaders()
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    await loadApplications();
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to delete application'));
+                }
+            } catch (err) {
+                alert('Failed to delete application');
+            }
+        }
+
+        function refreshData() {
+            loadJobs();
+            loadApplications();
+        }
+
+        refreshData();
+    </script>
+    <script src="/js/auth-nav.js"></script>
+</body>
 </html>

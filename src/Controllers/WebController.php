@@ -77,7 +77,7 @@ class WebController {
     }
 
     public function profile(string $id): void {
-        $alumni = $this->service->getById((int)$id);
+        $alumni = $this->service->findById((int)$id);
         if (!$alumni) {
             Response::html(__DIR__ . '/../../templates/404.html', [
                 'PATH' => "/alumni/{$id}",
