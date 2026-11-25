@@ -13,13 +13,33 @@ class WebController {
         $this->service = new AlumniService();
     }
 
+    public function welcome(): void {
+        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+        if (isset($_GET['raw']) || isset($_GET['test']) || (str_starts_with($accept, 'text/plain') && !str_contains($accept, 'text/html'))) {
+            Response::text("ok");
+        }
+
+        $alumniList = $this->service->getAll();
+        $totalAlumni = count($alumniList);
+        $totalMentors = count(array_filter($alumniList, fn($a) => !empty($a['is_mentor'])));
+
+        Response::html(__DIR__ . '/../../templates/welcome.html', [
+            'TOTAL_ALUMNI' => (string)$totalAlumni,
+            'TOTAL_MENTORS' => (string)$totalMentors,
+        ]);
+    }
+
+    public function directory(): void {
+        $this->home();
+    }
+
     public function home(): void {
         $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
         if (isset($_GET['raw']) || isset($_GET['test']) || (str_starts_with($accept, 'text/plain') && !str_contains($accept, 'text/html'))) {
             Response::text("ok");
         }
 
-        // MVC Flow: Query Model/Service layer for initial Homepage telemetry
+        // MVC Flow: Query Model/Service layer for initial Directory telemetry
         $alumniList = $this->service->getAll();
         $totalAlumni = count($alumniList);
         $totalMentors = count(array_filter($alumniList, fn($a) => !empty($a['is_mentor'])));

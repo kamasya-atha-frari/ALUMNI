@@ -35,15 +35,15 @@
         try {
             localStorage.removeItem(TOKEN_KEY);
             localStorage.removeItem(USER_KEY);
-        } catch (_) {}
+        } catch (_) { }
     }
 
     function isLinkActive(href, currentPath) {
-        if (href === '/') {
-            return currentPath === '/' || currentPath.startsWith('/alumni/');
+        if (href === '/directory') {
+            return currentPath === '/directory' || currentPath === '/dashboard' || currentPath === '/alumni' || currentPath.startsWith('/alumni/');
         }
         if (href === '/my-profile') {
-            return currentPath === '/my-profile' || currentPath === '/dashboard' || currentPath === '/profile';
+            return currentPath === '/my-profile' || currentPath === '/profile';
         }
         return currentPath === href;
     }
@@ -65,7 +65,7 @@
         document.querySelectorAll('[data-auth-nav-links]').forEach((navEl) => {
             const linkClass = navEl.getAttribute('data-link-class') || 'mercury-nav-pill';
             const links = [
-                buildLink('/', 'Directory', current, linkClass, ''),
+                buildLink('/directory', 'Directory', current, linkClass, ''),
                 buildLink('/jobs', 'Job Board', current, linkClass, ''),
                 buildLink('/analytics', 'Career Graph', current, linkClass, ''),
             ];
@@ -147,13 +147,13 @@
                 credentials: 'same-origin',
                 headers
             });
-        } catch (_) {}
+        } catch (_) { }
 
         clearLocalAuth();
         renderMenus({ authenticated: false, user: null });
 
         const current = normalizedPath();
-        if (current === '/admin' || current === '/my-profile' || current === '/dashboard' || current === '/profile') {
+        if (current === '/admin' || current === '/my-profile' || current === '/profile') {
             window.location.href = '/login';
         }
     }
@@ -188,7 +188,7 @@
                 const user = payload.data.user;
                 try {
                     localStorage.setItem(USER_KEY, JSON.stringify(user));
-                } catch (_) {}
+                } catch (_) { }
                 renderMenus({ authenticated: true, user });
                 return {
                     authenticated: true,

@@ -122,7 +122,8 @@ All endpoints connect to MySQL with parameterized PDO queries (`prepare`/`execut
   - Nested: `GET /api/v1/job-postings/{id}/applications` & `POST /api/v1/job-postings/{id}/applications`
   - Nested: `GET /api/v1/users/{id}/applications`
 - **Interactive Web UI**:
-  - Graduate Directory: `http://localhost:8080/`
+  - Welcome Landing Page (Create Account / Login): `http://localhost:8080/`
+  - Graduate Directory & Career Observatory: `http://localhost:8080/directory` (and `/dashboard`)
   - Job Board & Application Pipeline: `http://localhost:8080/jobs`
   - Career Graph Telemetry: `http://localhost:8080/analytics`
 
@@ -168,8 +169,8 @@ AlumniIstü enforces stateless **HS256 JWT Bearer Token Authentication** with **
 
 | Role | Self-Register? | Key Access Permissions |
 | :--- | :---: | :--- |
-| **`guest`** *(unauthenticated)* | — | Browse public directory (`/`), job board (`/jobs`), analytics summary (`/analytics`), faculty page (`/about`), API Docs (`/swagger`), Register (`/register`), and Login (`/login`). Blocked (`401`) from protected routes. |
-| **`alumni` / `user`** *(default)* | Yes | Access member dashboard & editable profile (`/my-profile`, `/dashboard`, `/profile`), edit **own** bio/links/skills (`PATCH /api/profile/me`), view own applications & posted jobs (`/api/profile/me/activity`), delete own job postings, and log out. Blocked (`403`) from other users' profiles and `/admin`. |
+| **`guest`** *(unauthenticated)* | — | View Welcome landing screen (`/`), browse public directory (`/directory`, `/dashboard`), job board (`/jobs`), analytics summary (`/analytics`), faculty page (`/about`), API Docs (`/swagger`), Register (`/register`), and Login (`/login`). Blocked (`401`) from protected routes. |
+| **`alumni` / `user`** *(default)* | Yes | Access member profile & activity workspace (`/my-profile`, `/profile`), edit **own** bio/links/skills (`PATCH /api/profile/me`), view own applications & posted jobs (`/api/profile/me/activity`), delete own job postings, and log out. Blocked (`403`) from other users' profiles and `/admin`. |
 | **`student`** | Yes | Access `/my-profile`, edit own profile, submit/withdraw own job applications, and request alumni mentorship. |
 | **`employer`** | Yes | Access `/my-profile`, create companies (`POST /api/v1/companies`), manage job postings, and transition candidate application statuses. |
 | **`faculty` / `moderator`** | Admin-assigned | Access institutional accreditation telemetry (`GET /api/v1/analytics/accreditation`) and moderation controls. |
@@ -229,15 +230,17 @@ curl http://localhost:8080/api/auth/me \
   ```sql
   UPDATE users SET role = 'admin', is_active = 1 WHERE email = 'kamasyaatha.frari@ogr.iu.edu.tr';
   ```
-- **User-Specific Pages (Auth Protected)**: `/my-profile`, `/dashboard`, `/profile` — edit own alumni profile, graduation year, bio, social links, skills, and inspect submitted applications & job postings (`PATCH /api/v1/profile/me`, `GET /api/v1/profile/me/activity`).
+- **User-Specific Pages (Auth Protected)**: `/my-profile`, `/profile` — edit own alumni profile, graduation year, bio, social links, skills, and inspect submitted applications & job postings (`PATCH /api/v1/profile/me`, `GET /api/v1/profile/me/activity`).
 - **Admin Panel (Auth + `admin` Role Protected)**: `/admin` — system telemetry, user role assignment, account activation/deactivation/deletion, alumni management, job posting moderation, and department announcements.
 
 #### Quick Verification (Browser, Swagger UI, Postman & CLI Tests)
 
 - **Local Browser**: Visit `http://alumni-istu` (or `http://localhost:8080`):
+  - Welcome screen with **Create Account** / **Login** CTAs at `/`
+  - Full Alumni Directory & Career Observatory at `/directory` (and `/dashboard`)
   - Register with CAPTCHA or Google at `/register`
   - Sign in / Log out at `/login`
-  - Edit your own profile & activity at `/my-profile` (or `/dashboard`)
+  - Edit your own profile & activity at `/my-profile`
   - Manage system data as `admin` at `/admin`
 - **Swagger UI (`BearerAuth`)**: Open `http://alumni-istu/swagger` (or `http://localhost:8080/swagger`) → execute `POST /api/v1/auth/login` → click **Authorize** → paste `access_token` into **BearerAuth** → test `/api/v1/auth/me`, `/api/v1/profile/me`, and `/api/v1/admin/*`.
 - **Postman Collection**: Import `docs/AlumniIstü_Postman_Collection.json` and run:

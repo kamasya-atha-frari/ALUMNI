@@ -99,8 +99,13 @@ $router->get('/auto/sum/{a}/{b}', function ($a, $b): string {
     return (string)$res;
 });
 
-// 5. Main Page (Item 5 on whiteboard: GET / -> temporary one main page)
-$router->get('/', [WebController::class, 'home']);
+// 5. Initial Landing Welcome Experience (GET / -> Welcome screen to Create Account or Login)
+$router->get('/', [WebController::class, 'welcome']);
+$router->get('/welcome', [WebController::class, 'welcome']);
+
+// Full Alumni Directory & Career Observatory View (/directory and /dashboard)
+$router->get('/directory', [WebController::class, 'directory']);
+$router->get('/dashboard', [WebController::class, 'directory']);
 
 // Interactive Views & Aliases with Graceful Redirection
 $router->get('/home', fn() => Response::redirect('/'));
@@ -120,9 +125,8 @@ $router->get('/register', [WebController::class, 'register']);
 $router->get('/signup', fn() => Response::redirect('/register'));
 $router->get('/login', [WebController::class, 'login']);
 $router->get('/signin', fn() => Response::redirect('/login'));
-// Authenticated User Dashboard / My Profile — Protected server-side by AuthMiddleware
+// Authenticated User Profile & Personal Activity — Protected server-side by AuthMiddleware
 $router->get('/my-profile', [WebController::class, 'myProfile'], [new AuthMiddleware()]);
-$router->get('/dashboard', [WebController::class, 'myProfile'], [new AuthMiddleware()]);
 $router->get('/profile', [WebController::class, 'myProfile'], [new AuthMiddleware()]);
 // Admin Panel UI — Protected server-side by AuthMiddleware + RoleMiddleware(['admin'])
 $router->get(
