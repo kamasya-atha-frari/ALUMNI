@@ -73,6 +73,11 @@ Structured database migrations stored in `database/migrations/`:
 - `003_create_mentorship_requests_table.sql`
 - `004_create_job_postings_table.sql` (Companies & Job Postings schema)
 - `005_create_applications_table.sql` (Applications schema)
+- `006_create_users_table.sql` (Authenticated users, RBAC roles & Google OAuth fields)
+- `007_create_captcha_challenges_table.sql` (Short-TTL single-use CAPTCHA challenges)
+- `008_create_revoked_tokens_table.sql` (Server-side JWT logout revocation blocklist)
+- `009_create_announcements_table.sql` (Admin-managed department announcements)
+- `010_add_profile_fields_to_users_table.sql` (Editable profile bio, contact links & skills)
 - Run migrations:
   ```bash
   php database/migrate.php [up|status|fresh]
@@ -152,6 +157,102 @@ Enterprise-grade request interceptors and fail-safe middleware pipeline:
 
 5. **Postman Collection for Validation & Error Testing**:
    - Import `docs/AlumniIstü_Postman_Collection.json` into Postman to test invalid requests (missing title, oversized title >120 chars, missing company), 404 Guardian intercepted routes, and 500 error resilience.
+
+---
+
+### 2.9 Authentication & Authorization (RBAC, CAPTCHA, Google OAuth, Admin Panel & Member Profile)
+
+AlumniIstü enforces stateless **HS256 JWT Bearer Token Authentication** with **server-side logout revocation**, **Role-Based Access Control (RBAC)**, **self-hosted SVG/Math CAPTCHA**, and **Google OAuth 2.0 ("Continue with Google")**. Full schema diagrams and security invariants are documented in [`ddd.md`](./ddd.md).
+
+#### User Roles & Access Permissions
+
+| Role | Self-Register? | Key Access Permissions |
+| :--- | :---: | :--- |
+| **`guest`** *(unauthenticated)* | — | Browse public directory (`/`), job board (`/jobs`), analytics summary (`/analytics`), faculty page (`/about`), API Docs (`/swagger`), Register (`/register`), and Login (`/login`). Blocked (`401`) from protected routes. |
+| **`alumni` / `user`** *(default)* | Yes | Access member dashboard & editable profile (`/my-profile`, `/dashboard`, `/profile`), edit **own** bio/links/skills (`PATCH /api/profile/me`), view own applications & posted jobs (`/api/profile/me/activity`), delete own job postings, and log out. Blocked (`403`) from other users' profiles and `/admin`. |
+| **`student`** | Yes | Access `/my-profile`, edit own profile, submit/withdraw own job applications, and request alumni mentorship. |
+| **`employer`** | Yes | Access `/my-profile`, create companies (`POST /api/v1/companies`), manage job postings, and transition candidate application statuses. |
+| **`faculty` / `moderator`** | Admin-assigned | Access institutional accreditation telemetry (`GET /api/v1/analytics/accreditation`) and moderation controls. |
+| **`admin`** | Admin-assigned | Full system governance via **Admin Panel (`/admin`)** and `/api/v1/admin/*`: manage users, assign roles, activate/deactivate or delete users (with self-lockout protection), manage alumni profiles, moderate job postings, and publish department announcements. |
+
+#### Registration Flow (Standard + CAPTCHA & Google OAuth 2.0)
+
+1. **Standard Form Registration with Self-Hosted CAPTCHA** (works out-of-the-box in local Docker with zero third-party API keys):
+   - Client fetches a short-TTL (`300s`), single-use SVG or Math challenge via `GET /api/auth/captcha` (or `/api/v1/auth/captcha?mode=math`).
+   - Client submits account details + `captcha_id` & `captcha_answer` to `POST /api/auth/register`.
+   - Server validates fields, verifies CAPTCHA before creating the user (`422` on missing/incorrect/expired/reused CAPTCHA), checks duplicate `username`/`email`/`student_id` (`409 Conflict`), hashes passwords with `password_hash()`, and returns `201 Created` + HS256 Bearer `access_token`.
+2. **Google OAuth 2.0 Registration & Sign-In ("Continue with Google")**:
+   - Configure OAuth 2.0 Web Application credentials in **Google Cloud Console → APIs & Services → Credentials**:
+     - **Authorized JavaScript origins**: `http://localhost:8080`, `http://alumni-istu`
+     - **Authorized redirect URIs**: `http://localhost:8080/api/v1/auth/google/callback` (and/or `http://alumni-istu/api/v1/auth/google/callback`)
+   - Populate `.env` (see `.env.example`):
+     ```env
+     GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+     GOOGLE_CLIENT_SECRET=your-client-secret
+     GOOGLE_REDIRECT_URI=http://localhost:8080/api/v1/auth/google/callback
+     ```
+   - Browser flow: `GET /api/auth/google` (signed CSRF `state`) → Google consent → `GET /api/auth/google/callback` → creates a new `auth_provider='google'` account (`password_hash=NULL`) or links to an existing verified email, then issues the same application HS256 Bearer token.
+   - API / Swagger / Postman flow: `POST /api/auth/google/token` with `{"id_token": "<google-oidc-id-token>", "role": "alumni"}`.
+
+#### Token-Based Login, Logout & `Authorization: Bearer <token>` Usage
+
+```bash
+# 1. Login (returns HS256 Bearer access_token containing sub, username, role & unique jti)
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"emre.arslan","password":"AlumniPass2026!"}'
+
+# 2. Call a protected route using Authorization: Bearer <token>
+curl http://localhost:8080/api/auth/me \
+  -H "Authorization: Bearer <YOUR_ACCESS_TOKEN>"
+
+# 3. Logout (revokes token jti server-side in revoked_tokens & clears auth cookie)
+curl -X POST http://localhost:8080/api/auth/logout \
+  -H "Authorization: Bearer <YOUR_ACCESS_TOKEN>"
+
+# 4. Reusing the logged-out token immediately returns HTTP 401 (TOKEN_REVOKED)
+curl http://localhost:8080/api/auth/me \
+  -H "Authorization: Bearer <YOUR_ACCESS_TOKEN>"
+```
+
+- **Auth & Role Middleware**: `AuthMiddleware` (`src/Middleware/AuthMiddleware.php`) validates signature, expiry, and revocation (`401`) and attaches the authenticated user to `RequestContext`; `RoleMiddleware::requireRole([...])` (`src/Middleware/RoleMiddleware.php`) enforces role permissions (`403 FORBIDDEN_ROLE`).
+- **Dynamic Role-Based Navigation**: `public/js/auth-nav.js` queries `GET /api/auth/me` on every page load—rendering **Login/Register** for guests, **My Profile + Logout** for authenticated users, and **My Profile + Admin Panel + Logout** for admins, automatically resetting to guest state if a token expires or is revoked.
+
+#### Assigning an `admin` Account & Accessing Admin / User Pages
+
+- **Option 1 — Seeder (Automatic)**: Running `docker compose exec app php database/seed.php --count=5` seeds the owner admin account from `.env` (`ADMIN_USERNAME=kamasya`, `ADMIN_EMAIL=kamasyaatha.frari@ogr.iu.edu.tr`, `ADMIN_PASSWORD=AdminPass2026!`) plus demo accounts (`emre.arslan` / `AlumniPass2026!`, `deniz.kaya` / `StudentPass2026!`, `trendyol.talent` / `EmployerPass2026!`).
+- **Option 2 — CLI Promotion Tool**: Promote any registered local or Google user by email or username:
+  ```bash
+  docker compose exec app php database/promote_admin.php kamasyaatha.frari@ogr.iu.edu.tr
+  ```
+- **Option 3 — Direct SQL**:
+  ```sql
+  UPDATE users SET role = 'admin', is_active = 1 WHERE email = 'kamasyaatha.frari@ogr.iu.edu.tr';
+  ```
+- **User-Specific Pages (Auth Protected)**: `/my-profile`, `/dashboard`, `/profile` — edit own alumni profile, graduation year, bio, social links, skills, and inspect submitted applications & job postings (`PATCH /api/v1/profile/me`, `GET /api/v1/profile/me/activity`).
+- **Admin Panel (Auth + `admin` Role Protected)**: `/admin` — system telemetry, user role assignment, account activation/deactivation/deletion, alumni management, job posting moderation, and department announcements.
+
+#### Quick Verification (Browser, Swagger UI, Postman & CLI Tests)
+
+- **Local Browser**: Visit `http://alumni-istu` (or `http://localhost:8080`):
+  - Register with CAPTCHA or Google at `/register`
+  - Sign in / Log out at `/login`
+  - Edit your own profile & activity at `/my-profile` (or `/dashboard`)
+  - Manage system data as `admin` at `/admin`
+- **Swagger UI (`BearerAuth`)**: Open `http://alumni-istu/swagger` (or `http://localhost:8080/swagger`) → execute `POST /api/v1/auth/login` → click **Authorize** → paste `access_token` into **BearerAuth** → test `/api/v1/auth/me`, `/api/v1/profile/me`, and `/api/v1/admin/*`.
+- **Postman Collection**: Import `docs/AlumniIstü_Postman_Collection.json` and run:
+  - **Folder 5**: Registration, CAPTCHA, Login & Logout (`5.1`–`5.10`)
+  - **Folder 6**: Google OAuth 2.0 endpoints (`6.1`–`6.6`)
+  - **Folder 7**: Auth & Role Middleware `401`/`403` RBAC tests (`7.1`–`7.5`)
+  - **Folder 8**: Admin Panel API (`8.1`–`8.7`)
+  - **Folder 9**: User Profile, Dashboard & Ownership `403 OWNERSHIP_VIOLATION` tests (`9.1`–`9.6`)
+- **Automated PHP Verification Suites**:
+  ```bash
+  docker compose exec app php tests/test_auth_and_captcha.php
+  docker compose exec app php tests/test_admin_panel.php
+  docker compose exec app php tests/test_user_profile_ownership.php
+  docker compose exec app php tests/test_middleware_and_validation.php
+  ```
 
 ---
 
@@ -382,7 +483,14 @@ curl -X POST http://localhost:8080/api/v1/job-postings -d '{"title":"Backend Eng
 | **Job Board UI** | [`http://localhost:8080/jobs`](http://localhost:8080/jobs) | `GET` | Interactive Job Board & applications pipeline interface |
 | **About Page** | [`http://localhost:8080/about`](http://localhost:8080/about) | `GET` | Istanbul University MIS Department overview (Whiteboard Item 6) |
 | **Analytics UI** | [`http://localhost:8080/analytics`](http://localhost:8080/analytics) | `GET` | Career mobility graph and institutional accreditation KPIs |
-| **API Explorer** | [`http://localhost:8080/swagger`](http://localhost:8080/swagger) | `GET` | Interactive Swagger UI API documentation |
+| **Register UI** | [`http://localhost:8080/register`](http://localhost:8080/register) | `GET` | Standard registration with SVG/Math CAPTCHA + Continue with Google |
+| **Login UI** | [`http://localhost:8080/login`](http://localhost:8080/login) | `GET` | Local & Google OAuth sign-in, Bearer session inspector & Logout |
+| **My Profile UI** | [`http://localhost:8080/my-profile`](http://localhost:8080/my-profile) | `GET` | Auth-protected member dashboard, profile editor & My Activity (`/dashboard`, `/profile`) |
+| **Admin Panel UI** | [`http://localhost:8080/admin`](http://localhost:8080/admin) | `GET` | Admin-only control plane for users, roles, alumni, jobs & announcements |
+| **API Explorer** | [`http://localhost:8080/swagger`](http://localhost:8080/swagger) | `GET` | Interactive Swagger UI API documentation (`BearerAuth` enabled) |
+| **Auth & CAPTCHA** | [`http://localhost:8080/api/auth/captcha`](http://localhost:8080/api/auth/captcha) | `GET/POST` | `/api/auth/{captcha,register,login,logout,me,google,google/callback,google/token}` |
+| **Profile API** | [`http://localhost:8080/api/v1/profile/me`](http://localhost:8080/api/v1/profile/me) | `GET/PATCH` | Authenticated own profile, `/me/activity`, and ownership-enforced `/users/{id}` |
+| **Admin API** | [`http://localhost:8080/api/v1/admin/overview`](http://localhost:8080/api/v1/admin/overview) | `CRUD` | Admin-only `/api/v1/admin/{overview,users,alumni,job-postings,announcements}` |
 | **Health Probe** | [`http://localhost:8080/api/v1/health`](http://localhost:8080/api/v1/health) | `GET` | System memory telemetry and database connectivity status |
 | **Users API** | [`http://localhost:8080/api/users`](http://localhost:8080/api/users) | `GET/POST` | Week 03 In-Memory User CRUD without database |
 | **List Alumni** | [`http://localhost:8080/api/v1/alumni`](http://localhost:8080/api/v1/alumni) | `GET` | Query alumni (`?cohort=`, `?industry=`, `?mentor=`, `?search=`) |

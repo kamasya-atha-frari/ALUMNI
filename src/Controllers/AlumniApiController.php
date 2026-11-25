@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AlumniIstü\Controllers;
 
+use AlumniIstü\Core\RequestContext;
 use AlumniIstü\Core\Response;
 use AlumniIstü\Services\AlumniService;
 
@@ -148,7 +149,7 @@ class AlumniApiController {
     }
 
     /**
-     * ANALYTICS: Accreditation & career metrics
+     * ANALYTICS: Accreditation & career metrics (Public summary)
      * GET /api/v1/analytics
      */
     public function analytics(): void {
@@ -157,6 +158,24 @@ class AlumniApiController {
             'status' => 'success',
             'data' => $analytics
         ]);
+    }
+
+    /**
+     * PROTECTED ACCREDITATION TELEMETRY (RBAC: faculty, moderator, admin)
+     * GET /api/v1/analytics/accreditation
+     */
+    public function accreditationAnalytics(): void {
+        $analytics = $this->service->getAnalytics();
+        Response::json([
+            'status' => 'success',
+            'access_level' => 'institutional_accreditation',
+            'authorized_reviewer' => RequestContext::user(),
+            'data' => array_merge($analytics, [
+                'accreditation_boards' => ['YÖKAK', 'AACSB'],
+                'export_ready' => true,
+                'generated_at' => date('c'),
+            ]),
+        ], 200);
     }
 
     /**

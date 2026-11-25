@@ -132,7 +132,7 @@
             </a>
 
             <!-- Menu Layer -->
-            <nav class="hidden md:flex items-center space-x-1">
+            <nav data-auth-nav-links class="hidden md:flex items-center space-x-1">
                 <a href="/" class="mercury-nav-pill active">Directory</a>
                 <a href="/jobs" class="mercury-nav-pill">Job Board</a>
                 <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
@@ -140,7 +140,7 @@
                 <a href="/swagger" class="mercury-nav-pill">API Docs</a>
             </nav>
 
-            <a href="/" class="mercury-btn-ghost">← All Alumni</a>
+            <div data-auth-nav-actions class="flex items-center space-x-2"></div>
         </div>
     </header>
 
@@ -228,5 +228,6 @@
                 ).join('');
             });
     </script>
+    <script src="/js/auth-nav.js"></script>
 </body>
 </html>

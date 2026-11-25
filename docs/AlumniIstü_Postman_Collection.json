@@ -10,6 +10,16 @@
       "key": "baseUrl",
       "value": "http://localhost:8080",
       "type": "string"
+    },
+    {
+      "key": "captcha_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -388,6 +398,727 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "job-postings"]
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Authentication, Registration & CAPTCHA",
+      "item": [
+        {
+          "name": "5.1 GET CAPTCHA Challenge (/api/v1/auth/captcha)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.captcha_id) {",
+                  "  pm.collectionVariables.set('captcha_id', json.data.captcha_id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/captcha?mode=alphanumeric",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "captcha"],
+              "query": [
+                { "key": "mode", "value": "alphanumeric", "description": "alphanumeric or math" }
+              ]
+            },
+            "description": "Generates a local SVG CAPTCHA challenge (stores hashed answer server-side with 300s TTL) and saves captcha_id to collection variables. Open image_data_uri or svg to read the challenge."
+          }
+        },
+        {
+          "name": "5.2 POST Register - Missing CAPTCHA (Expects 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"bot.attempt\",\n  \"email\": \"bot.attempt@ogr.iu.edu.tr\",\n  \"password\": \"SecurePass2026!\",\n  \"password_confirmation\": \"SecurePass2026!\",\n  \"full_name\": \"Automated Bot\",\n  \"role\": \"alumni\",\n  \"graduation_year\": 2024\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "Verifies that registration without captcha_id and captcha_answer is rejected with HTTP 422 (CAPTCHA_MISSING) before creating any user."
+          }
+        },
+        {
+          "name": "5.3 POST Register - Invalid CAPTCHA Answer (Expects 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"zeynep.yilmaz\",\n  \"email\": \"zeynep.yilmaz@ogr.iu.edu.tr\",\n  \"password\": \"SecurePass2026!\",\n  \"password_confirmation\": \"SecurePass2026!\",\n  \"full_name\": \"Zeynep Yılmaz\",\n  \"role\": \"alumni\",\n  \"graduation_year\": 2024,\n  \"department_id\": 1,\n  \"captcha_id\": \"{{captcha_id}}\",\n  \"captcha_answer\": \"WRONG99\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "Verifies that an incorrect CAPTCHA answer returns HTTP 422 (CAPTCHA_INCORRECT) and does not create the user."
+          }
+        },
+        {
+          "name": "5.4 POST Register - Valid Account with Solved CAPTCHA (Expects 201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.access_token) {",
+                  "  pm.collectionVariables.set('access_token', json.data.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"zeynep.yilmaz\",\n  \"email\": \"zeynep.yilmaz@ogr.iu.edu.tr\",\n  \"password\": \"SecurePass2026!\",\n  \"password_confirmation\": \"SecurePass2026!\",\n  \"full_name\": \"Zeynep Yılmaz\",\n  \"role\": \"alumni\",\n  \"graduation_year\": 2024,\n  \"department_id\": 1,\n  \"company\": \"Trendyol Group\",\n  \"job_title\": \"Product Analyst\",\n  \"captcha_id\": \"{{captcha_id}}\",\n  \"captcha_answer\": \"REPLACE_WITH_CAPTCHA_ANSWER\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "First run 5.1 GET CAPTCHA Challenge, read the SVG answer, replace REPLACE_WITH_CAPTCHA_ANSWER, and send. Returns 201 Created with sanitized user + Bearer access_token. Re-sending with the same captcha_id triggers 422 CAPTCHA_REUSED."
+          }
+        },
+        {
+          "name": "5.5 POST Login - Authenticate & Receive Access Token (/api/auth/login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.access_token) {",
+                  "  pm.collectionVariables.set('access_token', json.data.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"emre.arslan\",\n  \"password\": \"AlumniPass2026!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticates seeded or newly registered username/email + password and saves the HS256 Bearer access_token."
+          }
+        },
+        {
+          "name": "5.6 POST Login - Invalid Password (Expects 401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"emre.arslan\",\n  \"password\": \"WrongPassword99!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Verifies wrong password returns HTTP 401 INVALID_CREDENTIALS."
+          }
+        },
+        {
+          "name": "5.7 GET Current User Profile - Protected with Bearer Token (/api/auth/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Sends req + Bearer token and receives authenticated user profile, role, and RBAC permissions."
+          }
+        },
+        {
+          "name": "5.8 POST Logout - Revoke Current Access Token (/api/auth/logout)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Revokes the current Bearer token server-side (HTTP 200). Re-running 5.7 GET /api/auth/me with the same token will now return HTTP 401 TOKEN_REVOKED."
+          }
+        },
+        {
+          "name": "5.9 GET Current User Profile - After Logout / Revoked Token (Expects 401)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Run immediately after 5.8 Logout to confirm the revoked token is rejected with HTTP 401 TOKEN_REVOKED."
+          }
+        },
+        {
+          "name": "5.10 GET Current User Profile - Missing Token (Expects 401)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Verifies unauthenticated guest access to a protected route returns HTTP 401 TOKEN_MISSING."
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Google OAuth 2.0 Registration & Sign-In",
+      "item": [
+        {
+          "name": "6.1 GET Auth Providers Readiness (/api/v1/auth/providers)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/providers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "providers"]
+            },
+            "description": "Checks whether GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET are configured and returns CAPTCHA & public role metadata."
+          }
+        },
+        {
+          "name": "6.2 GET Initiate Google OAuth URL (/api/v1/auth/google?format=json)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google?role=alumni&format=json",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "google"],
+              "query": [
+                { "key": "role", "value": "alumni" },
+                { "key": "format", "value": "json" }
+              ]
+            },
+            "description": "Returns the Google OAuth 2.0 authorize_url and HMAC-signed CSRF state (or 503 GOOGLE_OAUTH_NOT_CONFIGURED if .env keys are empty)."
+          }
+        },
+        {
+          "name": "6.3 GET Google Callback - Cancelled Consent (Expects 400)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google/callback?error=access_denied",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "google", "callback"],
+              "query": [
+                { "key": "error", "value": "access_denied" }
+              ]
+            },
+            "description": "Verifies graceful handling when the user cancels Google OAuth consent (returns 400 OAUTH_CONSENT_CANCELLED)."
+          }
+        },
+        {
+          "name": "6.4 GET Google Callback - Invalid CSRF State (Expects 400)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google/callback?code=fake_code&state=tampered_state",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "google", "callback"],
+              "query": [
+                { "key": "code", "value": "fake_code" },
+                { "key": "state", "value": "tampered_state" }
+              ]
+            },
+            "description": "Verifies tampered or expired CSRF state is rejected with 400 OAUTH_INVALID_STATE."
+          }
+        },
+        {
+          "name": "6.5 POST Google ID Token - Invalid Token (Expects 401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_token\": \"invalid.google.id.token\",\n  \"role\": \"alumni\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google/token",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "google", "token"]
+            },
+            "description": "Verifies invalid Google ID tokens are rejected cleanly with HTTP 401 (GOOGLE_TOKEN_INVALID)."
+          }
+        },
+        {
+          "name": "6.6 POST Google ID Token - Register or Sign-In (/api/v1/auth/google/token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.access_token) {",
+                  "  pm.collectionVariables.set('access_token', json.data.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_token\": \"PASTE_REAL_GOOGLE_ID_TOKEN_HERE\",\n  \"role\": \"alumni\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google/token",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "google", "token"]
+            },
+            "description": "Verifies a real Google OIDC ID token, creates or links the user account, and saves AlumniIstü's Bearer access_token for GET /api/v1/auth/me."
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Auth & Role Middleware (401 / 403 RBAC Tests)",
+      "item": [
+        {
+          "name": "7.1 GET Admin Users - Unauthenticated (Expects 401 TOKEN_MISSING)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "users"]
+            },
+            "description": "AuthMiddleware blocks unauthenticated requests to protected routes with HTTP 401."
+          }
+        },
+        {
+          "name": "7.2 GET Admin Users - Alumni Token (Expects 403 FORBIDDEN_ROLE)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "users"]
+            },
+            "description": "Run after logging in as an 'alumni' user (5.5): RoleMiddleware rejects non-admin roles with HTTP 403 FORBIDDEN_ROLE."
+          }
+        },
+        {
+          "name": "7.3 POST Login as Admin (admin.ybs) & Save Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.access_token) {",
+                  "  pm.collectionVariables.set('access_token', json.data.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin.ybs\",\n  \"password\": \"AdminPass2026!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticates seeded admin account and stores admin Bearer token into {{access_token}}."
+          }
+        },
+        {
+          "name": "7.4 GET Admin Users - Admin Token (Expects 200)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "users"]
+            },
+            "description": "Authorized admin request passes AuthMiddleware + RoleMiddleware(['admin']) and returns sanitized user directory."
+          }
+        },
+        {
+          "name": "7.5 GET Accreditation Analytics - Faculty/Admin Token (Expects 200)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/analytics/accreditation",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "analytics", "accreditation"]
+            },
+            "description": "Protected by RoleMiddleware(['faculty', 'moderator', 'admin'])."
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Admin Panel API (Requires Admin Bearer Token)",
+      "item": [
+        {
+          "name": "8.1 POST Login as Owner Admin (kamasya)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.access_token) {",
+                  "  pm.collectionVariables.set('access_token', json.data.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"kamasya\",\n  \"password\": \"AdminPass2026!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticates seeded owner admin account (kamasya / kamasyaatha.frari@ogr.iu.edu.tr) and stores admin Bearer token."
+          }
+        },
+        {
+          "name": "8.2 GET Admin Overview Telemetry (/api/v1/admin/overview)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/overview",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "overview"]
+            }
+          }
+        },
+        {
+          "name": "8.3 PATCH Deactivate / Activate User (/api/v1/admin/users/3/status)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/users/3/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "users", "3", "status"]
+            }
+          }
+        },
+        {
+          "name": "8.4 PATCH Moderate Job Posting Status (/api/v1/admin/job-postings/1)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"closed\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/job-postings/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "job-postings", "1"]
+            }
+          }
+        },
+        {
+          "name": "8.5 POST Create Department Announcement (/api/v1/admin/announcements)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Fall 2026 Istanbul University MIS Career Summit\",\n  \"body\": \"Register to connect with senior alumni mentors and partner employers.\",\n  \"category\": \"event\",\n  \"status\": \"published\",\n  \"is_pinned\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/announcements",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "announcements"]
+            }
+          }
+        },
+        {
+          "name": "8.6 POST Announcement - Missing Title Validation (Expects 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"Body without required title.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/announcements",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "announcements"]
+            }
+          }
+        },
+        {
+          "name": "8.7 GET Public Published Announcements (/api/v1/announcements)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/announcements",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "announcements"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. User Profile, Dashboard & Ownership (STEP 7)",
+      "item": [
+        {
+          "name": "9.1 GET Own Profile - Unauthenticated (Expects 401)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profile/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profile", "me"]
+            },
+            "description": "Verifies AuthMiddleware rejects unauthenticated profile requests with HTTP 401."
+          }
+        },
+        {
+          "name": "9.2 GET Own Profile - Authenticated (/api/v1/profile/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profile/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profile", "me"]
+            }
+          }
+        },
+        {
+          "name": "9.3 PATCH Update Own Profile (/api/v1/profile/me)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Istanbul University MIS graduate focused on cloud architecture and mentoring.\",\n  \"location\": \"Istanbul, Turkey\",\n  \"linkedin_url\": \"https://linkedin.com/in/emre-arslan\",\n  \"github_url\": \"https://github.com/emrearslan\",\n  \"skills\": [\"Python\", \"SQL\", \"Docker\", \"Apache Spark\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profile/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profile", "me"]
+            }
+          }
+        },
+        {
+          "name": "9.4 PATCH Own Profile - Attempt Role Escalation (Expects 403)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profile/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profile", "me"]
+            },
+            "description": "Verifies attempting to alter restricted fields like 'role' returns HTTP 403 FORBIDDEN_FIELD_MUTATION."
+          }
+        },
+        {
+          "name": "9.5 GET Own Activity & Submissions (/api/v1/profile/me/activity)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profile/me/activity",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profile", "me", "activity"]
+            }
+          }
+        },
+        {
+          "name": "9.6 PATCH Another User Profile as Regular User (Expects 403 OWNERSHIP_VIOLATION)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Unauthorized edit attempt\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/profile/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "profile", "users", "1"]
+            },
+            "description": "Run while signed in as a non-admin user (e.g., emre.arslan, id != 1): returns HTTP 403 OWNERSHIP_VIOLATION."
           }
         }
       ]

@@ -34,6 +34,22 @@ class WebController {
         Response::html(__DIR__ . '/../../templates/about.html');
     }
 
+    public function register(): void {
+        Response::html(__DIR__ . '/../../templates/register.html');
+    }
+
+    public function login(): void {
+        Response::html(__DIR__ . '/../../templates/login.html');
+    }
+
+    public function admin(): void {
+        Response::html(__DIR__ . '/../../templates/admin.html');
+    }
+
+    public function myProfile(): void {
+        Response::html(__DIR__ . '/../../templates/my-profile.html');
+    }
+
     public function analytics(): void {
         Response::html(__DIR__ . '/../../templates/analytics.html');
     }

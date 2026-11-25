@@ -31,8 +31,30 @@
     {
       "name": "Alumni V1",
       "description": "Alumni database directory queries"
+    },
+    {
+      "name": "Authentication & CAPTCHA",
+      "description": "Server-side CAPTCHA challenges, user registration, token-based login, logout revocation, and Bearer authorization"
+    },
+    {
+      "name": "RBAC Protected (Admin & Faculty)",
+      "description": "Role-protected endpoints enforced by AuthMiddleware + RoleMiddleware (401 Unauthorized / 403 Forbidden)"
+    },
+    {
+      "name": "User Profile & Dashboard",
+      "description": "Authenticated user-specific profile editing and activity endpoints with strict ownership authorization"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "HS256 Bearer access token returned by POST /api/auth/login, POST /api/auth/register, or Google OAuth. Paste the raw JWT token (without the 'Bearer ' prefix) in Swagger UI Authorize."
+      }
+    }
+  },
   "paths": {
     "/api/health": {
       "get": {
@@ -348,12 +370,15 @@
         }
       },
       "delete": {
-        "summary": "Delete Alumni Profile (DELETE)",
+        "summary": "Delete Alumni Profile (Protected: moderator, admin)",
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
         ],
         "responses": {
           "200": { "description": "Profile deleted successfully" },
+          "401": { "description": "Unauthorized — missing, invalid, or revoked Bearer token" },
+          "403": { "description": "Forbidden — requires moderator or admin role" },
           "404": { "description": "Profile not found" }
         }
       }
@@ -417,9 +442,14 @@
         "responses": { "200": { "description": "Job posting updated" } }
       },
       "delete": {
-        "summary": "Delete Job Posting (DELETE)",
+        "summary": "Delete Job Posting (Protected: alumni, employer, moderator, admin)",
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
-        "responses": { "200": { "description": "Job posting deleted" } }
+        "responses": {
+          "200": { "description": "Job posting deleted" },
+          "401": { "description": "Unauthorized — missing or invalid Bearer token" },
+          "403": { "description": "Forbidden — requires alumni, employer, moderator, or admin role" }
+        }
       }
     },
     "/api/v1/companies/{id}/job-postings": {
@@ -471,6 +501,883 @@
         "summary": "Submit Application to Specific Job Posting (Nested Route)",
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
         "responses": { "201": { "description": "Application submitted directly to job" } }
+      }
+    },
+    "/api/v1/auth/captcha": {
+      "get": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "Generate Anti-Bot CAPTCHA Challenge (alias: /api/auth/captcha)",
+        "description": "Generates a short-lived, single-use server-side SVG CAPTCHA challenge (alphanumeric or math) that works locally in Docker without external API keys. Also accessible at GET /api/auth/captcha. The plaintext answer is never returned.",
+        "parameters": [
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "description": "Challenge mode: alphanumeric (default) or math",
+            "schema": { "type": "string", "enum": ["alphanumeric", "math"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fresh CAPTCHA challenge generated",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "captcha_id": "cap_9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+                    "driver": "local_svg",
+                    "mode": "alphanumeric",
+                    "prompt": "Enter the 6 characters shown in the image (case-insensitive)",
+                    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 72\">...</svg>",
+                    "image_data_uri": "data:image/svg+xml;base64,PHN2Zy4uLg==",
+                    "expires_in": 300,
+                    "expires_at": "2026-11-25T11:30:00+00:00"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "Register New Account with CAPTCHA Verification (alias: /api/auth/register)",
+        "description": "Creates a new AlumniIstü user account (alumni, student, or employer) after validating inputs, verifying the server-side single-use CAPTCHA challenge, checking for duplicate username/email, and hashing the password with password_hash(). Also accessible at POST /api/auth/register. Returns the sanitized user and an HS256 Bearer access token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "email", "password", "full_name", "captcha_id", "captcha_answer"],
+                "properties": {
+                  "username": { "type": "string", "minLength": 3, "maxLength": 50, "example": "zeynep.yilmaz" },
+                  "email": { "type": "string", "format": "email", "example": "zeynep.yilmaz@ogr.iu.edu.tr" },
+                  "password": { "type": "string", "minLength": 8, "example": "SecurePass2026!" },
+                  "password_confirmation": { "type": "string", "example": "SecurePass2026!" },
+                  "full_name": { "type": "string", "example": "Zeynep Yılmaz" },
+                  "role": { "type": "string", "enum": ["alumni", "student", "employer"], "default": "alumni", "example": "alumni" },
+                  "graduation_year": { "type": "integer", "minimum": 1950, "maximum": 2035, "example": 2024 },
+                  "department_id": { "type": "integer", "example": 1 },
+                  "student_id": { "type": "string", "example": "130124055" },
+                  "company": { "type": "string", "example": "Trendyol Group" },
+                  "job_title": { "type": "string", "example": "Product Analyst" },
+                  "captcha_id": { "type": "string", "example": "cap_9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d" },
+                  "captcha_answer": { "type": "string", "example": "K7P4M9" }
+                }
+              },
+              "example": {
+                "username": "zeynep.yilmaz",
+                "email": "zeynep.yilmaz@ogr.iu.edu.tr",
+                "password": "SecurePass2026!",
+                "password_confirmation": "SecurePass2026!",
+                "full_name": "Zeynep Yılmaz",
+                "role": "alumni",
+                "graduation_year": 2024,
+                "department_id": 1,
+                "company": "Trendyol Group",
+                "job_title": "Product Analyst",
+                "captcha_id": "cap_9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d",
+                "captcha_answer": "K7P4M9"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Account registered successfully and Bearer token issued",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "success",
+                  "message": "Account registered successfully.",
+                  "data": {
+                    "user": {
+                      "id": 5,
+                      "username": "zeynep.yilmaz",
+                      "email": "zeynep.yilmaz@ogr.iu.edu.tr",
+                      "full_name": "Zeynep Yılmaz",
+                      "role": "alumni",
+                      "role_label": "Graduate / Alumni",
+                      "graduation_year": 2024,
+                      "department_id": 1,
+                      "department": "Management Information Systems (YBS)"
+                    },
+                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "token_type": "Bearer",
+                    "expires_in": 3600
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Duplicate username, email, or student_id",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "code": 409,
+                  "error_code": "DUPLICATE_EMAIL",
+                  "message": "An account with email 'zeynep.yilmaz@ogr.iu.edu.tr' already exists.",
+                  "errors": {
+                    "email": "Email 'zeynep.yilmaz@ogr.iu.edu.tr' is already registered."
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error or invalid/missing/expired/reused CAPTCHA",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "invalid_captcha": {
+                    "summary": "Incorrect CAPTCHA answer",
+                    "value": {
+                      "status": "error",
+                      "code": 422,
+                      "error_code": "CAPTCHA_INCORRECT",
+                      "message": "Incorrect CAPTCHA answer. Please verify the characters and try again.",
+                      "errors": {
+                        "captcha": "Incorrect CAPTCHA answer. Please verify the characters and try again."
+                      }
+                    }
+                  },
+                  "reused_captcha": {
+                    "summary": "Already-used CAPTCHA challenge",
+                    "value": {
+                      "status": "error",
+                      "code": 422,
+                      "error_code": "CAPTCHA_REUSED",
+                      "message": "This CAPTCHA challenge has already been used. Please request a new CAPTCHA.",
+                      "errors": {
+                        "captcha": "This CAPTCHA challenge has already been used. Please request a new CAPTCHA."
+                      }
+                    }
+                  },
+                  "expired_captcha": {
+                    "summary": "Expired CAPTCHA challenge",
+                    "value": {
+                      "status": "error",
+                      "code": 422,
+                      "error_code": "CAPTCHA_EXPIRED",
+                      "message": "CAPTCHA challenge has expired. Please refresh the CAPTCHA and try again.",
+                      "errors": {
+                        "captcha": "CAPTCHA challenge has expired. Please refresh the CAPTCHA and try again."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "Authenticate User & Issue Access Token (alias: /api/auth/login)",
+        "description": "Step (a)-(b) of the Client <-> Server token auth flow: verifies username or email + password against stored password_hash and returns an HS256 Bearer access token containing user identity, role, and unique jti. Also accessible at POST /api/auth/login.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": { "type": "string", "description": "Username or email address", "example": "emre.arslan" },
+                  "password": { "type": "string", "example": "AlumniPass2026!" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication succeeded and Bearer token returned",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "success",
+                  "message": "Authentication successful.",
+                  "data": {
+                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "token_type": "Bearer",
+                    "expires_in": 3600,
+                    "expires_at": "2026-11-25T16:00:00+00:00",
+                    "user": {
+                      "id": 2,
+                      "username": "emre.arslan",
+                      "email": "emre.arslan@ogr.iu.edu.tr",
+                      "role": "alumni",
+                      "auth_provider": "local"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials (INVALID_CREDENTIALS) or Google-only OAuth account (OAUTH_ACCOUNT_ONLY)",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "invalid_credentials": {
+                    "summary": "Wrong username or password",
+                    "value": {
+                      "status": "error",
+                      "code": 401,
+                      "error_code": "INVALID_CREDENTIALS",
+                      "message": "Invalid username/email or password."
+                    }
+                  },
+                  "oauth_only": {
+                    "summary": "Account uses Google Sign-In",
+                    "value": {
+                      "status": "error",
+                      "code": 401,
+                      "error_code": "OAUTH_ACCOUNT_ONLY",
+                      "message": "This account is registered with Google Sign-In. Please continue with Google."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Missing username/email or password"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "Logout & Revoke Current Access Token (alias: /api/auth/logout)",
+        "description": "Revokes the current Bearer JWT server-side (persisting its jti in revoked_tokens) and clears any auth cookie so subsequent requests using the revoked token are rejected with HTTP 401 TOKEN_REVOKED. Also accessible at POST /api/auth/logout.",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Token revoked and session logged out cleanly",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "success",
+                  "message": "Logged out successfully. Access token has been revoked.",
+                  "data": {
+                    "revoked": true,
+                    "token_id": "tok_9f8e7d6c5b4a3210fedcba9876543210",
+                    "revoked_at": "2026-11-25T15:00:00+00:00",
+                    "user_id": 2,
+                    "username": "emre.arslan"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid, expired, or already-revoked Bearer token",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "code": 401,
+                  "error_code": "TOKEN_REVOKED",
+                  "message": "Access token has been revoked via logout. Please log in again."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "Get Authenticated User, Role & Dynamic Nav State (alias: /api/auth/me)",
+        "description": "Protected by AuthMiddleware. Validates Authorization: Bearer <token> (or HttpOnly auth cookie) including signature, expiry, revocation, and account active state, returning authenticated=true, role, is_admin, user profile, and RBAC permissions for dynamic frontend navigation.",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Valid token — authenticated user, role, is_admin flag, and RBAC permissions returned",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "success",
+                  "data": {
+                    "authenticated": true,
+                    "role": "admin",
+                    "is_admin": true,
+                    "user": {
+                      "id": 1,
+                      "username": "kamasya",
+                      "email": "kamasyaatha.frari@ogr.iu.edu.tr",
+                      "full_name": "Kamasya Atha Frari",
+                      "role": "admin",
+                      "role_label": "System Administrator",
+                      "is_active": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing (TOKEN_MISSING), invalid/expired (TOKEN_INVALID_OR_EXPIRED), or revoked (TOKEN_REVOKED) Bearer token — frontend resets navigation to guest state"
+          },
+          "403": {
+            "description": "Account deactivated (ACCOUNT_INACTIVE) — frontend resets navigation to guest state"
+          }
+        }
+      }
+    },
+    "/api/v1/departments": {
+      "get": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "List Academic Departments",
+        "description": "Returns academic departments used to populate the registration form dropdown.",
+        "responses": {
+          "200": {
+            "description": "List of departments"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/providers": {
+      "get": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "Discover Auth & CAPTCHA Provider Readiness",
+        "description": "Returns public configuration metadata indicating local CAPTCHA mode, allowed self-registration roles, and whether Google OAuth 2.0 credentials are active (never exposes secrets).",
+        "responses": {
+          "200": {
+            "description": "Provider readiness metadata"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/google": {
+      "get": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "Initiate Google OAuth 2.0 Redirect (alias: /api/auth/google)",
+        "description": "Generates a signed CSRF state token and redirects the browser to Google's OAuth 2.0 consent screen. Also accessible at GET /api/auth/google. Pass ?format=json or Accept: application/json to receive the authorize_url as JSON.",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "description": "Desired public self-registration role for new users",
+            "schema": { "type": "string", "enum": ["alumni", "student", "employer"], "default": "alumni" }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "Set to 'json' to return the Google authorization URL in JSON instead of HTTP 302 redirect",
+            "schema": { "type": "string", "enum": ["json"] }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirects browser to Google OAuth 2.0 authorization URL"
+          },
+          "200": {
+            "description": "JSON response with authorize_url and signed CSRF state (when ?format=json)"
+          },
+          "503": {
+            "description": "Google OAuth credentials not configured in .env (GOOGLE_OAUTH_NOT_CONFIGURED)"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/google/callback": {
+      "get": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "Google OAuth 2.0 Callback Handler",
+        "description": "Validates the HMAC-signed CSRF state parameter, exchanges the authorization code with Google, verifies email_verified=true, links/creates the user (auth_provider='google', password_hash=NULL), and issues the application HS256 Bearer token.",
+        "parameters": [
+          { "name": "code", "in": "query", "required": false, "schema": { "type": "string" }, "description": "Authorization code returned by Google" },
+          { "name": "state", "in": "query", "required": false, "schema": { "type": "string" }, "description": "Signed CSRF state parameter" },
+          { "name": "error", "in": "query", "required": false, "schema": { "type": "string" }, "description": "Google OAuth error code (e.g., access_denied)" }
+        ],
+        "responses": {
+          "200": { "description": "Existing or linked Google user authenticated (JSON mode)" },
+          "201": { "description": "New Google user registered and Bearer token issued (JSON mode)" },
+          "302": { "description": "Browser redirect back to /register#oauth_token=... or /register?oauth_error=..." },
+          "400": { "description": "Cancelled consent (OAUTH_CONSENT_CANCELLED) or invalid/expired state (OAUTH_INVALID_STATE)" },
+          "401": { "description": "Code exchange or Google token verification failed" },
+          "422": { "description": "Google account email is not verified (GOOGLE_EMAIL_UNVERIFIED)" }
+        }
+      }
+    },
+    "/api/v1/auth/google/token": {
+      "post": {
+        "tags": ["Authentication & CAPTCHA"],
+        "summary": "Register / Sign-In via Google ID Token (alias: /api/auth/google/token)",
+        "description": "Verifies a Google OpenID Connect ID token directly against Google tokeninfo (checking aud, iss, exp, email_verified), links or creates the user account, and issues the AlumniIstü HS256 Bearer access token. Also accessible at POST /api/auth/google/token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id_token"],
+                "properties": {
+                  "id_token": { "type": "string", "description": "Google OIDC ID token (JWT)", "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6..." },
+                  "role": { "type": "string", "enum": ["alumni", "student", "employer"], "default": "alumni", "example": "alumni" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Existing or email-linked Google user authenticated",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "success",
+                  "message": "Signed in with Google successfully.",
+                  "data": {
+                    "is_new_user": false,
+                    "account_linked": true,
+                    "user": {
+                      "id": 2,
+                      "username": "emre.arslan",
+                      "email": "emre.arslan@ogr.iu.edu.tr",
+                      "role": "alumni",
+                      "auth_provider": "local",
+                      "google_linked": true
+                    },
+                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "token_type": "Bearer",
+                    "expires_in": 3600
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "New user registered via Google OAuth (auth_provider='google', password_hash=NULL)"
+          },
+          "401": {
+            "description": "Invalid, expired, or audience-mismatched Google ID token (GOOGLE_TOKEN_INVALID)"
+          },
+          "422": {
+            "description": "Missing id_token, disallowed role, or unverified Google email (GOOGLE_EMAIL_UNVERIFIED)"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users": {
+      "get": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "List All Registered Accounts (Protected: admin only)",
+        "description": "Enforced by AuthMiddleware + RoleMiddleware::requireRole(['admin']). Also accessible at GET /api/admin/users.",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Sanitized list of all registered user accounts and role distribution" },
+          "401": {
+            "description": "Unauthenticated — missing, invalid, expired, or revoked Bearer token",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "code": 401,
+                  "guardian": "Auth Middleware",
+                  "error": "Unauthorized",
+                  "error_code": "TOKEN_MISSING",
+                  "message": "Authentication required. Provide an Authorization: Bearer <token> header."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authenticated user does not have the 'admin' role",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "error",
+                  "code": 403,
+                  "guardian": "Role Authorization Middleware",
+                  "error": "Forbidden",
+                  "error_code": "FORBIDDEN_ROLE",
+                  "message": "Access denied. Role 'alumni' is not authorized for this resource.",
+                  "current_role": "alumni",
+                  "required_roles": ["admin"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/{id}/role": {
+      "patch": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Update User RBAC Role (Protected: admin only)",
+        "description": "Promotes or changes a user's RBAC role. Enforced by AuthMiddleware + RoleMiddleware::requireRole(['admin']). Also accessible at PATCH /api/admin/users/{id}/role.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "example": 2 }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["role"],
+                "properties": {
+                  "role": { "type": "string", "enum": ["alumni", "student", "faculty", "employer", "moderator", "admin"], "example": "moderator" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User role updated successfully" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — admin role required" },
+          "404": { "description": "User not found" },
+          "422": { "description": "Invalid role value" }
+        }
+      }
+    },
+    "/api/v1/analytics/accreditation": {
+      "get": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Institutional Accreditation Telemetry (Protected: faculty, moderator, admin)",
+        "description": "Returns YÖKAK / AACSB accreditation dossier metrics along with the authorized reviewer context. Enforced by AuthMiddleware + RoleMiddleware::requireRole(['faculty', 'moderator', 'admin']).",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Accreditation analytics payload" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — requires faculty, moderator, or admin role" }
+        }
+      }
+    },
+    "/api/v1/companies": {
+      "post": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Register Corporate Employer (Protected: employer, moderator, admin)",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string", "example": "Hepsiburada Tech" },
+                  "industry": { "type": "string", "example": "E-Commerce" },
+                  "location": { "type": "string", "example": "Istanbul, Turkey" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Company created" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — requires employer, moderator, or admin role" }
+        }
+      }
+    },
+    "/api/v1/admin/overview": {
+      "get": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Admin Panel System Telemetry Overview (Protected: admin only)",
+        "description": "Returns system-wide user, role, alumni, job posting, application, and announcement metrics for /admin. Also accessible at GET /api/admin/overview.",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "System telemetry overview payload" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — admin role required" }
+        }
+      }
+    },
+    "/api/v1/admin/users/{id}/status": {
+      "patch": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Activate or Deactivate User Account (Protected: admin only)",
+        "description": "Sets users.is_active to true or false. Blocks self-deactivation with 422 CANNOT_DEACTIVATE_SELF. Also accessible at PATCH /api/admin/users/{id}/status.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "example": 3 }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["is_active"],
+                "properties": {
+                  "is_active": { "type": "boolean", "example": false }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User status updated" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — admin role required" },
+          "404": { "description": "User not found" },
+          "422": { "description": "Validation error or self-deactivation attempt" }
+        }
+      }
+    },
+    "/api/v1/admin/users/{id}": {
+      "delete": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Delete User Account (Protected: admin only)",
+        "description": "Permanently deletes a user account. Blocks self-deletion with 422 CANNOT_DELETE_SELF. Also accessible at DELETE /api/admin/users/{id}.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "example": 4 }],
+        "responses": {
+          "200": { "description": "User deleted" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — admin role required" },
+          "404": { "description": "User not found" },
+          "422": { "description": "Cannot delete own active admin account" }
+        }
+      }
+    },
+    "/api/v1/admin/alumni": {
+      "post": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Create Alumni Profile as Admin (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["full_name", "email"],
+                "properties": {
+                  "full_name": { "type": "string", "example": "Mert Demir" },
+                  "email": { "type": "string", "example": "mert.demir@ogr.iu.edu.tr" },
+                  "cohort": { "type": "integer", "example": 2024 },
+                  "company": { "type": "string", "example": "Turkcell Tech" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Alumni profile created" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — admin role required" },
+          "422": { "description": "Validation error" }
+        }
+      }
+    },
+    "/api/v1/admin/alumni/{id}": {
+      "patch": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Update Alumni Profile as Admin (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Alumni updated" }, "401": { "description": "Unauthorized" }, "403": { "description": "Forbidden" }, "404": { "description": "Not found" } }
+      },
+      "delete": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Delete Alumni Profile as Admin (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Alumni deleted" }, "401": { "description": "Unauthorized" }, "403": { "description": "Forbidden" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/api/v1/admin/job-postings": {
+      "get": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "List All Job Postings for Moderation (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "All job postings" }, "401": { "description": "Unauthorized" }, "403": { "description": "Forbidden" } }
+      }
+    },
+    "/api/v1/admin/job-postings/{id}": {
+      "patch": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Moderate Job Posting Status / Fields (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "example": 1 }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "enum": ["active", "closed", "draft"], "example": "closed" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Job posting updated" }, "401": { "description": "Unauthorized" }, "403": { "description": "Forbidden" }, "404": { "description": "Not found" }, "422": { "description": "Validation error" } }
+      },
+      "delete": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Delete Job Posting as Admin (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Job posting deleted" }, "401": { "description": "Unauthorized" }, "403": { "description": "Forbidden" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/api/v1/announcements": {
+      "get": {
+        "tags": ["Alumni V1"],
+        "summary": "List Published Department Announcements (Public)",
+        "responses": { "200": { "description": "Published department announcements" } }
+      }
+    },
+    "/api/v1/admin/announcements": {
+      "get": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "List All Announcements Including Drafts (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "All announcements" }, "401": { "description": "Unauthorized" }, "403": { "description": "Forbidden" } }
+      },
+      "post": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Create Department Announcement (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "body"],
+                "properties": {
+                  "title": { "type": "string", "maxLength": 150, "example": "Fall 2026 Alumni Career Summit" },
+                  "body": { "type": "string", "example": "Join Istanbul University MIS graduates at Beyazıt Campus." },
+                  "category": { "type": "string", "enum": ["general", "career", "event", "accreditation"], "default": "general" },
+                  "status": { "type": "string", "enum": ["published", "draft"], "default": "published" },
+                  "is_pinned": { "type": "boolean", "default": false }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Announcement created" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "422": { "description": "Validation error (missing title/body or invalid category/status)" }
+        }
+      }
+    },
+    "/api/v1/admin/announcements/{id}": {
+      "patch": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Update Department Announcement (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Announcement updated" }, "401": { "description": "Unauthorized" }, "403": { "description": "Forbidden" }, "404": { "description": "Not found" }, "422": { "description": "Validation error" } }
+      },
+      "delete": {
+        "tags": ["RBAC Protected (Admin & Faculty)"],
+        "summary": "Delete Department Announcement (Protected: admin only)",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Announcement deleted" }, "401": { "description": "Unauthorized" }, "403": { "description": "Forbidden" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/api/v1/profile/me": {
+      "get": {
+        "tags": ["User Profile & Dashboard"],
+        "summary": "Get Own Editable Profile (alias: /api/profile/me)",
+        "description": "Protected by AuthMiddleware. Returns the logged-in user's full editable profile (graduation info, bio, contact links, skills) and linked alumni directory record.",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Authenticated user's profile" },
+          "401": { "description": "Unauthorized — missing, invalid, or revoked Bearer token" }
+        }
+      },
+      "patch": {
+        "tags": ["User Profile & Dashboard"],
+        "summary": "Update Own Profile Details (alias: /api/profile/me)",
+        "description": "Protected by AuthMiddleware. Allows a user to update only their own profile (full_name, graduation_year, department_id, company, job_title, location, bio, skills, linkedin_url, github_url, website_url, phone). Attempting to modify restricted fields like role or is_active returns 403 FORBIDDEN_FIELD_MUTATION.",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "full_name": { "type": "string", "example": "Emre Arslan" },
+                  "graduation_year": { "type": "integer", "example": 2023 },
+                  "department_id": { "type": "integer", "example": 1 },
+                  "company": { "type": "string", "example": "Turkcell Tech" },
+                  "job_title": { "type": "string", "example": "Principal Data Engineer" },
+                  "location": { "type": "string", "example": "Istanbul, Turkey" },
+                  "bio": { "type": "string", "maxLength": 1000, "example": "MIS graduate mentoring students in cloud & data engineering." },
+                  "skills": { "type": "array", "items": { "type": "string" }, "example": ["Python", "SQL", "Spark"] },
+                  "linkedin_url": { "type": "string", "example": "https://linkedin.com/in/emre-arslan" },
+                  "github_url": { "type": "string", "example": "https://github.com/emrearslan" },
+                  "website_url": { "type": "string", "example": "https://emrearslan.dev" },
+                  "phone": { "type": "string", "example": "+90 555 123 45 67" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Own profile updated successfully" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — attempted to mutate restricted fields (FORBIDDEN_FIELD_MUTATION)" },
+          "422": { "description": "Validation error (invalid URL, graduation year out of range, bio > 1000 chars)" }
+        }
+      }
+    },
+    "/api/v1/profile/me/activity": {
+      "get": {
+        "tags": ["User Profile & Dashboard"],
+        "summary": "Get Own Submitted Items & Activity (alias: /api/profile/me/activity)",
+        "description": "Protected by AuthMiddleware. Returns the logged-in user's own submitted job applications, authored job postings, and published department announcements.",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User's activity summary and records" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v1/profile/users/{id}": {
+      "get": {
+        "tags": ["User Profile & Dashboard"],
+        "summary": "Get User Profile by ID (Ownership-Enforced: Self or Admin)",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "example": 2 }],
+        "responses": {
+          "200": { "description": "User profile returned (owner or admin)" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — non-admin attempting to access another user's profile (OWNERSHIP_VIOLATION)" },
+          "404": { "description": "User not found" }
+        }
+      },
+      "patch": {
+        "tags": ["User Profile & Dashboard"],
+        "summary": "Update User Profile by ID (Ownership-Enforced: Self or Admin)",
+        "description": "Regular users can only update their own user ID (returns 403 OWNERSHIP_VIOLATION for any other user ID). Admins may update any user's profile.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "example": 2 }],
+        "responses": {
+          "200": { "description": "User profile updated" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden — OWNERSHIP_VIOLATION or FORBIDDEN_FIELD_MUTATION" },
+          "404": { "description": "User not found" },
+          "422": { "description": "Validation error" }
+        }
       }
     }
   }

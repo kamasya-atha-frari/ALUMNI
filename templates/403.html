@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden • AlumniIstü Admin Guard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-[#14213D] text-[#F4EDE0] flex items-center justify-center p-6" style="font-family: 'Inter', sans-serif;">
+    <div class="max-w-lg w-full rounded-2xl bg-[#1c2a4a] border border-[#FF6B58]/40 p-8 text-center space-y-5 shadow-2xl">
+        <div class="w-16 h-16 mx-auto rounded-full bg-[#FF6B58]/15 border border-[#FF6B58]/50 text-[#FF6B58] flex items-center justify-center text-2xl">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 text-xs font-mono text-[#FF6B58]">
+            HTTP 403 • Role Authorization Middleware
+        </div>
+        <h1 class="text-3xl text-[#F4EDE0]" style="font-family: 'Playfair Display', Georgia, serif;">
+            Administrator Access Required
+        </h1>
+        <p class="text-sm text-[#F4EDE0]/75 leading-relaxed">
+            {{REASON}}
+        </p>
+        <div class="rounded-xl bg-[#0f1a30] border border-[#F4EDE0]/10 p-3 text-xs font-mono text-[#F4EDE0]/70 space-y-1">
+            <div>Route: <span class="text-[#F4EDE0]">{{METHOD}} {{PATH}}</span></div>
+            <div>Current Role: <span class="text-[#FF6B58]">{{CURRENT_ROLE}}</span> • Required: <span class="text-emerald-300">{{REQUIRED_ROLES}}</span></div>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <a href="/login" class="px-5 py-2.5 rounded-full bg-[#FF6B58] text-[#F4EDE0] text-sm font-medium hover:bg-[#ff7e6d] transition">
+                Switch Account
+            </a>
+            <a href="/" class="px-5 py-2.5 rounded-full border border-[#F4EDE0]/25 text-[#F4EDE0] text-sm hover:border-[#FF6B58] transition">
+                Return to Directory
+            </a>
+        </div>
+    </div>
+</body>
+</html>

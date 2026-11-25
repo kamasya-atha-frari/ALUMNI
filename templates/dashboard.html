@@ -429,8 +429,8 @@
                 </div>
             </a>
 
-            <!-- Centered Navigation Pill Links (40px radius) -->
-            <nav class="hidden md:flex items-center space-x-1">
+            <!-- Centered Dynamic Role-Aware Navigation (powered by /js/auth-nav.js + GET /api/auth/me) -->
+            <nav data-auth-nav-links class="hidden md:flex items-center space-x-1">
                 <a href="/" class="mercury-nav-pill active">Directory</a>
                 <a href="/jobs" class="mercury-nav-pill">Job Board</a>
                 <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
@@ -438,12 +438,10 @@
                 <a href="/swagger" class="mercury-nav-pill">API Docs</a>
             </nav>
 
-            <!-- Right Actions: Log in Link + Coral 'Open profile' Pill Button -->
-            <div class="flex items-center space-x-4">
-                <a href="/swagger" class="text-sm text-[#F4EDE0]/80 hover:text-[#F4EDE0] hidden sm:inline-block transition">
-                    API Explorer
-                </a>
-                <button onclick="openModal()" class="mercury-btn-coral">
+            <!-- Right Actions: Dynamic Auth Controls (Guest: Login/Register | User: @user/Logout | Admin: +Admin) -->
+            <div class="flex items-center space-x-3">
+                <div data-auth-nav-actions class="flex items-center space-x-2"></div>
+                <button onclick="openModal()" class="mercury-btn-coral hidden sm:inline-flex">
                     <span>Open profile</span>
                     <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
@@ -1251,5 +1249,6 @@
 
         fetchDirectory();
     </script>
+    <script src="/js/auth-nav.js"></script>
 </body>
 </html>

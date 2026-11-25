@@ -136,7 +136,7 @@
                 </div>
             </a>
 
-            <nav class="hidden md:flex items-center space-x-1">
+            <nav data-auth-nav-links class="hidden md:flex items-center space-x-1">
                 <a href="/" class="mercury-nav-pill">Directory</a>
                 <a href="/jobs" class="mercury-nav-pill">Job Board</a>
                 <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
@@ -144,7 +144,7 @@
                 <a href="/swagger" class="mercury-nav-pill">API Docs</a>
             </nav>
 
-            <a href="/" class="mercury-btn-coral">Directory →</a>
+            <div data-auth-nav-actions class="flex items-center space-x-2"></div>
         </div>
     </header>
 
@@ -217,5 +217,6 @@
             <span class="text-[#FF6B58] font-mono">Navy #14213D • Cream #F4EDE0 • Coral #FF6B58</span>
         </div>
     </footer>
+    <script src="/js/auth-nav.js"></script>
 </body>
 </html>

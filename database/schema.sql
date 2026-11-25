@@ -97,6 +97,87 @@ CREATE TABLE IF NOT EXISTS applications (
     CONSTRAINT fk_application_user FOREIGN KEY (user_id) REFERENCES alumni(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 6. Authenticated Users Table (Registration, Login, Google OAuth & RBAC)
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NULL,
+    google_id VARCHAR(255) NULL UNIQUE,
+    auth_provider ENUM('local', 'google') NOT NULL DEFAULT 'local',
+    avatar_url VARCHAR(512) NULL,
+    full_name VARCHAR(150) NOT NULL,
+    role ENUM('alumni', 'student', 'faculty', 'employer', 'moderator', 'admin') NOT NULL DEFAULT 'alumni',
+    graduation_year INT NULL,
+    department_id INT NULL,
+    student_id VARCHAR(50) NULL UNIQUE,
+    company VARCHAR(150) NULL,
+    job_title VARCHAR(150) NULL,
+    bio TEXT NULL,
+    location VARCHAR(120) NULL,
+    linkedin_url VARCHAR(255) NULL,
+    github_url VARCHAR(255) NULL,
+    website_url VARCHAR(255) NULL,
+    phone VARCHAR(30) NULL,
+    skills JSON NULL,
+    alumni_id INT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_users_role (role),
+    INDEX idx_users_auth_provider (auth_provider),
+    INDEX idx_users_graduation_year (graduation_year),
+    INDEX idx_users_department (department_id),
+    CONSTRAINT fk_users_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL,
+    CONSTRAINT fk_users_alumni FOREIGN KEY (alumni_id) REFERENCES alumni(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Server-Side CAPTCHA Challenges Table (Anti-Bot Registration)
+CREATE TABLE IF NOT EXISTS captcha_challenges (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    captcha_id VARCHAR(64) NOT NULL UNIQUE,
+    answer_hash VARCHAR(64) NOT NULL,
+    challenge_type VARCHAR(30) NOT NULL DEFAULT 'alphanumeric',
+    attempts INT NOT NULL DEFAULT 0,
+    max_attempts INT NOT NULL DEFAULT 5,
+    ip_address VARCHAR(45) NULL,
+    expires_at DATETIME NOT NULL,
+    used_at DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_captcha_expires (expires_at),
+    INDEX idx_captcha_used (used_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 8. Revoked Access Tokens Table (Server-Side Logout Invalidation)
+CREATE TABLE IF NOT EXISTS revoked_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    jti VARCHAR(64) NOT NULL UNIQUE,
+    user_id INT NULL,
+    expires_at DATETIME NOT NULL,
+    revoked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_revoked_expires (expires_at),
+    INDEX idx_revoked_user (user_id),
+    CONSTRAINT fk_revoked_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 9. Department Announcements Table (Admin Panel Managed Posts)
+CREATE TABLE IF NOT EXISTS announcements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    body TEXT NOT NULL,
+    category ENUM('general', 'career', 'event', 'accreditation') NOT NULL DEFAULT 'general',
+    status ENUM('published', 'draft') NOT NULL DEFAULT 'published',
+    is_pinned BOOLEAN NOT NULL DEFAULT FALSE,
+    author_user_id INT NULL,
+    author_name VARCHAR(150) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_announcements_status (status),
+    INDEX idx_announcements_category (category),
+    INDEX idx_announcements_pinned (is_pinned),
+    CONSTRAINT fk_announcements_author FOREIGN KEY (author_user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- =====================================================================
 -- Seed Fixtures
 -- =====================================================================

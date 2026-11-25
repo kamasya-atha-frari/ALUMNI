@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register • AlumniIstü (Istanbul University MIS)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #14213D;
+            --color-cream: #F4EDE0;
+            --color-coral: #FF6B58;
+            --surface-onyx-canvas: #14213D;
+            --surface-graphite-card: #1c2a4a;
+            --surface-obsidian-button: #24355c;
+            --surface-deep-vault: #0f1a30;
+            --color-slate-border: rgba(244, 237, 224, 0.12);
+            --color-mist-border: rgba(244, 237, 224, 0.28);
+            --color-ash-text: rgba(244, 237, 224, 0.70);
+            --color-ivory-text: #F4EDE0;
+
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', Georgia, serif;
+            --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+            --page-max-width: 1200px;
+            --radius-cards: 12px;
+            --radius-inputs: 14px;
+            --radius-buttons: 32px;
+            --radius-nav: 40px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--surface-onyx-canvas);
+            color: var(--color-ivory-text);
+            font-family: var(--font-inter);
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-container {
+            max-width: var(--page-max-width);
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        @keyframes auroraFloat {
+
+            0%,
+            100% {
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate3d(-24px, 18px, 0) scale(1.06);
+            }
+        }
+
+        @keyframes pulseCoralBeacon {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.9);
+                opacity: 0;
+            }
+        }
+
+        .animate-aurora {
+            animation: auroraFloat 16s ease-in-out infinite;
+        }
+
+        .beacon-ring {
+            transform-origin: center;
+            animation: pulseCoralBeacon 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+
+        .mercury-display {
+            font-family: var(--font-ivy-presto);
+            font-weight: 400;
+            letter-spacing: 0.012em;
+            line-height: 1.12;
+        }
+
+        .mercury-card {
+            background-color: var(--surface-graphite-card);
+            border-radius: var(--radius-cards);
+            border: 1px solid var(--color-slate-border);
+        }
+
+        .mercury-nav-pill {
+            color: var(--color-ash-text);
+            font-size: 15px;
+            font-weight: 400;
+            border-radius: var(--radius-nav);
+            padding: 8px 18px;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .mercury-nav-pill:hover,
+        .mercury-nav-pill.active {
+            color: var(--color-ivory-text);
+            background-color: rgba(244, 237, 224, 0.08);
+        }
+
+        .mercury-btn-coral {
+            background-color: var(--color-coral);
+            color: var(--color-ivory-text);
+            font-weight: 500;
+            border-radius: var(--radius-buttons);
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, opacity 0.2s ease;
+        }
+
+        .mercury-btn-coral:hover:not(:disabled) {
+            transform: translateY(-1.5px);
+            background-color: #ff7e6d;
+        }
+
+        .mercury-btn-coral:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .mercury-btn-ghost {
+            background-color: transparent;
+            color: var(--color-ivory-text);
+            border: 1px solid var(--color-mist-border);
+            border-radius: var(--radius-nav);
+            padding: 9px 18px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .mercury-btn-ghost:hover {
+            border-color: var(--color-coral);
+            color: var(--color-coral);
+            background-color: rgba(255, 107, 88, 0.08);
+        }
+
+        .field-input {
+            width: 100%;
+            background-color: var(--surface-deep-vault);
+            color: var(--color-ivory-text);
+            border: 1px solid var(--color-mist-border);
+            border-radius: var(--radius-inputs);
+            padding: 11px 15px;
+            font-family: var(--font-inter);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .field-input::placeholder {
+            color: rgba(244, 237, 224, 0.42);
+        }
+
+        .field-input:focus {
+            border-color: var(--color-coral);
+            box-shadow: 0 0 0 3px rgba(255, 107, 88, 0.16);
+        }
+
+        .field-input.has-error {
+            border-color: #ff6b58;
+            box-shadow: 0 0 0 3px rgba(255, 107, 88, 0.18);
+        }
+
+        .role-pill {
+            border: 1px solid var(--color-mist-border);
+            background-color: var(--surface-deep-vault);
+            color: var(--color-ash-text);
+            border-radius: 14px;
+            padding: 12px 14px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .role-pill:hover {
+            border-color: rgba(255, 107, 88, 0.65);
+            color: var(--color-ivory-text);
+        }
+
+        .role-pill.active {
+            border-color: var(--color-coral);
+            background-color: rgba(255, 107, 88, 0.12);
+            color: var(--color-ivory-text);
+        }
+
+        .captcha-stage svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .google-oauth-btn {
+            width: 100%;
+            background-color: #F4EDE0;
+            color: #14213D;
+            font-family: var(--font-inter);
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid rgba(244, 237, 224, 0.9);
+            border-radius: var(--radius-buttons);
+            padding: 12px 20px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .google-oauth-btn:hover {
+            background-color: #ffffff;
+            transform: translateY(-1.5px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
+
+    <!-- Frosted Top Navigation -->
+    <header class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/85 backdrop-blur-xl">
+        <div class="page-container h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3 group">
+                <div
+                    class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/30 flex items-center justify-center relative">
+                    <span
+                        class="w-4 h-4 rounded-full border-2 border-[#FF6B58] block group-hover:scale-110 transition-transform"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#F4EDE0] absolute"></span>
+                </div>
+                <div>
+                    <span class="text-xl tracking-wide text-[#F4EDE0]"
+                        style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">
+                        AlumniIstü
+                    </span>
+                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/55">
+                        Istanbul University • MIS
+                    </span>
+                </div>
+            </a>
+
+            <nav data-auth-nav-links class="hidden md:flex items-center space-x-1">
+                <a href="/" class="mercury-nav-pill">Directory</a>
+                <a href="/jobs" class="mercury-nav-pill">Job Board</a>
+                <a href="/analytics" class="mercury-nav-pill">Career Graph</a>
+                <a href="/about" class="mercury-nav-pill">Faculty</a>
+                <a href="/swagger" class="mercury-nav-pill">API Docs</a>
+            </nav>
+
+            <div data-auth-nav-actions class="flex items-center space-x-2"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow relative overflow-hidden py-12 md:py-16">
+        <!-- Ambient Aurora Glow -->
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+            <div
+                class="animate-aurora absolute -top-24 right-1/4 w-[500px] h-[500px] rounded-full bg-[#FF6B58]/12 blur-[130px]">
+            </div>
+            <div
+                class="animate-aurora absolute bottom-0 left-1/5 w-[440px] h-[440px] rounded-full bg-[#24355c]/55 blur-[130px]">
+            </div>
+        </div>
+
+        <div class="page-container relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+                <!-- Left Info Column: Identity, RBAC & Security Context -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div
+                        class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/20 text-xs text-[#F4EDE0]/90">
+                        <span class="relative flex h-2 w-2">
+                            <span
+                                class="beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#FF6B58]"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#FF6B58]"></span>
+                        </span>
+                        <span>CAPTCHA &amp; Google OAuth Onboarding • RBAC Enabled</span>
+                    </div>
+
+                    <h1 class="mercury-display text-4xl md:text-5xl text-[#F4EDE0]">
+                        Join the <span class="italic text-[#FF6B58]">AlumniIstü</span> Network
+                    </h1>
+
+                    <p class="text-[#F4EDE0]/72 text-base leading-relaxed">
+                        Create your Istanbul University Management Information Systems (YBS) account with <strong>Google
+                            Sign-In</strong> or standard email + CAPTCHA registration to unlock mentorship pairings, job
+                        board referrals, and tokenized REST API access.
+                    </p>
+
+                    <div class="mercury-card p-6 space-y-4">
+                        <h2 class="text-sm font-semibold uppercase tracking-widest text-[#FF6B58]">
+                            Security &amp; Authorization Architecture
+                        </h2>
+                        <ul class="space-y-3 text-sm text-[#F4EDE0]/80">
+                            <li class="flex items-start gap-3">
+                                <span
+                                    class="w-6 h-6 rounded-full bg-[#FF6B58]/15 text-[#FF6B58] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fa-brands fa-google text-xs"></i>
+                                </span>
+                                <span><strong class="text-[#F4EDE0]">Continue with Google (OAuth 2.0):</strong> Verifies
+                                    Google identity with signed CSRF state and verified-email checks, automatically
+                                    linking or creating your account and issuing a Bearer token.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span
+                                    class="w-6 h-6 rounded-full bg-[#FF6B58]/15 text-[#FF6B58] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-shield-halved text-xs"></i>
+                                </span>
+                                <span><strong class="text-[#F4EDE0]">Server-Side Anti-Bot CAPTCHA:</strong> Standard
+                                    form registration requires a valid, single-use, short-TTL SVG/Math challenge
+                                    verified before database writes.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span
+                                    class="w-6 h-6 rounded-full bg-[#FF6B58]/15 text-[#FF6B58] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-lock text-xs"></i>
+                                </span>
+                                <span><strong class="text-[#F4EDE0]">Salted Password Hashing:</strong> Local passwords
+                                    are hashed with PHP <code
+                                        class="text-xs px-1.5 py-0.5 rounded bg-[#0f1a30]">password_hash()</code> prior
+                                    to MySQL storage.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span
+                                    class="w-6 h-6 rounded-full bg-[#FF6B58]/15 text-[#FF6B58] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-key text-xs"></i>
+                                </span>
+                                <span><strong class="text-[#F4EDE0]">Unified Bearer Token Flow:</strong> Both
+                                    registration flows issue an HS256 JWT token for <code
+                                        class="text-xs px-1.5 py-0.5 rounded bg-[#0f1a30]">Authorization: Bearer</code>
+                                    requests and RBAC enforcement.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mercury-card p-5 text-xs text-[#F4EDE0]/70 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="uppercase tracking-wider font-semibold text-[#F4EDE0]/90">API Endpoints
+                                Wired</span>
+                            <span
+                                class="px-2 py-0.5 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 text-[#FF6B58]">REST
+                                v1</span>
+                        </div>
+                        <div class="font-mono space-y-1 text-[12px]">
+                            <div><span class="text-emerald-400">GET</span> /api/v1/auth/captcha</div>
+                            <div><span class="text-amber-300">POST</span> /api/v1/auth/register</div>
+                            <div><span class="text-emerald-400">GET</span> /api/v1/auth/google</div>
+                            <div><span class="text-emerald-400">GET</span> /api/v1/auth/google/callback</div>
+                            <div><span class="text-amber-300">POST</span> /api/v1/auth/google/token</div>
+                            <div><span class="text-amber-300">POST</span> /api/v1/auth/login</div>
+                            <div><span class="text-sky-300">GET</span> /api/v1/auth/me <span
+                                    class="text-[#F4EDE0]/45">(Bearer)</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Registration Form Card -->
+                <div class="lg:col-span-7">
+                    <div id="registrationCard" class="mercury-card p-6 md:p-8 shadow-2xl">
+                        <div class="flex items-center justify-between pb-5 mb-6 border-b border-[#F4EDE0]/10">
+                            <div>
+                                <h2 class="text-2xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">
+                                    Create Account
+                                </h2>
+                                <p class="text-xs text-[#F4EDE0]/60 mt-1">
+                                    Fields marked with <span class="text-[#FF6B58]">*</span> are required.
+                                </p>
+                            </div>
+                            <span
+                                class="text-xs px-3 py-1 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 text-[#F4EDE0]/80">
+                                <i class="fa-solid fa-database text-[#FF6B58] mr-1"></i> MySQL + CAPTCHA
+                            </span>
+                        </div>
+
+                        <!-- Global Alert Box -->
+                        <div id="formAlert" class="hidden mb-6 rounded-xl px-4 py-3.5 text-sm border" role="alert">
+                        </div>
+
+                        <!-- Prominent Google OAuth 2.0 Registration / Sign-In -->
+                        <div class="mb-6 space-y-2.5">
+                            <button type="button" id="googleOAuthBtn" class="google-oauth-btn">
+                                <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+                                    <path fill="#EA4335"
+                                        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                                    <path fill="#4285F4"
+                                        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                                    <path fill="#FBBC05"
+                                        d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+                                    <path fill="#34A853"
+                                        d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                                </svg>
+                                <span>Continue with Google</span>
+                            </button>
+                            <p id="googleStatusHint" class="text-[11px] text-center text-[#F4EDE0]/55">
+                                Fast registration with your Google account — automatically assigns your selected role
+                                below.
+                            </p>
+                        </div>
+
+                        <div class="relative flex items-center justify-center my-6">
+                            <div class="w-full border-t border-[#F4EDE0]/12"></div>
+                            <span
+                                class="px-3 text-[11px] uppercase tracking-widest text-[#F4EDE0]/50 bg-[#1c2a4a] whitespace-nowrap">
+                                or register with email &amp; CAPTCHA
+                            </span>
+                            <div class="w-full border-t border-[#F4EDE0]/12"></div>
+                        </div>
+
+                        <form id="registerForm" novalidate class="space-y-6">
+                            <!-- Account Role Selector -->
+                            <div>
+                                <label
+                                    class="block text-xs font-semibold uppercase tracking-wider text-[#F4EDE0]/75 mb-2.5">
+                                    Account Role <span class="text-[#FF6B58]">*</span>
+                                </label>
+                                <input type="hidden" id="role" name="role" value="alumni">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="roleSelector">
+                                    <button type="button" data-role="alumni" class="role-pill active">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="font-medium text-sm">Alumni</span>
+                                            <i class="fa-solid fa-graduation-cap text-[#FF6B58] text-xs"></i>
+                                        </div>
+                                        <p class="text-[11px] opacity-75">Graduate profile, mentor &amp; referrals</p>
+                                    </button>
+                                    <button type="button" data-role="student" class="role-pill">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="font-medium text-sm">Student</span>
+                                            <i class="fa-solid fa-book-open text-[#FF6B58] text-xs"></i>
+                                        </div>
+                                        <p class="text-[11px] opacity-75">Apply for roles &amp; find mentors</p>
+                                    </button>
+                                    <button type="button" data-role="employer" class="role-pill">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="font-medium text-sm">Employer</span>
+                                            <i class="fa-solid fa-building text-[#FF6B58] text-xs"></i>
+                                        </div>
+                                        <p class="text-[11px] opacity-75">Post openings &amp; review talent</p>
+                                    </button>
+                                </div>
+                                <p id="err-role" class="text-xs text-[#FF6B58] mt-1.5 hidden"></p>
+                            </div>
+
+                            <!-- Core Account Credentials -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="full_name" class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                        Full Name <span class="text-[#FF6B58]">*</span>
+                                    </label>
+                                    <input type="text" id="full_name" name="full_name" required autocomplete="name"
+                                        placeholder="e.g., Zeynep Yılmaz" class="field-input">
+                                    <p id="err-full_name" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                                </div>
+
+                                <div>
+                                    <label for="username" class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                        Username <span class="text-[#FF6B58]">*</span>
+                                    </label>
+                                    <input type="text" id="username" name="username" required autocomplete="username"
+                                        placeholder="e.g., zeynep.yilmaz" class="field-input">
+                                    <p class="text-[11px] text-[#F4EDE0]/45 mt-1">3–50 chars: letters, numbers,
+                                        <code>.</code>, <code>_</code>, <code>-</code>
+                                    </p>
+                                    <p id="err-username" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="email" class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                    Email Address <span class="text-[#FF6B58]">*</span>
+                                </label>
+                                <input type="email" id="email" name="email" required autocomplete="email"
+                                    placeholder="zeynep.yilmaz@ogr.iu.edu.tr" class="field-input">
+                                <p id="err-email" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="password" class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                        Password <span class="text-[#FF6B58]">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <input type="password" id="password" name="password" required
+                                            autocomplete="new-password"
+                                            placeholder="Min. 8 chars with letter &amp; digit"
+                                            class="field-input pr-10">
+                                        <button type="button"
+                                            class="toggle-pw absolute right-3 top-1/2 -translate-y-1/2 text-[#F4EDE0]/50 hover:text-[#F4EDE0]"
+                                            data-target="password" aria-label="Toggle password visibility">
+                                            <i class="fa-regular fa-eye text-sm"></i>
+                                        </button>
+                                    </div>
+                                    <div class="mt-2 h-1.5 w-full rounded-full bg-[#0f1a30] overflow-hidden">
+                                        <div id="pwStrengthBar"
+                                            class="h-full w-0 rounded-full transition-all duration-300 bg-[#FF6B58]">
+                                        </div>
+                                    </div>
+                                    <p id="pwStrengthLabel" class="text-[11px] text-[#F4EDE0]/50 mt-1">At least 8
+                                        characters, including 1 letter and 1 number</p>
+                                    <p id="err-password" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                                </div>
+
+                                <div>
+                                    <label for="password_confirmation"
+                                        class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                        Confirm Password <span class="text-[#FF6B58]">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <input type="password" id="password_confirmation" name="password_confirmation"
+                                            required autocomplete="new-password" placeholder="Re-enter password"
+                                            class="field-input pr-10">
+                                        <button type="button"
+                                            class="toggle-pw absolute right-3 top-1/2 -translate-y-1/2 text-[#F4EDE0]/50 hover:text-[#F4EDE0]"
+                                            data-target="password_confirmation"
+                                            aria-label="Toggle confirm password visibility">
+                                            <i class="fa-regular fa-eye text-sm"></i>
+                                        </button>
+                                    </div>
+                                    <p id="err-password_confirmation" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                                </div>
+                            </div>
+
+                            <!-- AlumniIstü Academic & Professional Profile Fields -->
+                            <div class="pt-4 border-t border-[#F4EDE0]/10 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xs font-semibold uppercase tracking-wider text-[#F4EDE0]/75">
+                                        Academic &amp; Professional Details
+                                    </h3>
+                                    <span class="text-[11px] text-[#F4EDE0]/50">Tailored to AlumniIstü</span>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="department_id"
+                                            class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                            Department
+                                        </label>
+                                        <select id="department_id" name="department_id" class="field-input">
+                                            <option value="1">Management Information Systems (YBS)</option>
+                                            <option value="2">Computer Engineering</option>
+                                            <option value="3">Industrial Engineering</option>
+                                            <option value="4">Software Engineering</option>
+                                        </select>
+                                        <p id="err-department_id" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                                    </div>
+
+                                    <div>
+                                        <label for="graduation_year" id="gradYearLabel"
+                                            class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                            Graduation Year / Cohort
+                                        </label>
+                                        <input type="number" id="graduation_year" name="graduation_year" min="1950"
+                                            max="2035" placeholder="e.g., 2024" class="field-input">
+                                        <p id="err-graduation_year" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label for="student_id"
+                                            class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                            Student ID <span class="text-[#F4EDE0]/40">(Optional)</span>
+                                        </label>
+                                        <input type="text" id="student_id" name="student_id"
+                                            placeholder="e.g., 130124055" class="field-input">
+                                        <p id="err-student_id" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                                    </div>
+
+                                    <div>
+                                        <label for="company" class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                            Company <span class="text-[#F4EDE0]/40">(Optional)</span>
+                                        </label>
+                                        <input type="text" id="company" name="company"
+                                            placeholder="e.g., Trendyol Group" class="field-input">
+                                        <p id="err-company" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                                    </div>
+
+                                    <div>
+                                        <label for="job_title"
+                                            class="block text-xs font-medium text-[#F4EDE0]/80 mb-1.5">
+                                            Job Title <span class="text-[#F4EDE0]/40">(Optional)</span>
+                                        </label>
+                                        <input type="text" id="job_title" name="job_title"
+                                            placeholder="e.g., Data Analyst" class="field-input">
+                                        <p id="err-job_title" class="text-xs text-[#FF6B58] mt-1 hidden"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Server-Generated CAPTCHA Protection Box -->
+                            <div class="pt-4 border-t border-[#F4EDE0]/10">
+                                <div class="rounded-xl bg-[#0f1a30]/80 border border-[#F4EDE0]/18 p-4 space-y-3.5">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-robot text-[#FF6B58] text-sm"></i>
+                                            <span class="text-xs font-semibold uppercase tracking-wider text-[#F4EDE0]">
+                                                Human Verification (CAPTCHA) <span class="text-[#FF6B58]">*</span>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-xs">
+                                            <div
+                                                class="inline-flex rounded-full bg-[#14213D] p-0.5 border border-[#F4EDE0]/15">
+                                                <button type="button" id="modeAlphaBtn"
+                                                    class="px-2.5 py-1 rounded-full text-[11px] bg-[#FF6B58] text-[#F4EDE0] font-medium transition">
+                                                    Text
+                                                </button>
+                                                <button type="button" id="modeMathBtn"
+                                                    class="px-2.5 py-1 rounded-full text-[11px] text-[#F4EDE0]/70 hover:text-[#F4EDE0] transition">
+                                                    Math
+                                                </button>
+                                            </div>
+                                            <span id="captchaTimer"
+                                                class="font-mono text-[11px] px-2 py-1 rounded-full bg-[#1c2a4a] text-[#F4EDE0]/80 border border-[#F4EDE0]/12">
+                                                --:--
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" id="captcha_id" name="captcha_id" value="">
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                                        <div class="sm:col-span-6 flex items-center gap-2">
+                                            <div id="captchaVisual"
+                                                class="captcha-stage flex-grow min-h-[72px] rounded-xl bg-[#0f1a30] border border-[#F4EDE0]/20 flex items-center justify-center overflow-hidden p-1">
+                                                <span class="text-xs text-[#F4EDE0]/50">
+                                                    <i class="fa-solid fa-spinner fa-spin mr-1.5"></i>Loading
+                                                    challenge...
+                                                </span>
+                                            </div>
+                                            <button type="button" id="refreshCaptchaBtn"
+                                                title="Refresh CAPTCHA challenge"
+                                                class="h-[72px] w-11 rounded-xl bg-[#1c2a4a] border border-[#F4EDE0]/20 hover:border-[#FF6B58] text-[#F4EDE0] hover:text-[#FF6B58] flex items-center justify-center transition flex-shrink-0">
+                                                <i id="refreshCaptchaIcon" class="fa-solid fa-arrows-rotate"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="sm:col-span-6">
+                                            <label for="captcha_answer" id="captchaPrompt"
+                                                class="block text-[11px] text-[#F4EDE0]/65 mb-1.5">
+                                                Enter the characters shown in the image
+                                            </label>
+                                            <input type="text" id="captcha_answer" name="captcha_answer" required
+                                                autocomplete="off" placeholder="Type CAPTCHA answer"
+                                                class="field-input font-mono tracking-wider uppercase">
+                                        </div>
+                                    </div>
+
+                                    <p id="err-captcha" class="text-xs text-[#FF6B58] hidden"></p>
+                                </div>
+                            </div>
+
+                            <!-- Submit Action -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+                                <p class="text-xs text-[#F4EDE0]/55">
+                                    Protected by server-side single-use CAPTCHA &amp; HS256 Bearer auth.
+                                </p>
+                                <button type="submit" id="submitBtn" class="mercury-btn-coral px-7 py-3 text-sm">
+                                    <i id="submitSpinner" class="fa-solid fa-spinner fa-spin hidden"></i>
+                                    <span id="submitBtnText">Create AlumniIstü Account</span>
+                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Registration Success + Live Token Test Panel -->
+                    <div id="successCard" class="hidden mercury-card p-6 md:p-8 space-y-6 border-[#FF6B58]/40">
+                        <div class="flex items-start justify-between gap-4 pb-5 border-b border-[#F4EDE0]/10">
+                            <div class="flex items-center gap-3.5">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 flex items-center justify-center text-xl">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">
+                                        Registration Confirmed
+                                    </h2>
+                                    <p class="text-xs text-[#F4EDE0]/65 mt-0.5">
+                                        CAPTCHA verified, password hashed, and Bearer access token issued.
+                                    </p>
+                                </div>
+                            </div>
+                            <span id="successRoleBadge"
+                                class="text-xs px-3 py-1 rounded-full bg-[#FF6B58]/20 border border-[#FF6B58]/50 text-[#FF6B58] font-medium"></span>
+                        </div>
+
+                        <div id="successUserGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm"></div>
+
+                        <div class="rounded-xl bg-[#0f1a30] border border-[#F4EDE0]/15 p-4 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold uppercase tracking-wider text-[#FF6B58]">
+                                    Issued Bearer Access Token (JWT)
+                                </span>
+                                <button type="button" id="copyTokenBtn"
+                                    class="text-xs text-[#F4EDE0]/75 hover:text-[#FF6B58] transition">
+                                    <i class="fa-regular fa-copy mr-1"></i>Copy Token
+                                </button>
+                            </div>
+                            <code id="issuedTokenBox"
+                                class="block text-[11px] font-mono text-[#F4EDE0]/85 break-all bg-[#14213D] p-3 rounded-lg border border-[#F4EDE0]/10"></code>
+                        </div>
+
+                        <!-- Live Token Verification Demo (Client -> Server req + token -> resp) -->
+                        <div class="rounded-xl bg-[#0f1a30]/70 border border-[#F4EDE0]/12 p-4 space-y-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <span class="text-xs text-[#F4EDE0]/80">
+                                    Test authenticated request (<code class="text-[#FF6B58]">GET /api/v1/auth/me</code>
+                                    with <code class="text-[#FF6B58]">Authorization: Bearer</code>):
+                                </span>
+                                <button type="button" id="verifyTokenBtn"
+                                    class="mercury-btn-ghost text-xs py-1.5 px-3.5">
+                                    <i class="fa-solid fa-bolt text-[#FF6B58]"></i>
+                                    <span>Verify Token Live</span>
+                                </button>
+                            </div>
+                            <pre id="tokenVerifyOutput"
+                                class="hidden text-[11px] font-mono text-emerald-300 bg-[#14213D] p-3 rounded-lg border border-emerald-400/20 overflow-x-auto"></pre>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <button type="button" id="logoutFromRegisterBtn"
+                                    class="mercury-btn-ghost text-sm border-[#FF6B58]/50 text-[#FF6B58] hover:bg-[#FF6B58]/15">
+                                    <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                                    <span>Log Out &amp; Revoke Token</span>
+                                </button>
+                                <button type="button" id="registerAnotherBtn" class="mercury-btn-ghost text-sm">
+                                    <i class="fa-solid fa-user-plus text-xs"></i>
+                                    <span>Register Another</span>
+                                </button>
+                            </div>
+                            <a href="/login" class="mercury-btn-coral text-sm">
+                                <span>Manage Session</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-[#F4EDE0]/10 py-6 text-center text-xs text-[#F4EDE0]/50">
+        <div class="page-container">
+            AlumniIstü • Istanbul University Faculty of Economics — Management Information Systems (YBS)
+        </div>
+    </footer>
+
+    <script>
+        const BASE_PATH = window.location.pathname.toLowerCase().startsWith('/alumni/') ? '/alumni' : '';
+        const apiUrl = (path) => `${BASE_PATH}${path}`;
+
+        let currentCaptchaMode = 'alphanumeric';
+        let captchaExpiresAt = null;
+        let captchaTimerHandle = null;
+        let issuedAccessToken = '';
+
+        // 1. Load Departments from API
+        async function loadDepartments() {
+            try {
+                const res = await fetch(apiUrl('/api/v1/departments'), {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!res.ok) return;
+                const payload = await res.json();
+                if (payload.status === 'success' && Array.isArray(payload.data) && payload.data.length > 0) {
+                    const select = document.getElementById('department_id');
+                    select.innerHTML = payload.data.map(d =>
+                        `<option value="${d.id}">${escapeHtml(d.name)} (${escapeHtml(d.code)})</option>`
+                    ).join('');
+                }
+            } catch (_) {
+                // Keep static fallback options
+            }
+        }
+
+        // 2. Load / Refresh CAPTCHA Challenge
+        async function loadCaptcha(mode = currentCaptchaMode) {
+            currentCaptchaMode = mode;
+            const visual = document.getElementById('captchaVisual');
+            const icon = document.getElementById('refreshCaptchaIcon');
+            const answerInput = document.getElementById('captcha_answer');
+
+            icon.classList.add('fa-spin');
+            clearFieldError('captcha');
+
+            try {
+                const res = await fetch(apiUrl(`/api/v1/auth/captcha?mode=${encodeURIComponent(mode)}&t=${Date.now()}`), {
+                    headers: { 'Accept': 'application/json' },
+                    cache: 'no-store'
+                });
+                const payload = await res.json();
+                if (!res.ok || payload.status !== 'success' || !payload.data) {
+                    throw new Error(payload.message || 'Unable to load CAPTCHA challenge.');
+                }
+
+                const data = payload.data;
+                document.getElementById('captcha_id').value = data.captcha_id;
+                document.getElementById('captchaPrompt').textContent = data.prompt || 'Enter the CAPTCHA answer';
+
+                if (data.image_data_uri) {
+                    visual.innerHTML = `<img src="${data.image_data_uri}" alt="CAPTCHA challenge" class="w-full h-auto rounded-lg select-none" draggable="false">`;
+                } else if (data.svg) {
+                    visual.innerHTML = data.svg;
+                }
+
+                answerInput.value = '';
+                answerInput.placeholder = mode === 'math' ? 'Enter numeric result' : 'Enter 6 characters';
+                answerInput.classList.toggle('uppercase', mode !== 'math');
+
+                startCaptchaCountdown(data.expires_in || 300);
+            } catch (err) {
+                visual.innerHTML = `<span class="text-xs text-[#FF6B58] px-2 text-center">${escapeHtml(err.message)}</span>`;
+            } finally {
+                icon.classList.remove('fa-spin');
+            }
+        }
+
+        function startCaptchaCountdown(seconds) {
+            if (captchaTimerHandle) clearInterval(captchaTimerHandle);
+            captchaExpiresAt = Date.now() + (seconds * 1000);
+            const timerEl = document.getElementById('captchaTimer');
+
+            const tick = () => {
+                const remaining = Math.max(0, Math.floor((captchaExpiresAt - Date.now()) / 1000));
+                const mins = String(Math.floor(remaining / 60)).padStart(2, '0');
+                const secs = String(remaining % 60).padStart(2, '0');
+                timerEl.textContent = `${mins}:${secs}`;
+                if (remaining === 0) {
+                    timerEl.textContent = 'Expired';
+                    timerEl.classList.add('text-[#FF6B58]');
+                    clearInterval(captchaTimerHandle);
+                } else {
+                    timerEl.classList.remove('text-[#FF6B58]');
+                }
+            };
+
+            tick();
+            captchaTimerHandle = setInterval(tick, 1000);
+        }
+
+        // 3. Role Selection
+        document.querySelectorAll('#roleSelector .role-pill').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#roleSelector .role-pill').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const role = btn.getAttribute('data-role');
+                document.getElementById('role').value = role;
+
+                const gradLabel = document.getElementById('gradYearLabel');
+                if (role === 'student') {
+                    gradLabel.textContent = 'Expected Graduation Year';
+                } else if (role === 'employer') {
+                    gradLabel.textContent = 'Graduation Year (Optional)';
+                } else {
+                    gradLabel.textContent = 'Graduation Year / Cohort';
+                }
+            });
+        });
+
+        // 4. CAPTCHA Mode Toggle & Refresh
+        document.getElementById('modeAlphaBtn').addEventListener('click', () => {
+            setModeButtons('alphanumeric');
+            loadCaptcha('alphanumeric');
+        });
+        document.getElementById('modeMathBtn').addEventListener('click', () => {
+            setModeButtons('math');
+            loadCaptcha('math');
+        });
+        document.getElementById('refreshCaptchaBtn').addEventListener('click', () => {
+            loadCaptcha(currentCaptchaMode);
+        });
+
+        function setModeButtons(mode) {
+            const alpha = document.getElementById('modeAlphaBtn');
+            const math = document.getElementById('modeMathBtn');
+            if (mode === 'math') {
+                math.className = 'px-2.5 py-1 rounded-full text-[11px] bg-[#FF6B58] text-[#F4EDE0] font-medium transition';
+                alpha.className = 'px-2.5 py-1 rounded-full text-[11px] text-[#F4EDE0]/70 hover:text-[#F4EDE0] transition';
+            } else {
+                alpha.className = 'px-2.5 py-1 rounded-full text-[11px] bg-[#FF6B58] text-[#F4EDE0] font-medium transition';
+                math.className = 'px-2.5 py-1 rounded-full text-[11px] text-[#F4EDE0]/70 hover:text-[#F4EDE0] transition';
+            }
+        }
+
+        // 5. Password Visibility & Live Strength Meter
+        document.querySelectorAll('.toggle-pw').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.getElementById(btn.getAttribute('data-target'));
+                const icon = btn.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fa-regular fa-eye-slash text-sm';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fa-regular fa-eye text-sm';
+                }
+            });
+        });
+
+        document.getElementById('password').addEventListener('input', (e) => {
+            const val = e.target.value || '';
+            let score = 0;
+            if (val.length >= 8) score += 25;
+            if (/[A-Za-z]/.test(val)) score += 25;
+            if (/\d/.test(val)) score += 25;
+            if (/[^A-Za-z0-9]/.test(val) || val.length >= 12) score += 25;
+
+            const bar = document.getElementById('pwStrengthBar');
+            const label = document.getElementById('pwStrengthLabel');
+            bar.style.width = `${score}%`;
+
+            if (score === 0) {
+                label.textContent = 'At least 8 characters, including 1 letter and 1 number';
+            } else if (score <= 50) {
+                bar.style.backgroundColor = '#FF6B58';
+                label.textContent = 'Weak — add more characters, letters & numbers';
+            } else if (score === 75) {
+                bar.style.backgroundColor = '#f59e0b';
+                label.textContent = 'Good — meets AlumniIstü security requirements';
+            } else {
+                bar.style.backgroundColor = '#34d399';
+                label.textContent = 'Strong password';
+            }
+        });
+
+        // 6. Form Submission
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearAllErrors();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('submitSpinner');
+            const btnText = document.getElementById('submitBtnText');
+
+            const payload = {
+                role: document.getElementById('role').value,
+                full_name: document.getElementById('full_name').value.trim(),
+                username: document.getElementById('username').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value,
+                password_confirmation: document.getElementById('password_confirmation').value,
+                department_id: document.getElementById('department_id').value,
+                graduation_year: document.getElementById('graduation_year').value.trim() || null,
+                student_id: document.getElementById('student_id').value.trim() || null,
+                company: document.getElementById('company').value.trim() || null,
+                job_title: document.getElementById('job_title').value.trim() || null,
+                captcha_id: document.getElementById('captcha_id').value,
+                captcha_answer: document.getElementById('captcha_answer').value.trim()
+            };
+
+            submitBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.textContent = 'Verifying & Registering...';
+
+            try {
+                const res = await fetch(apiUrl('/api/v1/auth/register'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (!res.ok || data.status !== 'success') {
+                    showAlert(data.message || 'Registration failed. Please check the highlighted fields.', 'error', data.error_code);
+                    if (data.errors && typeof data.errors === 'object') {
+                        Object.entries(data.errors).forEach(([field, msg]) => setFieldError(field, msg));
+                    }
+
+                    // Auto-refresh CAPTCHA if expired, reused, or exhausted
+                    const refreshCodes = ['CAPTCHA_EXPIRED', 'CAPTCHA_REUSED', 'CAPTCHA_MAX_ATTEMPTS', 'CAPTCHA_INVALID'];
+                    if (refreshCodes.includes(data.error_code)) {
+                        loadCaptcha(currentCaptchaMode);
+                    }
+                    return;
+                }
+
+                renderSuccess(data.data);
+            } catch (err) {
+                showAlert('Network error communicating with AlumniIstü API. Please verify the server is running.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                spinner.classList.add('hidden');
+                btnText.textContent = 'Create AlumniIstü Account';
+            }
+        });
+
+        function renderSuccess(data, subtitleText = null) {
+            const user = data.user || {};
+            issuedAccessToken = data.access_token || '';
+            if (issuedAccessToken) {
+                localStorage.setItem('alumni_istu_access_token', issuedAccessToken);
+                localStorage.setItem('alumni_istu_user', JSON.stringify(user));
+                if (window.AlumniAuthNav) window.AlumniAuthNav.refresh();
+            }
+
+            document.getElementById('registrationCard').classList.add('hidden');
+            document.getElementById('successCard').classList.remove('hidden');
+            document.getElementById('successRoleBadge').textContent = `${user.role_label || user.role}`;
+            document.getElementById('issuedTokenBox').textContent = issuedAccessToken;
+            document.getElementById('tokenVerifyOutput').classList.add('hidden');
+
+            const subtitleEl = document.querySelector('#successCard p');
+            if (subtitleEl && subtitleText) {
+                subtitleEl.textContent = subtitleText;
+            }
+
+            const providerLabel = user.auth_provider === 'google'
+                ? 'Google OAuth 2.0'
+                : (user.google_linked ? 'Local + Google Linked' : 'Local (Password + CAPTCHA)');
+
+            const details = [
+                ['User ID', `#${user.id}`],
+                ['Auth Provider', providerLabel],
+                ['Full Name', user.full_name],
+                ['Username', `@${user.username}`],
+                ['Email', user.email],
+                ['Department', user.department || 'Management Information Systems (YBS)'],
+                ['Graduation Year', user.graduation_year || '—'],
+                ['Role', user.role_label || user.role],
+            ];
+
+            document.getElementById('successUserGrid').innerHTML = details.map(([k, v]) => `
+                <div class="rounded-xl bg-[#0f1a30]/75 border border-[#F4EDE0]/10 px-4 py-3">
+                    <div class="text-[11px] uppercase tracking-wider text-[#F4EDE0]/50">${escapeHtml(String(k))}</div>
+                    <div class="text-sm font-medium text-[#F4EDE0] mt-0.5">${escapeHtml(String(v))}</div>
+                </div>
+            `).join('');
+        }
+
+        // 7. Google OAuth Button, Provider Status Discovery & Callback Handling
+        document.getElementById('googleOAuthBtn').addEventListener('click', () => {
+            const selectedRole = document.getElementById('role').value || 'alumni';
+            const target = apiUrl(`/api/v1/auth/google?role=${encodeURIComponent(selectedRole)}&return_to=${encodeURIComponent('/register')}`);
+            window.location.href = target;
+        });
+
+        async function loadAuthProviders() {
+            try {
+                const res = await fetch(apiUrl('/api/v1/auth/providers'), {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!res.ok) return;
+                const payload = await res.json();
+                const googleCfg = payload?.data?.google;
+                const hint = document.getElementById('googleStatusHint');
+                if (googleCfg && googleCfg.enabled) {
+                    hint.innerHTML = '<span class="text-emerald-400">●</span> Google OAuth 2.0 ready — uses your selected role below.';
+                } else if (googleCfg) {
+                    hint.innerHTML = 'Set <code class="px-1 py-0.5 rounded bg-[#0f1a30] text-[#FF6B58]">GOOGLE_CLIENT_ID</code> &amp; <code class="px-1 py-0.5 rounded bg-[#0f1a30] text-[#FF6B58]">GOOGLE_CLIENT_SECRET</code> in <code class="px-1 py-0.5 rounded bg-[#0f1a30]">.env</code> to activate live Google redirects.';
+                }
+            } catch (_) { }
+        }
+
+        async function handleOAuthCallbackReturn() {
+            // A) Check error query parameters from Google OAuth callback
+            const searchParams = new URLSearchParams(window.location.search);
+            const oauthError = searchParams.get('oauth_error');
+            const oauthErrorMessage = searchParams.get('oauth_error_message');
+            if (oauthError) {
+                showAlert(oauthErrorMessage || 'Google authentication did not complete.', 'error', oauthError);
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return;
+            }
+
+            // B) Check URL fragment (#oauth_token=...) returned on successful browser OAuth
+            const hashStr = window.location.hash ? window.location.hash.replace(/^#/, '') : '';
+            if (!hashStr) return;
+            const hashParams = new URLSearchParams(hashStr);
+            const oauthToken = hashParams.get('oauth_token');
+            if (!oauthToken) return;
+
+            const isNew = hashParams.get('is_new_user') === '1';
+            const linked = hashParams.get('account_linked') === '1';
+
+            // Immediately remove token from browser URL bar
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            try {
+                const res = await fetch(apiUrl('/api/v1/auth/me'), {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${oauthToken}`
+                    }
+                });
+                const payload = await res.json();
+                if (!res.ok || payload.status !== 'success') {
+                    showAlert(payload.message || 'Could not load Google-authenticated profile.', 'error', payload.error_code || 'OAUTH_PROFILE_ERROR');
+                    return;
+                }
+                const subtitle = isNew
+                    ? 'Google identity verified, new AlumniIstü account created, and Bearer access token issued.'
+                    : (linked
+                        ? 'Google account linked to your existing AlumniIstü email and Bearer access token issued.'
+                        : 'Signed in via Google OAuth 2.0 and Bearer access token issued.');
+
+                renderSuccess({
+                    user: payload.data.user,
+                    access_token: oauthToken
+                }, subtitle);
+            } catch (err) {
+                showAlert(`Failed to verify returned Google session token: ${err.message}`, 'error');
+            }
+        }
+
+        document.getElementById('copyTokenBtn').addEventListener('click', async () => {
+            if (!issuedAccessToken) return;
+            try {
+                await navigator.clipboard.writeText(issuedAccessToken);
+                document.getElementById('copyTokenBtn').innerHTML = '<i class="fa-solid fa-check text-emerald-400 mr-1"></i>Copied';
+                setTimeout(() => {
+                    document.getElementById('copyTokenBtn').innerHTML = '<i class="fa-regular fa-copy mr-1"></i>Copy Token';
+                }, 1800);
+            } catch (_) { }
+        });
+
+        document.getElementById('verifyTokenBtn').addEventListener('click', async () => {
+            const out = document.getElementById('tokenVerifyOutput');
+            out.classList.remove('hidden');
+            out.textContent = 'Sending GET /api/v1/auth/me with Authorization: Bearer <token>...';
+            try {
+                const res = await fetch(apiUrl('/api/v1/auth/me'), {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${issuedAccessToken}`
+                    }
+                });
+                const json = await res.json();
+                out.textContent = JSON.stringify(json, null, 2);
+            } catch (err) {
+                out.textContent = `Request error: ${err.message}`;
+            }
+        });
+
+        document.getElementById('logoutFromRegisterBtn').addEventListener('click', async () => {
+            const tok = issuedAccessToken || localStorage.getItem('alumni_istu_access_token') || '';
+            try {
+                await fetch(apiUrl('/api/auth/logout'), {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${tok}`
+                    }
+                });
+            } catch (_) { }
+            issuedAccessToken = '';
+            localStorage.removeItem('alumni_istu_access_token');
+            localStorage.removeItem('alumni_istu_user');
+            document.getElementById('registerForm').reset();
+            document.getElementById('pwStrengthBar').style.width = '0%';
+            document.getElementById('successCard').classList.add('hidden');
+            document.getElementById('registrationCard').classList.remove('hidden');
+            clearAllErrors();
+            showAlert('Logged out successfully and access token revoked.', 'success', 'LOGGED_OUT');
+            if (window.AlumniAuthNav) window.AlumniAuthNav.refresh();
+            loadCaptcha(currentCaptchaMode);
+        });
+
+        document.getElementById('registerAnotherBtn').addEventListener('click', () => {
+            document.getElementById('registerForm').reset();
+            document.getElementById('pwStrengthBar').style.width = '0%';
+            document.getElementById('successCard').classList.add('hidden');
+            document.getElementById('registrationCard').classList.remove('hidden');
+            clearAllErrors();
+            loadCaptcha(currentCaptchaMode);
+        });
+
+        function showAlert(message, type = 'error', code = null) {
+            const box = document.getElementById('formAlert');
+            box.classList.remove('hidden');
+            if (type === 'error') {
+                box.className = 'mb-6 rounded-xl px-4 py-3.5 text-sm border bg-[#FF6B58]/12 border-[#FF6B58]/45 text-[#F4EDE0]';
+            } else {
+                box.className = 'mb-6 rounded-xl px-4 py-3.5 text-sm border bg-emerald-500/12 border-emerald-400/45 text-[#F4EDE0]';
+            }
+            const badge = code ? `<span class="font-mono text-[11px] px-2 py-0.5 rounded bg-[#0f1a30] text-[#FF6B58] mr-2">${escapeHtml(code)}</span>` : '';
+            box.innerHTML = `<div class="flex items-start gap-2.5"><i class="fa-solid fa-circle-exclamation text-[#FF6B58] mt-0.5"></i><div>${badge}${escapeHtml(message)}</div></div>`;
+        }
+
+        function setFieldError(field, message) {
+            const errEl = document.getElementById(`err-${field}`);
+            const inputEl = document.getElementById(field === 'captcha' ? 'captcha_answer' : field);
+            if (errEl) {
+                errEl.textContent = message;
+                errEl.classList.remove('hidden');
+            }
+            if (inputEl) {
+                inputEl.classList.add('has-error');
+            }
+        }
+
+        function clearFieldError(field) {
+            const errEl = document.getElementById(`err-${field}`);
+            const inputEl = document.getElementById(field === 'captcha' ? 'captcha_answer' : field);
+            if (errEl) {
+                errEl.textContent = '';
+                errEl.classList.add('hidden');
+            }
+            if (inputEl) {
+                inputEl.classList.remove('has-error');
+            }
+        }
+
+        function clearAllErrors() {
+            const box = document.getElementById('formAlert');
+            box.classList.add('hidden');
+            box.innerHTML = '';
+            document.querySelectorAll('[id^="err-"]').forEach(el => {
+                el.textContent = '';
+                el.classList.add('hidden');
+            });
+            document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, (m) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[m]));
+        }
+
+        // Initial page bootstrap
+        loadDepartments();
+        loadAuthProviders();
+        loadCaptcha('alphanumeric');
+        handleOAuthCallbackReturn();
+    </script>
+    <script src="/js/auth-nav.js"></script>
+</body>
+
+</html>

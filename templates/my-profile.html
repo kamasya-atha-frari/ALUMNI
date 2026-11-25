@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile &amp; Dashboard • AlumniIstü</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #14213D;
+            --color-cream: #F4EDE0;
+            --color-coral: #FF6B58;
+            --surface-graphite-card: #1c2a4a;
+            --surface-deep-vault: #0f1a30;
+            --color-slate-border: rgba(244, 237, 224, 0.12);
+            --color-mist-border: rgba(244, 237, 224, 0.25);
+            --color-ash-text: rgba(244, 237, 224, 0.70);
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', Georgia, serif;
+            --font-inter: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        }
+        * { box-sizing: border-box; }
+        body { background-color: var(--color-navy); color: var(--color-cream); font-family: var(--font-inter); margin: 0; -webkit-font-smoothing: antialiased; }
+        .page-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .mercury-card { background-color: var(--surface-graphite-card); border: 1px solid var(--color-slate-border); border-radius: 14px; }
+        .mercury-nav-pill { color: var(--color-ash-text); font-size: 15px; border-radius: 40px; padding: 8px 16px; transition: all 0.2s ease; }
+        .mercury-nav-pill:hover, .mercury-nav-pill.active { color: var(--color-cream); background-color: rgba(244, 237, 224, 0.08); }
+        .field-input {
+            width: 100%;
+            background-color: var(--surface-deep-vault);
+            color: var(--color-cream);
+            border: 1px solid var(--color-mist-border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .field-input:focus { border-color: var(--color-coral); }
+        .tab-btn {
+            padding: 9px 18px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-ash-text);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover { color: var(--color-cream); background: rgba(244,237,224,0.06); }
+        .tab-btn.active { color: var(--color-cream); background-color: var(--color-coral); }
+        .btn-coral {
+            background-color: var(--color-coral);
+            color: var(--color-cream);
+            border-radius: 9999px;
+            padding: 10px 22px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease;
+        }
+        .btn-coral:hover { background-color: #ff7e6d; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/85 backdrop-blur-xl">
+        <div class="page-container h-20 flex items-center justify-between gap-4">
+            <a href="/" class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/30 flex items-center justify-center relative">
+                    <span class="w-4 h-4 rounded-full border-2 border-[#FF6B58] block"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#F4EDE0] absolute"></span>
+                </div>
+                <div>
+                    <span class="text-xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">AlumniIstü</span>
+                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/55">Member Dashboard</span>
+                </div>
+            </a>
+
+            <nav data-auth-nav-links class="hidden md:flex items-center space-x-1"></nav>
+            <div data-auth-nav-actions class="flex items-center space-x-2"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10">
+        <div class="page-container space-y-7">
+
+            <!-- Toast -->
+            <div id="profileToast" class="hidden rounded-xl px-4 py-3 text-sm border"></div>
+
+            <!-- Hero Member Identity Card -->
+            <section class="mercury-card p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="flex items-start gap-4">
+                    <div id="profileAvatar" class="w-16 h-16 rounded-full bg-[#0f1a30] border border-[#FF6B58]/50 flex items-center justify-center text-xl font-medium text-[#FF6B58] overflow-hidden flex-shrink-0">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="space-y-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="profileRoleLabel" class="text-[11px] px-3 py-0.5 rounded-full bg-[#FF6B58]/15 border border-[#FF6B58]/40 text-[#FF6B58] font-medium">
+                                Authenticated Member
+                            </span>
+                            <span id="profileProviderPill" class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 text-[#F4EDE0]/70">
+                                —
+                            </span>
+                        </div>
+                        <h1 id="profileFullName" class="text-3xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">
+                            Loading profile...
+                        </h1>
+                        <p id="profileSubtitle" class="text-xs text-[#F4EDE0]/70"></p>
+                        <div id="profileSocialLinks" class="flex flex-wrap items-center gap-2 pt-1"></div>
+                    </div>
+                </div>
+
+                <!-- Activity Summary Pills -->
+                <div class="grid grid-cols-3 gap-3 text-center">
+                    <div class="rounded-xl bg-[#0f1a30] border border-[#F4EDE0]/12 px-4 py-3">
+                        <div id="kpiMyApps" class="text-2xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">0</div>
+                        <div class="text-[11px] text-[#F4EDE0]/55">Applications</div>
+                    </div>
+                    <div class="rounded-xl bg-[#0f1a30] border border-[#F4EDE0]/12 px-4 py-3">
+                        <div id="kpiMyJobs" class="text-2xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">0</div>
+                        <div class="text-[11px] text-[#F4EDE0]/55">Posted Jobs</div>
+                    </div>
+                    <div class="rounded-xl bg-[#0f1a30] border border-[#F4EDE0]/12 px-4 py-3">
+                        <div id="kpiMyPerms" class="text-2xl text-[#FF6B58]" style="font-family: var(--font-ivy-presto);">0</div>
+                        <div class="text-[11px] text-[#F4EDE0]/55">Capabilities</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workspace Tabs -->
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#F4EDE0]/10 pb-3">
+                <div class="flex flex-wrap items-center gap-2" id="memberTabs">
+                    <button type="button" data-tab="edit" class="tab-btn active">
+                        <i class="fa-solid fa-pen-to-square mr-1.5"></i>Edit My Profile
+                    </button>
+                    <button type="button" data-tab="activity" class="tab-btn">
+                        <i class="fa-solid fa-clock-rotate-left mr-1.5"></i>My Activity &amp; Submissions
+                    </button>
+                    <button type="button" data-tab="account" class="tab-btn">
+                        <i class="fa-solid fa-shield-halved mr-1.5"></i>Account, RBAC &amp; Notices
+                    </button>
+                </div>
+                <a id="profileAdminShortcut" href="/admin" class="hidden text-xs px-4 py-2 rounded-full bg-[#FF6B58]/20 border border-[#FF6B58]/50 text-[#FF6B58] hover:bg-[#FF6B58]/30 font-medium transition">
+                    <i class="fa-solid fa-shield-halved mr-1"></i>Open Admin Panel →
+                </a>
+            </div>
+
+            <!-- TAB 1: EDIT MY PROFILE -->
+            <section id="tab-edit" class="member-panel">
+                <form id="editProfileForm" class="mercury-card p-6 md:p-8 space-y-6">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-[#F4EDE0]/10">
+                        <div>
+                            <h2 class="text-xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">Personal &amp; Alumni Profile</h2>
+                            <p class="text-xs text-[#F4EDE0]/60 mt-0.5">Ownership-protected via <code class="text-[#FF6B58]">PATCH /api/v1/profile/me</code> — you can edit only your own account details.</p>
+                        </div>
+                        <span class="text-[11px] px-3 py-1 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 text-[#F4EDE0]/75">
+                            Owner-Only Access
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="f_full_name" class="block text-xs text-[#F4EDE0]/80 mb-1.5">Full Name <span class="text-[#FF6B58]">*</span></label>
+                            <input type="text" id="f_full_name" required class="field-input">
+                        </div>
+                        <div>
+                            <label for="f_department_id" class="block text-xs text-[#F4EDE0]/80 mb-1.5">Department</label>
+                            <select id="f_department_id" class="field-input">
+                                <option value="1">Management Information Systems (YBS)</option>
+                                <option value="2">Computer Engineering</option>
+                                <option value="3">Industrial Engineering</option>
+                                <option value="4">Software Engineering</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="f_graduation_year" class="block text-xs text-[#F4EDE0]/80 mb-1.5">Graduation Year / Cohort</label>
+                            <input type="number" id="f_graduation_year" min="1950" max="2035" placeholder="e.g., 2024" class="field-input">
+                        </div>
+                        <div>
+                            <label for="f_location" class="block text-xs text-[#F4EDE0]/80 mb-1.5">Location</label>
+                            <input type="text" id="f_location" placeholder="Istanbul, Turkey" class="field-input">
+                        </div>
+                        <div>
+                            <label for="f_company" class="block text-xs text-[#F4EDE0]/80 mb-1.5">Company / Organization</label>
+                            <input type="text" id="f_company" placeholder="e.g., Turkcell Tech" class="field-input">
+                        </div>
+                        <div>
+                            <label for="f_job_title" class="block text-xs text-[#F4EDE0]/80 mb-1.5">Job Title / Position</label>
+                            <input type="text" id="f_job_title" placeholder="e.g., Senior Data Engineer" class="field-input">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="f_bio" class="text-xs text-[#F4EDE0]/80">Bio / Career Summary</label>
+                            <span id="bioCounter" class="text-[11px] font-mono text-[#F4EDE0]/50">0 / 1000</span>
+                        </div>
+                        <textarea id="f_bio" rows="3" maxlength="1000" placeholder="Share your career focus, mentoring interests, or academic background..." class="field-input"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="f_skills" class="block text-xs text-[#F4EDE0]/80 mb-1.5">Skills (comma-separated)</label>
+                        <input type="text" id="f_skills" placeholder="Python, SQL, Product Strategy, Docker" class="field-input">
+                        <div id="skillsPreview" class="flex flex-wrap gap-1.5 mt-2"></div>
+                    </div>
+
+                    <div class="pt-4 border-t border-[#F4EDE0]/10 space-y-4">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-[#F4EDE0]/70">Contact &amp; Social Links</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="f_linkedin_url" class="block text-xs text-[#F4EDE0]/80 mb-1.5"><i class="fa-brands fa-linkedin text-[#FF6B58] mr-1"></i>LinkedIn URL</label>
+                                <input type="url" id="f_linkedin_url" placeholder="https://linkedin.com/in/your-handle" class="field-input">
+                            </div>
+                            <div>
+                                <label for="f_github_url" class="block text-xs text-[#F4EDE0]/80 mb-1.5"><i class="fa-brands fa-github text-[#FF6B58] mr-1"></i>GitHub URL</label>
+                                <input type="url" id="f_github_url" placeholder="https://github.com/your-handle" class="field-input">
+                            </div>
+                            <div>
+                                <label for="f_website_url" class="block text-xs text-[#F4EDE0]/80 mb-1.5"><i class="fa-solid fa-globe text-[#FF6B58] mr-1"></i>Personal Website / Portfolio</label>
+                                <input type="url" id="f_website_url" placeholder="https://yourportfolio.dev" class="field-input">
+                            </div>
+                            <div>
+                                <label for="f_phone" class="block text-xs text-[#F4EDE0]/80 mb-1.5"><i class="fa-solid fa-phone text-[#FF6B58] mr-1"></i>Phone (Optional)</label>
+                                <input type="text" id="f_phone" placeholder="+90 5xx xxx xx xx" class="field-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-2">
+                        <button type="submit" id="saveProfileBtn" class="btn-coral">
+                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>Save Profile Changes
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- TAB 2: MY ACTIVITY & SUBMISSIONS -->
+            <section id="tab-activity" class="member-panel hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="mercury-card p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">My Submitted Applications</h2>
+                            <a href="/jobs" class="text-xs text-[#FF6B58] hover:underline">Explore Openings →</a>
+                        </div>
+                        <div id="myApplicationsList" class="space-y-3 text-sm">
+                            <div class="text-xs text-[#F4EDE0]/55">Loading your applications...</div>
+                        </div>
+                    </div>
+
+                    <div class="mercury-card p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">My Published Job Postings</h2>
+                            <a href="/jobs" class="text-xs text-[#FF6B58] hover:underline">Job Board →</a>
+                        </div>
+                        <div id="myJobsList" class="space-y-3 text-sm">
+                            <div class="text-xs text-[#F4EDE0]/55">Loading your job postings...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: ACCOUNT, RBAC & DEPARTMENT NOTICES -->
+            <section id="tab-account" class="member-panel hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="lg:col-span-5 mercury-card p-6 space-y-4">
+                        <h2 class="text-lg text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">RBAC Permissions &amp; Identity</h2>
+                        <div id="accountSummaryRows" class="space-y-2.5 text-xs"></div>
+                        <div class="pt-2 space-y-2">
+                            <div class="text-[11px] uppercase tracking-wider text-[#F4EDE0]/55">Assigned Capabilities</div>
+                            <div id="profilePerms" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 mercury-card p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">Department Announcements</h2>
+                            <span class="text-xs text-[#F4EDE0]/55">Istanbul University MIS</span>
+                        </div>
+                        <div id="memberAnnouncements" class="space-y-3 text-sm">
+                            <div class="text-xs text-[#F4EDE0]/55">Loading announcements...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="/js/auth-nav.js"></script>
+    <script>
+        const TOKEN_KEY = 'alumni_istu_access_token';
+        const BASE_PATH = window.location.pathname.toLowerCase().startsWith('/alumni/') ? '/alumni' : '';
+        const apiUrl = (p) => `${BASE_PATH}${p}`;
+
+        function esc(s) {
+            return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+        }
+
+        function authHeaders(extra = {}) {
+            const h = { 'Accept': 'application/json', ...extra };
+            const tok = localStorage.getItem(TOKEN_KEY);
+            if (tok) h['Authorization'] = `Bearer ${tok}`;
+            return h;
+        }
+
+        function showToast(message, type = 'success') {
+            const el = document.getElementById('profileToast');
+            el.classList.remove('hidden');
+            el.className = type === 'error'
+                ? 'rounded-xl px-4 py-3 text-sm border bg-[#FF6B58]/15 border-[#FF6B58]/50 text-[#F4EDE0]'
+                : 'rounded-xl px-4 py-3 text-sm border bg-emerald-500/15 border-emerald-400/45 text-[#F4EDE0]';
+            el.textContent = message;
+            clearTimeout(window.__pToast);
+            window.__pToast = setTimeout(() => el.classList.add('hidden'), 4500);
+        }
+
+        // Tabs
+        document.querySelectorAll('#memberTabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#memberTabs .tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const tab = btn.getAttribute('data-tab');
+                document.querySelectorAll('.member-panel').forEach(p => p.classList.add('hidden'));
+                document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            });
+        });
+
+        function renderSkillPills(rawStr) {
+            const list = String(rawStr || '').split(',').map(s => s.trim()).filter(Boolean);
+            document.getElementById('skillsPreview').innerHTML = list.map(s =>
+                `<span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/18 text-[#F4EDE0]/85">${esc(s)}</span>`
+            ).join('');
+        }
+
+        document.getElementById('f_skills').addEventListener('input', (e) => renderSkillPills(e.target.value));
+        document.getElementById('f_bio').addEventListener('input', (e) => {
+            document.getElementById('bioCounter').textContent = `${e.target.value.length} / 1000`;
+        });
+
+        function populateProfile(user) {
+            document.getElementById('profileRoleLabel').textContent = user.role_label || user.role;
+            document.getElementById('profileProviderPill').textContent = user.auth_provider === 'google'
+                ? 'Google OAuth 2.0'
+                : (user.google_linked ? 'Local + Google Linked' : 'Local Credentials');
+            document.getElementById('profileFullName').textContent = user.full_name || user.username;
+            const dept = user.department || 'Management Information Systems (YBS)';
+            const grad = user.graduation_year ? ` • Class of ${user.graduation_year}` : '';
+            document.getElementById('profileSubtitle').textContent = `@${user.username} • ${user.email} • ${dept}${grad}`;
+
+            const avatarEl = document.getElementById('profileAvatar');
+            if (user.avatar_url) {
+                avatarEl.innerHTML = `<img src="${esc(user.avatar_url)}" alt="Avatar" class="w-full h-full object-cover">`;
+            } else {
+                const initials = (user.full_name || user.username || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                avatarEl.textContent = initials;
+            }
+
+            const socials = [];
+            if (user.linkedin_url) socials.push(`<a href="${esc(user.linkedin_url)}" target="_blank" rel="noopener" class="text-[11px] px-2.5 py-1 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 hover:border-[#FF6B58] text-[#F4EDE0]/85"><i class="fa-brands fa-linkedin text-[#FF6B58] mr-1"></i>LinkedIn</a>`);
+            if (user.github_url) socials.push(`<a href="${esc(user.github_url)}" target="_blank" rel="noopener" class="text-[11px] px-2.5 py-1 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 hover:border-[#FF6B58] text-[#F4EDE0]/85"><i class="fa-brands fa-github text-[#FF6B58] mr-1"></i>GitHub</a>`);
+            if (user.website_url) socials.push(`<a href="${esc(user.website_url)}" target="_blank" rel="noopener" class="text-[11px] px-2.5 py-1 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 hover:border-[#FF6B58] text-[#F4EDE0]/85"><i class="fa-solid fa-globe text-[#FF6B58] mr-1"></i>Website</a>`);
+            document.getElementById('profileSocialLinks').innerHTML = socials.join('');
+
+            if (user.role === 'admin') {
+                document.getElementById('profileAdminShortcut').classList.remove('hidden');
+            }
+
+            // Populate form fields
+            document.getElementById('f_full_name').value = user.full_name || '';
+            if (user.department_id) document.getElementById('f_department_id').value = String(user.department_id);
+            document.getElementById('f_graduation_year').value = user.graduation_year || '';
+            document.getElementById('f_location').value = user.location || '';
+            document.getElementById('f_company').value = user.company || '';
+            document.getElementById('f_job_title').value = user.job_title || '';
+            document.getElementById('f_bio').value = user.bio || '';
+            document.getElementById('bioCounter').textContent = `${(user.bio || '').length} / 1000`;
+            document.getElementById('f_linkedin_url').value = user.linkedin_url || '';
+            document.getElementById('f_github_url').value = user.github_url || '';
+            document.getElementById('f_website_url').value = user.website_url || '';
+            document.getElementById('f_phone').value = user.phone || '';
+            const skillsStr = Array.isArray(user.skills) ? user.skills.join(', ') : '';
+            document.getElementById('f_skills').value = skillsStr;
+            renderSkillPills(skillsStr);
+
+            // RBAC summary
+            const perms = Array.isArray(user.permissions) ? user.permissions : [];
+            document.getElementById('kpiMyPerms').textContent = perms.length;
+            document.getElementById('profilePerms').innerHTML = perms.map(p =>
+                `<span class="font-mono text-[11px] px-2.5 py-1 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 text-[#F4EDE0]/85">${esc(p)}</span>`
+            ).join('');
+
+            document.getElementById('accountSummaryRows').innerHTML = [
+                ['Account ID', `#${user.id}`],
+                ['Username', `@${user.username}`],
+                ['Email', user.email],
+                ['Assigned Role', `${user.role} (${user.role_label || user.role})`],
+                ['Linked Directory ID', user.alumni_id ? `#${user.alumni_id}` : 'Not linked'],
+            ].map(([k, v]) => `
+                <div class="rounded-lg bg-[#0f1a30]/75 border border-[#F4EDE0]/10 px-3.5 py-2 flex items-center justify-between gap-2">
+                    <span class="text-[#F4EDE0]/55">${esc(k)}</span>
+                    <span class="font-medium text-[#F4EDE0]">${esc(v)}</span>
+                </div>
+            `).join('');
+        }
+
+        async function loadDepartments() {
+            try {
+                const res = await fetch(apiUrl('/api/v1/departments'), { headers: { 'Accept': 'application/json' } });
+                const payload = await res.json();
+                if (res.ok && Array.isArray(payload.data) && payload.data.length > 0) {
+                    const sel = document.getElementById('f_department_id');
+                    const prev = sel.value;
+                    sel.innerHTML = payload.data.map(d => `<option value="${d.id}">${esc(d.name)} (${esc(d.code)})</option>`).join('');
+                    if (prev) sel.value = prev;
+                }
+            } catch (_) {}
+        }
+
+        async function loadProfileAndActivity() {
+            const [profRes, actRes] = await Promise.all([
+                fetch(apiUrl('/api/v1/profile/me'), { credentials: 'same-origin', headers: authHeaders() }),
+                fetch(apiUrl('/api/v1/profile/me/activity'), { credentials: 'same-origin', headers: authHeaders() })
+            ]);
+
+            if (profRes.status === 401) {
+                window.location.href = apiUrl('/login?auth_error=TOKEN_MISSING&next=%2Fmy-profile');
+                return;
+            }
+
+            const profJson = await profRes.json();
+            if (profRes.ok && profJson?.data?.user) {
+                populateProfile(profJson.data.user);
+            }
+
+            const actJson = await actRes.json();
+            if (actRes.ok && actJson?.data) {
+                const d = actJson.data;
+                document.getElementById('kpiMyApps').textContent = d.counts?.applications ?? 0;
+                document.getElementById('kpiMyJobs').textContent = d.counts?.job_postings ?? 0;
+
+                const apps = d.applications || [];
+                document.getElementById('myApplicationsList').innerHTML = apps.length === 0
+                    ? '<div class="text-xs text-[#F4EDE0]/55 py-4">You have not submitted any job applications yet.</div>'
+                    : apps.map(a => `
+                        <div class="rounded-xl bg-[#0f1a30]/80 border border-[#F4EDE0]/10 p-4 space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-[#F4EDE0]">Job Posting #${esc(a.job_posting_id)}</span>
+                                <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/35">${esc(a.status)}</span>
+                            </div>
+                            <div class="text-xs text-[#F4EDE0]/65">${esc(a.cover_letter || 'No cover letter provided.')}</div>
+                        </div>
+                    `).join('');
+
+                const jobs = d.job_postings || [];
+                document.getElementById('myJobsList').innerHTML = jobs.length === 0
+                    ? '<div class="text-xs text-[#F4EDE0]/55 py-4">You have not authored any job postings yet.</div>'
+                    : jobs.map(j => `
+                        <div class="rounded-xl bg-[#0f1a30]/80 border border-[#F4EDE0]/10 p-4 space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-[#F4EDE0]">${esc(j.title)}</span>
+                                <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300">${esc(j.status)}</span>
+                            </div>
+                            <div class="text-xs text-[#F4EDE0]/65">${esc(j.company_name)} • ${esc(j.job_type)} • ${esc(j.location || 'Istanbul')}</div>
+                        </div>
+                    `).join('');
+
+                const anns = d.announcements || [];
+                document.getElementById('memberAnnouncements').innerHTML = anns.length === 0
+                    ? '<div class="text-xs text-[#F4EDE0]/55">No published department announcements yet.</div>'
+                    : anns.map(a => `
+                        <div class="rounded-xl bg-[#0f1a30]/80 border border-[#F4EDE0]/10 p-4 space-y-1.5">
+                            <div class="flex items-center gap-2">
+                                ${a.is_pinned ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-[#FF6B58]/20 text-[#FF6B58]">Pinned</span>' : ''}
+                                <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#1c2a4a] text-[#F4EDE0]/70">${esc(a.category)}</span>
+                            </div>
+                            <div class="font-medium text-[#F4EDE0]">${esc(a.title)}</div>
+                            <p class="text-xs text-[#F4EDE0]/75 leading-relaxed">${esc(a.body)}</p>
+                        </div>
+                    `).join('');
+            }
+        }
+
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveProfileBtn');
+            btn.disabled = true;
+
+            const payload = {
+                full_name: document.getElementById('f_full_name').value.trim(),
+                department_id: document.getElementById('f_department_id').value || null,
+                graduation_year: document.getElementById('f_graduation_year').value.trim() || null,
+                location: document.getElementById('f_location').value.trim(),
+                company: document.getElementById('f_company').value.trim(),
+                job_title: document.getElementById('f_job_title').value.trim(),
+                bio: document.getElementById('f_bio').value.trim(),
+                skills: document.getElementById('f_skills').value.trim(),
+                linkedin_url: document.getElementById('f_linkedin_url').value.trim(),
+                github_url: document.getElementById('f_github_url').value.trim(),
+                website_url: document.getElementById('f_website_url').value.trim(),
+                phone: document.getElementById('f_phone').value.trim(),
+            };
+
+            try {
+                const res = await fetch(apiUrl('/api/v1/profile/me'), {
+                    method: 'PATCH',
+                    credentials: 'same-origin',
+                    headers: authHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify(payload)
+                });
+                const json = await res.json();
+                if (!res.ok || json.status !== 'success') {
+                    showToast(json.message || 'Failed to update profile.', 'error');
+                    return;
+                }
+                populateProfile(json.data.user);
+                showToast('Your profile has been updated successfully.', 'success');
+                if (window.AlumniAuthNav) window.AlumniAuthNav.refresh();
+            } catch (err) {
+                showToast(`Network error: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        loadDepartments().then(loadProfileAndActivity);
+    </script>
+</body>
+</html>

@@ -100,16 +100,19 @@
                     </span>
                 </div>
             </a>
-            <nav class="hidden md:flex items-center space-x-8 text-sm">
+            <nav data-auth-nav-links data-link-class="nav-link" class="hidden md:flex items-center space-x-6 text-sm">
                 <a href="/" class="nav-link">Directory</a>
                 <a href="/jobs" class="nav-link">Job Board</a>
                 <a href="/analytics" class="nav-link">Career Graph</a>
                 <a href="/about" class="nav-link">Faculty</a>
-                <a href="/swagger" class="nav-link active">API Ledger</a>
+                <a href="/swagger" class="nav-link active">API Docs</a>
             </nav>
-            <a href="/openapi.json" target="_blank" class="btn-primary-coral">
-                Raw JSON →
-            </a>
+            <div class="flex items-center space-x-3">
+                <div data-auth-nav-actions class="flex items-center space-x-2"></div>
+                <a href="/openapi.json" target="_blank" class="btn-primary-coral hidden sm:inline-block">
+                    Raw JSON →
+                </a>
+            </div>
         </div>
     </header>
 
@@ -140,10 +143,12 @@
                 url: "/openapi.json",
                 dom_id: '#swagger-ui',
                 deepLinking: true,
+                persistAuthorization: true,
                 presets: [SwaggerUIBundle.presets.apis],
                 layout: "BaseLayout"
             });
         };
     </script>
+    <script src="/js/auth-nav.js"></script>
 </body>
 </html>

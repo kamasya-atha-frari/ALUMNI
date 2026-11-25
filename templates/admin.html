@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel • AlumniIstü Control Plane</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-navy: #14213D;
+            --color-cream: #F4EDE0;
+            --color-coral: #FF6B58;
+            --surface-onyx-canvas: #14213D;
+            --surface-graphite-card: #1c2a4a;
+            --surface-obsidian-button: #24355c;
+            --surface-deep-vault: #0f1a30;
+            --color-slate-border: rgba(244, 237, 224, 0.12);
+            --color-mist-border: rgba(244, 237, 224, 0.25);
+            --color-ash-text: rgba(244, 237, 224, 0.70);
+            --color-ivory-text: #F4EDE0;
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', Georgia, serif;
+            --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--surface-onyx-canvas);
+            color: var(--color-ivory-text);
+            font-family: var(--font-inter);
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .page-container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+        .mercury-card {
+            background-color: var(--surface-graphite-card);
+            border: 1px solid var(--color-slate-border);
+            border-radius: 14px;
+        }
+        .field-input {
+            width: 100%;
+            background-color: var(--surface-deep-vault);
+            color: var(--color-ivory-text);
+            border: 1px solid var(--color-mist-border);
+            border-radius: 12px;
+            padding: 9px 13px;
+            font-size: 13px;
+            outline: none;
+        }
+        .field-input:focus { border-color: var(--color-coral); }
+        .tab-btn {
+            padding: 9px 18px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-ash-text);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover { color: var(--color-ivory-text); background: rgba(244,237,224,0.06); }
+        .tab-btn.active {
+            color: var(--color-ivory-text);
+            background-color: var(--color-coral);
+            border-color: var(--color-coral);
+        }
+        .btn-coral {
+            background-color: var(--color-coral);
+            color: var(--color-ivory-text);
+            border-radius: 9999px;
+            padding: 9px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease;
+        }
+        .btn-coral:hover { background-color: #ff7e6d; }
+        .btn-ghost {
+            background: transparent;
+            color: var(--color-ivory-text);
+            border: 1px solid var(--color-mist-border);
+            border-radius: 9999px;
+            padding: 7px 14px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-ghost:hover { border-color: var(--color-coral); color: var(--color-coral); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Admin Bar -->
+    <header class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/90 backdrop-blur-xl">
+        <div class="page-container h-20 flex items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <a href="/" class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#FF6B58] flex items-center justify-center text-[#FF6B58]">
+                    <i class="fa-solid fa-shield-halved text-sm"></i>
+                </a>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">AlumniIstü</span>
+                        <span class="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#FF6B58]/20 border border-[#FF6B58]/50 text-[#FF6B58]">
+                            Admin Panel
+                        </span>
+                    </div>
+                    <span class="text-[11px] text-[#F4EDE0]/55 block">Protected by AuthMiddleware + RoleMiddleware(['admin'])</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-5 text-sm text-[#F4EDE0]/75">
+                <a href="/" class="hover:text-[#F4EDE0]">Directory</a>
+                <a href="/jobs" class="hover:text-[#F4EDE0]">Job Board</a>
+                <a href="/analytics" class="hover:text-[#F4EDE0]">Career Graph</a>
+                <a href="/swagger" class="hover:text-[#F4EDE0]">API Docs</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <span id="adminIdentityBadge" class="hidden sm:inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-[#0f1a30] border border-[#F4EDE0]/15 text-[#F4EDE0]/90">
+                    <i class="fa-solid fa-user-shield text-[#FF6B58]"></i>
+                    <span id="adminUsernameLabel">Admin</span>
+                </span>
+                <button id="adminLogoutBtn" type="button" class="btn-ghost border-[#FF6B58]/50 text-[#FF6B58]">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i>Log Out
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10">
+        <div class="page-container space-y-8">
+
+            <!-- Toast Notification Banner -->
+            <div id="adminToast" class="hidden rounded-xl px-4 py-3 text-sm border"></div>
+
+            <!-- KPI Telemetry Strip -->
+            <section class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="mercury-card p-5">
+                    <div class="text-[11px] uppercase tracking-wider text-[#F4EDE0]/55">Registered Users</div>
+                    <div id="kpiUsers" class="text-3xl font-medium mt-1" style="font-family: var(--font-ivy-presto);">—</div>
+                    <div id="kpiUsersSub" class="text-[11px] text-emerald-300 mt-1">Loading...</div>
+                </div>
+                <div class="mercury-card p-5">
+                    <div class="text-[11px] uppercase tracking-wider text-[#F4EDE0]/55">Administrators</div>
+                    <div id="kpiAdmins" class="text-3xl font-medium mt-1 text-[#FF6B58]" style="font-family: var(--font-ivy-presto);">—</div>
+                    <div class="text-[11px] text-[#F4EDE0]/55 mt-1">RBAC Governance</div>
+                </div>
+                <div class="mercury-card p-5">
+                    <div class="text-[11px] uppercase tracking-wider text-[#F4EDE0]/55">Alumni Profiles</div>
+                    <div id="kpiAlumni" class="text-3xl font-medium mt-1" style="font-family: var(--font-ivy-presto);">—</div>
+                    <div id="kpiMentorsSub" class="text-[11px] text-[#F4EDE0]/55 mt-1">Directory records</div>
+                </div>
+                <div class="mercury-card p-5">
+                    <div class="text-[11px] uppercase tracking-wider text-[#F4EDE0]/55">Job Postings</div>
+                    <div id="kpiJobs" class="text-3xl font-medium mt-1" style="font-family: var(--font-ivy-presto);">—</div>
+                    <div id="kpiJobsSub" class="text-[11px] text-[#F4EDE0]/55 mt-1">Active listings</div>
+                </div>
+                <div class="mercury-card p-5 col-span-2 lg:col-span-1">
+                    <div class="text-[11px] uppercase tracking-wider text-[#F4EDE0]/55">Announcements</div>
+                    <div id="kpiAnnouncements" class="text-3xl font-medium mt-1" style="font-family: var(--font-ivy-presto);">—</div>
+                    <div id="kpiAnnSub" class="text-[11px] text-[#F4EDE0]/55 mt-1">Department notices</div>
+                </div>
+            </section>
+
+            <!-- Tab Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[#F4EDE0]/10 pb-4">
+                <div class="flex flex-wrap items-center gap-2" id="adminTabs">
+                    <button type="button" data-tab="users" class="tab-btn active">
+                        <i class="fa-solid fa-users-gear mr-1.5"></i>Users &amp; Roles
+                    </button>
+                    <button type="button" data-tab="alumni" class="tab-btn">
+                        <i class="fa-solid fa-graduation-cap mr-1.5"></i>Alumni Directory
+                    </button>
+                    <button type="button" data-tab="jobs" class="tab-btn">
+                        <i class="fa-solid fa-briefcase mr-1.5"></i>Job Postings
+                    </button>
+                    <button type="button" data-tab="announcements" class="tab-btn">
+                        <i class="fa-solid fa-bullhorn mr-1.5"></i>Announcements
+                    </button>
+                </div>
+                <button type="button" id="refreshAllBtn" class="btn-ghost">
+                    <i class="fa-solid fa-rotate mr-1"></i>Refresh All Data
+                </button>
+            </div>
+
+            <!-- TAB 1: USERS & ROLES GOVERNANCE -->
+            <section id="tab-users" class="tab-panel space-y-4">
+                <div class="mercury-card p-5 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">User Accounts &amp; RBAC Roles</h2>
+                            <p class="text-xs text-[#F4EDE0]/60">Assign roles, suspend/reactivate accounts, or remove users. Self-demotion &amp; self-deletion are blocked server-side.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <input type="text" id="userSearchInput" placeholder="Search username or email..." class="field-input w-56">
+                            <select id="userRoleFilter" class="field-input w-40">
+                                <option value="">All Roles</option>
+                                <option value="admin">admin</option>
+                                <option value="moderator">moderator</option>
+                                <option value="faculty">faculty</option>
+                                <option value="employer">employer</option>
+                                <option value="alumni">alumni</option>
+                                <option value="student">student</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="border-b border-[#F4EDE0]/12 text-[11px] uppercase tracking-wider text-[#F4EDE0]/55">
+                                    <th class="py-3 px-3">User</th>
+                                    <th class="py-3 px-3">Provider</th>
+                                    <th class="py-3 px-3">Role</th>
+                                    <th class="py-3 px-3">Status</th>
+                                    <th class="py-3 px-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody" class="divide-y divide-[#F4EDE0]/8"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: ALUMNI DIRECTORY CONTROL -->
+            <section id="tab-alumni" class="tab-panel hidden space-y-5">
+                <div class="mercury-card p-5">
+                    <h2 class="text-lg text-[#F4EDE0] mb-3" style="font-family: var(--font-ivy-presto);">Add Alumni Profile (Admin Direct Create)</h2>
+                    <form id="adminCreateAlumniForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                        <input type="text" id="newAlumniName" placeholder="Full Name *" required class="field-input">
+                        <input type="email" id="newAlumniEmail" placeholder="Email *" required class="field-input">
+                        <input type="number" id="newAlumniCohort" placeholder="Cohort (e.g. 2024)" value="2024" class="field-input">
+                        <input type="text" id="newAlumniCompany" placeholder="Company" class="field-input">
+                        <button type="submit" class="btn-coral">
+                            <i class="fa-solid fa-plus mr-1"></i>Add Profile
+                        </button>
+                    </form>
+                </div>
+
+                <div class="mercury-card p-5 overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="border-b border-[#F4EDE0]/12 text-[11px] uppercase tracking-wider text-[#F4EDE0]/55">
+                                <th class="py-3 px-3">ID</th>
+                                <th class="py-3 px-3">Graduate</th>
+                                <th class="py-3 px-3">Cohort</th>
+                                <th class="py-3 px-3">Company / Role</th>
+                                <th class="py-3 px-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alumniTableBody" class="divide-y divide-[#F4EDE0]/8"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 3: JOB POSTINGS MODERATION -->
+            <section id="tab-jobs" class="tab-panel hidden">
+                <div class="mercury-card p-5 overflow-x-auto">
+                    <div class="mb-4">
+                        <h2 class="text-xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">Job Postings Moderation</h2>
+                        <p class="text-xs text-[#F4EDE0]/60">Approve, close, draft, or remove corporate job listings.</p>
+                    </div>
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="border-b border-[#F4EDE0]/12 text-[11px] uppercase tracking-wider text-[#F4EDE0]/55">
+                                <th class="py-3 px-3">Position</th>
+                                <th class="py-3 px-3">Company</th>
+                                <th class="py-3 px-3">Type</th>
+                                <th class="py-3 px-3">Status</th>
+                                <th class="py-3 px-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobsTableBody" class="divide-y divide-[#F4EDE0]/8"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 4: DEPARTMENT ANNOUNCEMENTS -->
+            <section id="tab-announcements" class="tab-panel hidden space-y-5">
+                <div class="mercury-card p-5 space-y-4">
+                    <h2 class="text-xl text-[#F4EDE0]" style="font-family: var(--font-ivy-presto);">Publish Department Announcement</h2>
+                    <form id="createAnnouncementForm" class="space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                            <input type="text" id="annTitle" placeholder="Announcement Title (max 150 chars) *" required class="field-input md:col-span-2">
+                            <select id="annCategory" class="field-input">
+                                <option value="general">General</option>
+                                <option value="career">Career</option>
+                                <option value="event">Event</option>
+                                <option value="accreditation">Accreditation</option>
+                            </select>
+                            <select id="annStatus" class="field-input">
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
+                        <textarea id="annBody" rows="3" placeholder="Announcement body / message *" required class="field-input"></textarea>
+                        <div class="flex items-center justify-between">
+                            <label class="inline-flex items-center gap-2 text-xs text-[#F4EDE0]/80 cursor-pointer">
+                                <input type="checkbox" id="annPinned" class="accent-[#FF6B58]">
+                                <span>Pin announcement to top</span>
+                            </label>
+                            <button type="submit" class="btn-coral">
+                                <i class="fa-solid fa-paper-plane mr-1"></i>Create Announcement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="announcementsList" class="space-y-3"></div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const BASE_PATH = window.location.pathname.toLowerCase().startsWith('/alumni/') ? '/alumni' : '';
+        const apiUrl = (path) => `${BASE_PATH}${path}`;
+        const TOKEN_KEY = 'alumni_istu_access_token';
+        const ALL_ROLES = ['alumni', 'student', 'employer', 'faculty', 'moderator', 'admin'];
+
+        let currentAdminId = null;
+
+        function authHeaders(extra = {}) {
+            const headers = { 'Accept': 'application/json', ...extra };
+            const tok = localStorage.getItem(TOKEN_KEY);
+            if (tok) {
+                headers['Authorization'] = `Bearer ${tok}`;
+            }
+            return headers;
+        }
+
+        async function apiFetch(path, options = {}) {
+            const res = await fetch(apiUrl(path), {
+                credentials: 'same-origin',
+                ...options,
+                headers: authHeaders(options.headers || {})
+            });
+            const data = await res.json().catch(() => ({}));
+            if (res.status === 401) {
+                window.location.href = apiUrl('/login?auth_error=TOKEN_INVALID_OR_EXPIRED&next=%2Fadmin');
+                throw new Error('Unauthorized');
+            }
+            return { res, data };
+        }
+
+        function showToast(message, type = 'success') {
+            const el = document.getElementById('adminToast');
+            el.classList.remove('hidden');
+            el.className = type === 'error'
+                ? 'rounded-xl px-4 py-3 text-sm border bg-[#FF6B58]/15 border-[#FF6B58]/50 text-[#F4EDE0]'
+                : 'rounded-xl px-4 py-3 text-sm border bg-emerald-500/15 border-emerald-400/45 text-[#F4EDE0]';
+            el.textContent = message;
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(() => el.classList.add('hidden'), 4500);
+        }
+
+        // Tabs
+        document.querySelectorAll('#adminTabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#adminTabs .tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const target = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+                document.getElementById(`tab-${target}`).classList.remove('hidden');
+            });
+        });
+
+        async function loadOverview() {
+            const { res, data } = await apiFetch('/api/v1/admin/overview');
+            if (!res.ok) {
+                showToast(data.message || 'Failed to load admin overview.', 'error');
+                return;
+            }
+            const d = data.data || {};
+            currentAdminId = data.admin?.id ?? null;
+            if (data.admin?.username) {
+                document.getElementById('adminUsernameLabel').textContent = `@${data.admin.username} (admin)`;
+            }
+            document.getElementById('kpiUsers').textContent = d.users_total ?? 0;
+            document.getElementById('kpiUsersSub').textContent = `${d.users_active ?? 0} active • ${d.users_google_linked ?? 0} Google`;
+            document.getElementById('kpiAdmins').textContent = d.role_distribution?.admin ?? 0;
+            document.getElementById('kpiAlumni').textContent = d.alumni_total ?? 0;
+            document.getElementById('kpiMentorsSub').textContent = `${d.mentors_active ?? 0} active mentors`;
+            document.getElementById('kpiJobs').textContent = d.job_postings_total ?? 0;
+            document.getElementById('kpiJobsSub').textContent = `${d.job_postings_active ?? 0} active • ${d.applications_total ?? 0} apps`;
+            document.getElementById('kpiAnnouncements').textContent = d.announcements_total ?? 0;
+            document.getElementById('kpiAnnSub').textContent = `${d.announcements_published ?? 0} published`;
+        }
+
+        async function loadUsers() {
+            const q = document.getElementById('userSearchInput').value.trim();
+            const role = document.getElementById('userRoleFilter').value;
+            const qs = new URLSearchParams();
+            if (q) qs.set('search', q);
+            if (role) qs.set('role', role);
+
+            const { res, data } = await apiFetch(`/api/v1/admin/users?${qs.toString()}`);
+            const tbody = document.getElementById('usersTableBody');
+            if (!res.ok) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-[#FF6B58]">${escapeHtml(data.message || 'Error loading users')}</td></tr>`;
+                return;
+            }
+            const users = data.data || [];
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-[#F4EDE0]/50">No matching users found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(u => {
+                const isSelf = currentAdminId !== null && Number(u.id) === Number(currentAdminId);
+                const roleOpts = ALL_ROLES.map(r =>
+                    `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r}</option>`
+                ).join('');
+                const statusBadge = u.is_active
+                    ? '<span class="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">Active</span>'
+                    : '<span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/35">Inactive</span>';
+                const providerBadge = u.auth_provider === 'google'
+                    ? '<span class="text-[11px] px-2 py-0.5 rounded bg-[#0f1a30] text-sky-300">Google OAuth</span>'
+                    : (u.google_linked ? '<span class="text-[11px] px-2 py-0.5 rounded bg-[#0f1a30] text-emerald-300">Local + Google</span>' : '<span class="text-[11px] px-2 py-0.5 rounded bg-[#0f1a30] text-[#F4EDE0]/70">Local</span>');
+
+                return `
+                    <tr class="hover:bg-[#24355c]/30">
+                        <td class="py-3 px-3">
+                            <div class="font-medium text-[#F4EDE0]">${escapeHtml(u.full_name)} ${isSelf ? '<span class="text-[10px] text-[#FF6B58] ml-1">(you)</span>' : ''}</div>
+                            <div class="text-xs text-[#F4EDE0]/55">@${escapeHtml(u.username)} • ${escapeHtml(u.email)}</div>
+                        </td>
+                        <td class="py-3 px-3">${providerBadge}</td>
+                        <td class="py-3 px-3">
+                            <select onchange="changeUserRole(${u.id}, this.value)" ${isSelf ? 'disabled' : ''} class="field-input py-1.5 px-2.5 w-32 text-xs ${isSelf ? 'opacity-60' : ''}">
+                                ${roleOpts}
+                            </select>
+                        </td>
+                        <td class="py-3 px-3">${statusBadge}</td>
+                        <td class="py-3 px-3 text-right space-x-1.5 whitespace-nowrap">
+                            <button type="button" onclick="toggleUserStatus(${u.id}, ${!u.is_active})" ${isSelf ? 'disabled' : ''} class="btn-ghost ${isSelf ? 'opacity-40 cursor-not-allowed' : ''}">
+                                ${u.is_active ? 'Deactivate' : 'Activate'}
+                            </button>
+                            <button type="button" onclick="deleteUser(${u.id}, '${escapeHtml(u.username)}')" ${isSelf ? 'disabled' : ''} class="btn-ghost border-[#FF6B58]/40 text-[#FF6B58] ${isSelf ? 'opacity-40 cursor-not-allowed' : ''}">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function changeUserRole(id, role) {
+            const { res, data } = await apiFetch(`/api/v1/admin/users/${id}/role`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role })
+            });
+            showToast(data.message || (res.ok ? 'Role updated.' : 'Role update failed.'), res.ok ? 'success' : 'error');
+            await Promise.all([loadOverview(), loadUsers()]);
+        }
+
+        async function toggleUserStatus(id, isActive) {
+            const { res, data } = await apiFetch(`/api/v1/admin/users/${id}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_active: isActive })
+            });
+            showToast(data.message || (res.ok ? 'Status updated.' : 'Status update failed.'), res.ok ? 'success' : 'error');
+            await Promise.all([loadOverview(), loadUsers()]);
+        }
+
+        async function deleteUser(id, username) {
+            if (!confirm(`Permanently delete user @${username} (#${id})?`)) return;
+            const { res, data } = await apiFetch(`/api/v1/admin/users/${id}`, { method: 'DELETE' });
+            showToast(data.message || (res.ok ? 'User deleted.' : 'Delete failed.'), res.ok ? 'success' : 'error');
+            await Promise.all([loadOverview(), loadUsers()]);
+        }
+
+        async function loadAlumni() {
+            const { res, data } = await apiFetch('/api/v1/alumni');
+            const tbody = document.getElementById('alumniTableBody');
+            const items = data.data || [];
+            tbody.innerHTML = items.map(a => `
+                <tr class="hover:bg-[#24355c]/30">
+                    <td class="py-3 px-3 font-mono text-xs text-[#F4EDE0]/60">#${a.id}</td>
+                    <td class="py-3 px-3">
+                        <div class="font-medium">${escapeHtml(a.full_name)}</div>
+                        <div class="text-xs text-[#F4EDE0]/55">${escapeHtml(a.email)}</div>
+                    </td>
+                    <td class="py-3 px-3 text-xs">${escapeHtml(String(a.cohort || '—'))}</td>
+                    <td class="py-3 px-3 text-xs text-[#F4EDE0]/80">${escapeHtml(a.company || '—')} • ${escapeHtml(a.role || '—')}</td>
+                    <td class="py-3 px-3 text-right">
+                        <button type="button" onclick="adminDeleteAlumni(${a.id})" class="btn-ghost border-[#FF6B58]/40 text-[#FF6B58]">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('adminCreateAlumniForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                full_name: document.getElementById('newAlumniName').value.trim(),
+                email: document.getElementById('newAlumniEmail').value.trim(),
+                cohort: Number(document.getElementById('newAlumniCohort').value) || 2024,
+                company: document.getElementById('newAlumniCompany').value.trim() || 'Independent'
+            };
+            const { res, data } = await apiFetch('/api/v1/admin/alumni', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            showToast(data.message || (res.ok ? 'Alumni created.' : 'Validation error.'), res.ok ? 'success' : 'error');
+            if (res.ok) {
+                e.target.reset();
+                await Promise.all([loadOverview(), loadAlumni()]);
+            }
+        });
+
+        async function adminDeleteAlumni(id) {
+            if (!confirm(`Delete alumni profile #${id}?`)) return;
+            const { res, data } = await apiFetch(`/api/v1/admin/alumni/${id}`, { method: 'DELETE' });
+            showToast(data.message || 'Deleted.', res.ok ? 'success' : 'error');
+            await Promise.all([loadOverview(), loadAlumni()]);
+        }
+
+        async function loadJobs() {
+            const { res, data } = await apiFetch('/api/v1/admin/job-postings');
+            const tbody = document.getElementById('jobsTableBody');
+            const jobs = data.data || [];
+            tbody.innerHTML = jobs.map(j => `
+                <tr class="hover:bg-[#24355c]/30">
+                    <td class="py-3 px-3 font-medium">${escapeHtml(j.title)}</td>
+                    <td class="py-3 px-3 text-xs text-[#F4EDE0]/75">${escapeHtml(j.company_name || '')}</td>
+                    <td class="py-3 px-3 text-xs">${escapeHtml(j.job_type || 'full-time')}</td>
+                    <td class="py-3 px-3">
+                        <select onchange="adminUpdateJobStatus(${j.id}, this.value)" class="field-input py-1 px-2.5 w-28 text-xs">
+                            <option value="active" ${j.status === 'active' ? 'selected' : ''}>active</option>
+                            <option value="closed" ${j.status === 'closed' ? 'selected' : ''}>closed</option>
+                            <option value="draft" ${j.status === 'draft' ? 'selected' : ''}>draft</option>
+                        </select>
+                    </td>
+                    <td class="py-3 px-3 text-right">
+                        <button type="button" onclick="adminDeleteJob(${j.id})" class="btn-ghost border-[#FF6B58]/40 text-[#FF6B58]">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function adminUpdateJobStatus(id, status) {
+            const { res, data } = await apiFetch(`/api/v1/admin/job-postings/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            showToast(data.message || 'Job updated.', res.ok ? 'success' : 'error');
+            await loadOverview();
+        }
+
+        async function adminDeleteJob(id) {
+            if (!confirm(`Delete job posting #${id}?`)) return;
+            const { res, data } = await apiFetch(`/api/v1/admin/job-postings/${id}`, { method: 'DELETE' });
+            showToast(data.message || 'Job deleted.', res.ok ? 'success' : 'error');
+            await Promise.all([loadOverview(), loadJobs()]);
+        }
+
+        async function loadAnnouncements() {
+            const { res, data } = await apiFetch('/api/v1/admin/announcements');
+            const list = document.getElementById('announcementsList');
+            const items = data.data || [];
+            if (items.length === 0) {
+                list.innerHTML = '<div class="mercury-card p-6 text-center text-sm text-[#F4EDE0]/55">No announcements yet.</div>';
+                return;
+            }
+            list.innerHTML = items.map(a => `
+                <div class="mercury-card p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div class="space-y-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            ${a.is_pinned ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-[#FF6B58]/20 text-[#FF6B58] border border-[#FF6B58]/40">Pinned</span>' : ''}
+                            <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0f1a30] text-[#F4EDE0]/75">${escapeHtml(a.category)}</span>
+                            <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${a.status === 'published' ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'}">${escapeHtml(a.status)}</span>
+                        </div>
+                        <h3 class="text-base font-medium text-[#F4EDE0]">${escapeHtml(a.title)}</h3>
+                        <p class="text-xs text-[#F4EDE0]/75 leading-relaxed">${escapeHtml(a.body)}</p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button type="button" onclick="toggleAnnouncementStatus(${a.id}, '${a.status === 'published' ? 'draft' : 'published'}')" class="btn-ghost">
+                            ${a.status === 'published' ? 'Move to Draft' : 'Publish'}
+                        </button>
+                        <button type="button" onclick="deleteAnnouncement(${a.id})" class="btn-ghost border-[#FF6B58]/40 text-[#FF6B58]">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('createAnnouncementForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                title: document.getElementById('annTitle').value.trim(),
+                body: document.getElementById('annBody').value.trim(),
+                category: document.getElementById('annCategory').value,
+                status: document.getElementById('annStatus').value,
+                is_pinned: document.getElementById('annPinned').checked
+            };
+            const { res, data } = await apiFetch('/api/v1/admin/announcements', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            showToast(data.message || (res.ok ? 'Announcement created.' : 'Validation error.'), res.ok ? 'success' : 'error');
+            if (res.ok) {
+                e.target.reset();
+                await Promise.all([loadOverview(), loadAnnouncements()]);
+            }
+        });
+
+        async function toggleAnnouncementStatus(id, status) {
+            const { res, data } = await apiFetch(`/api/v1/admin/announcements/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            showToast(data.message || 'Announcement updated.', res.ok ? 'success' : 'error');
+            await Promise.all([loadOverview(), loadAnnouncements()]);
+        }
+
+        async function deleteAnnouncement(id) {
+            if (!confirm(`Delete announcement #${id}?`)) return;
+            const { res, data } = await apiFetch(`/api/v1/admin/announcements/${id}`, { method: 'DELETE' });
+            showToast(data.message || 'Announcement deleted.', res.ok ? 'success' : 'error');
+            await Promise.all([loadOverview(), loadAnnouncements()]);
+        }
+
+        document.getElementById('userSearchInput').addEventListener('input', loadUsers);
+        document.getElementById('userRoleFilter').addEventListener('change', loadUsers);
+        document.getElementById('refreshAllBtn').addEventListener('click', refreshAll);
+
+        document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
+            try {
+                await apiFetch('/api/auth/logout', { method: 'POST' });
+            } catch (_) {}
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem('alumni_istu_user');
+            window.location.href = apiUrl('/login');
+        });
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[m]));
+        }
+
+        async function refreshAll() {
+            await loadOverview();
+            await Promise.all([loadUsers(), loadAlumni(), loadJobs(), loadAnnouncements()]);
+        }
+
+        refreshAll();
+    </script>
+</body>
+</html>

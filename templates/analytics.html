@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlumniIstü (ALUMNI) • Career Graph &amp; Telemetry</title>
     <title>AlumniIstü (ALUMNI) • Career Graph &amp; Telemetry Observatory</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -14,6 +15,10 @@
             --color-navy: #14213D;
             --color-cream: #F4EDE0;
             --color-coral: #FF6B58;
+            --color-canvas: #14213D;
+            --color-surface: #1c2a4a;
+            --color-text-main: #F4EDE0;
+            --color-accent: #FF6B58;
             --surface-onyx-canvas: #14213D;
             --surface-graphite-card: #1c2a4a;
             --surface-obsidian-button: #24355c;
@@ -23,6 +28,9 @@
             --color-ash-text: rgba(244, 237, 224, 0.68);
             --color-ivory-text: #F4EDE0;
 
+            --font-ivy-presto: 'Ivy Presto', 'Playfair Display', serif;
+            --font-inter: 'Inter', sans-serif;
+            
             --font-ivy-presto: 'Ivy Presto', 'Playfair Display', Georgia, serif;
             --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 
@@ -32,9 +40,14 @@
             --radius-buttons: 32px;
             --radius-nav: 40px;
             --radius-full: 9999px;
+            --radius-lg: 10px;
+            --page-max-width: 1216px;
+            --section-gap: 160px;
         }
         * { box-sizing: border-box; }
         body {
+            background-color: var(--color-canvas);
+            color: var(--color-text-main);
             background-color: var(--surface-onyx-canvas);
             color: var(--color-ivory-text);
             font-family: var(--font-inter);
@@ -51,10 +64,17 @@
             padding-left: 24px;
             padding-right: 24px;
         }
+        .section-stack {
+            display: flex;
+            flex-direction: column;
+            gap: var(--section-gap);
+            padding-top: 80px;
+            padding-bottom: 120px;
         @keyframes auroraFloat {
             0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
             50% { transform: translate3d(30px, -22px, 0) scale(1.07); }
         }
+        .heading-hero {
         @keyframes pulseCoralBeacon {
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.9); opacity: 0; }
@@ -69,17 +89,32 @@
         .mercury-display {
             font-family: var(--font-ivy-presto);
             font-weight: 400;
+            font-size: clamp(2.35rem, 4vw, 3.25rem);
+            line-height: 1.15;
+            letter-spacing: 0.02em;
+            color: var(--color-cream);
             font-size: clamp(2.4rem, 4.8vw, 3.6rem);
             line-height: 1.1;
             letter-spacing: 0.012em;
         }
+        .heading-section {
         .mercury-heading-lg {
             font-family: var(--font-ivy-presto);
+            font-weight: 500;
+            font-size: 1.75rem;
+            line-height: 1.24;
+            letter-spacing: 0.018em;
+            color: var(--color-cream);
             font-weight: 400;
             font-size: clamp(1.85rem, 3vw, 2.35rem);
             line-height: 1.15;
             letter-spacing: 0.012em;
         }
+        .surface-card {
+            background-color: var(--color-surface);
+            border: 1px solid rgba(244, 237, 224, 0.14);
+            border-radius: var(--radius-lg);
+            box-shadow: none;
         .mercury-card {
             background-color: var(--surface-graphite-card);
             border-radius: var(--radius-cards);
@@ -87,24 +122,48 @@
             border: 1px solid var(--color-slate-border);
             transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
         }
+        .badge-coral {
+            border-radius: var(--radius-full);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 107, 88, 0.45);
+            color: var(--color-coral);
+            background-color: rgba(255, 107, 88, 0.12);
         .mercury-card:hover {
             transform: translateY(-4px);
             border-color: var(--color-mist-border);
         }
+        .nav-link {
+            position: relative;
+            padding-bottom: 6px;
+            color: rgba(244, 237, 224, 0.75);
         .mercury-nav-pill {
             color: var(--color-ash-text);
             font-size: 15px;
             font-weight: 400;
+            transition: color 0.2s ease;
             border-radius: var(--radius-nav);
             padding: 8px 18px;
             transition: all 0.2s ease;
         }
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--color-cream);
         .mercury-nav-pill:hover, .mercury-nav-pill.active {
             color: var(--color-ivory-text);
             background-color: rgba(244, 237, 224, 0.08);
         }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
         .mercury-btn-coral {
             background-color: var(--color-coral);
+            border-radius: 2px;
             color: var(--color-ivory-text);
             font-size: 14px;
             font-weight: 500;
@@ -114,22 +173,34 @@
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-[#FF6B58] selection:text-[#F4EDE0]">
+    <header class="border-b border-[#F4EDE0]/10 bg-[#14213D]/95 backdrop-blur-md sticky top-0 z-50">
     <header class="sticky top-0 z-50 border-b border-[#F4EDE0]/10 bg-[#14213D]/80 backdrop-blur-xl">
         <div class="page-container h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-full bg-[#1c2a4a] border border-[#FF6B58] flex items-center justify-center text-[#FF6B58]">
+                    <i class="fa-solid fa-chart-line text-xs"></i>
             <a href="/" class="flex items-center space-x-3 group">
                 <div class="w-10 h-10 rounded-full bg-[#1c2a4a] border border-[#F4EDE0]/30 flex items-center justify-center relative">
                     <span class="w-4 h-4 rounded-full border-2 border-[#FF6B58] block group-hover:scale-110 transition-transform"></span>
                     <span class="w-1.5 h-1.5 rounded-full bg-[#F4EDE0] absolute"></span>
                 </div>
                 <div>
+                    <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); font-weight: 500; letter-spacing: 0.03em;">
                     <span class="text-xl tracking-wide text-[#F4EDE0]" style="font-family: var(--font-ivy-presto); letter-spacing: 0.02em;">
                         AlumniIstü
                     </span>
+                    <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/60 font-light">
                     <span class="text-[10px] block uppercase tracking-widest text-[#F4EDE0]/55">
                         Institutional Telemetry
                     </span>
                 </div>
             </a>
+            <nav class="hidden md:flex items-center space-x-8 text-sm">
+                <a href="/" class="nav-link">Directory</a>
+                <a href="/jobs" class="nav-link">Job Board</a>
+                <a href="/analytics" class="nav-link active">Career Graph</a>
+                <a href="/about" class="nav-link">Faculty</a>
+                <a href="/swagger" class="nav-link">API Ledger</a>
             <nav class="hidden md:flex items-center space-x-1">
                 <a href="/" class="mercury-nav-pill">Directory</a>
                 <a href="/jobs" class="mercury-nav-pill">Job Board</a>
@@ -141,6 +212,15 @@
         </div>
     </header>
 
+    <main class="flex-grow page-container section-stack w-full">
+        <!-- SECTION 1: Hero & KPI Cards -->
+        <section class="space-y-8">
+            <div class="surface-card p-8 md:p-12 space-y-4">
+                <span class="badge-coral inline-block">YÖKAK &amp; AACSB ACCREDITATION TELEMETRY</span>
+                <h1 class="heading-hero">Graduate Mobility &amp; <span class="italic text-[#FF6B58]">Institutional KPIs</span></h1>
+                <p class="text-[#F4EDE0]/75 text-base font-light max-w-2xl">
+                    Empirical career mobility telemetry and curriculum alignment metrics for Istanbul University Management Information Systems (MIS / YBS) graduates.
+                </p>
     <main class="flex-grow">
         <section class="relative overflow-hidden pt-16 pb-16 border-b border-[#F4EDE0]/10">
             <div class="pointer-events-none absolute inset-0 overflow-hidden">
@@ -159,6 +239,11 @@
             </div>
         </section>
 
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="surface-card p-6">
+                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Employment Index</p>
+                    <p class="heading-section text-[#FF6B58] mt-2">96.4%</p>
+                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">Placed within 6 months</p>
         <div class="page-container py-16 space-y-12">
             <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="mercury-card">
@@ -166,23 +251,47 @@
                     <p class="mercury-heading-lg text-[#FF6B58] mt-2">96.4%</p>
                     <p class="text-xs text-[#F4EDE0]/65 mt-1">Placed within 6 months</p>
                 </div>
+                <div class="surface-card p-6">
+                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Active Mentors</p>
+                    <p class="heading-section text-[#F4EDE0] mt-2" id="stat-mentors">--</p>
+                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">1:1 Concierge available</p>
                 <div class="mercury-card">
                     <p class="text-xs text-[#F4EDE0]/55 uppercase tracking-wider">Active Mentors</p>
                     <p class="mercury-heading-lg text-[#F4EDE0] mt-2" id="stat-mentors">--</p>
                     <p class="text-xs text-[#F4EDE0]/65 mt-1">1:1 Concierge available</p>
                 </div>
+                <div class="surface-card p-6">
+                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Global Mobility</p>
+                    <p class="heading-section text-[#F4EDE0] mt-2">24.5%</p>
+                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">EU, UK &amp; North America</p>
                 <div class="mercury-card">
                     <p class="text-xs text-[#F4EDE0]/55 uppercase tracking-wider">Global Mobility</p>
                     <p class="mercury-heading-lg text-[#F4EDE0] mt-2">24.5%</p>
                     <p class="text-xs text-[#F4EDE0]/65 mt-1">EU, UK &amp; North America</p>
                 </div>
+                <div class="surface-card p-6">
+                    <p class="text-xs text-[#F4EDE0]/55 uppercase font-light">Persistence Engine</p>
+                    <p class="heading-section text-[#FF6B58] mt-2" id="stat-source">MySQL</p>
+                    <p class="text-xs text-[#F4EDE0]/65 font-light mt-1">PDO Prepared Statements</p>
                 <div class="mercury-card">
                     <p class="text-xs text-[#F4EDE0]/55 uppercase tracking-wider">Persistence Engine</p>
                     <p class="mercury-heading-lg text-[#FF6B58] mt-2" id="stat-source">MySQL 8.0</p>
                     <p class="text-xs text-[#F4EDE0]/65 mt-1">PDO Prepared Statements</p>
                 </div>
+            </div>
+        </section>
             </section>
 
+        <!-- SECTION 2: Sector Distribution -->
+        <section class="surface-card p-8 md:p-12 space-y-6">
+            <div class="border-b border-[#F4EDE0]/10 pb-4">
+                <h2 class="heading-section">Sector Distribution Across MIS Cohorts</h2>
+                <p class="text-xs text-[#F4EDE0]/60 font-light mt-1">Live aggregation from `/api/v1/analytics` controller endpoint.</p>
+            </div>
+            <div id="industry-bars" class="space-y-4">
+                <div class="text-[#F4EDE0]/50 text-xs font-light">Loading analytics telemetry...</div>
+            </div>
+        </section>
             <section class="mercury-card space-y-6">
                 <div class="border-b border-[#F4EDE0]/12 pb-4 flex items-center justify-between">
                     <div>
@@ -198,6 +307,10 @@
         </div>
     </main>
 
+    <footer class="border-t border-[#F4EDE0]/10 py-10 mt-auto">
+        <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60 font-light">
+            <span>© 2026 <strong class="text-[#F4EDE0] font-medium">AlumniIstü (ALUMNI)</strong> • Institutional Analytics</span>
+            <span>Navy <code class="text-[#F4EDE0]">#14213D</code> • Cream <code class="text-[#F4EDE0]">#F4EDE0</code> • Coral <code class="text-[#FF6B58]">#FF6B58</code></span>
     <footer class="border-t border-[#F4EDE0]/12 bg-[#0f1a30]/70 py-10 mt-auto">
         <div class="page-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F4EDE0]/60">
             <span>© 2026 <strong class="text-[#F4EDE0]">AlumniIstü (ALUMNI)</strong> • Institutional Analytics</span>
@@ -210,6 +323,7 @@
             .then(res => res.json())
             .then(payload => {
                 const data = payload.data || {};
+                document.getElementById('stat-mentors').textContent = data.active_mentors_count || '3';
                 document.getElementById('stat-mentors').textContent = data.active_mentors_count || '13';
                 document.getElementById('stat-source').textContent = (data.source === 'mysql_database') ? 'MySQL 8.0' : 'Standby Memory';
 
@@ -221,10 +335,14 @@
                     const pct = Math.min(100, count * 18);
                     const row = document.createElement('div');
                     row.innerHTML = `
+                        <div class="flex justify-between text-xs font-medium mb-1.5">
                         <div class="flex justify-between text-sm font-medium mb-2">
                             <span class="text-[#F4EDE0]">${ind}</span>
+                            <span class="badge-coral">${count} Alumni</span>
                             <span class="px-3 py-0.5 rounded-full text-xs bg-[#FF6B58]/15 text-[#FF6B58] border border-[#FF6B58]/35">${count} Alumni</span>
                         </div>
+                        <div class="w-full bg-[#14213D] border border-[#F4EDE0]/15 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-[#FF6B58] h-full rounded-full" style="width: ${Math.min(100, count * 25)}%"></div>
                         <div class="w-full bg-[#0f1a30] border border-[#F4EDE0]/15 h-3 rounded-full overflow-hidden">
                             <div class="bg-[#FF6B58] h-full rounded-full animate-bar" style="width: ${pct}%"></div>
                         </div>

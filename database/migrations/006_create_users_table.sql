@@ -1,0 +1,27 @@
+-- Migration 006: Create users table for authentication, registration, Google OAuth, and RBAC
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NULL,
+    google_id VARCHAR(255) NULL UNIQUE,
+    auth_provider ENUM('local', 'google') NOT NULL DEFAULT 'local',
+    avatar_url VARCHAR(512) NULL,
+    full_name VARCHAR(150) NOT NULL,
+    role ENUM('alumni', 'student', 'faculty', 'employer', 'moderator', 'admin') NOT NULL DEFAULT 'alumni',
+    graduation_year INT NULL,
+    department_id INT NULL,
+    student_id VARCHAR(50) NULL UNIQUE,
+    company VARCHAR(150) NULL,
+    job_title VARCHAR(150) NULL,
+    alumni_id INT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_users_role (role),
+    INDEX idx_users_auth_provider (auth_provider),
+    INDEX idx_users_graduation_year (graduation_year),
+    INDEX idx_users_department (department_id),
+    CONSTRAINT fk_users_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL,
+    CONSTRAINT fk_users_alumni FOREIGN KEY (alumni_id) REFERENCES alumni(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

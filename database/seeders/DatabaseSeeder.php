@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AlumniIstü\Database\Seeders;
 
 use AlumniIstü\Core\Database;
+use AlumniIstü\Core\Env;
 use AlumniIstü\Database\Factories\AlumniFactory;
 use AlumniIstü\Database\Factories\JobPostingFactory;
 use AlumniIstü\Database\Factories\ApplicationFactory;
@@ -215,5 +216,125 @@ class DatabaseSeeder {
             }
         }
         echo "  \033[32m✔ Generated and seeded {$seededApps} dynamic candidate applications.\033[0m\n";
+
+        // 6. Seed Baseline Authenticated Users (Owner Admin + Local & RBAC Demo Roles)
+        echo "\033[1;34m[Seeder]\033[0m Seeding owner admin and baseline authenticated users...\n";
+        try {
+            $ownerUsername = strtolower(trim((string)Env::get('ADMIN_USERNAME', 'kamasya')));
+            $ownerEmail = strtolower(trim((string)Env::get('ADMIN_EMAIL', 'kamasyaatha.frari@ogr.iu.edu.tr')));
+            $ownerName = trim((string)Env::get('ADMIN_FULL_NAME', 'Kamasya Atha Frari'));
+            $ownerPassword = (string)Env::get('ADMIN_PASSWORD', 'AdminPass2026!');
+
+            $userStmt = $pdo->prepare("
+                INSERT INTO users (username, email, password_hash, google_id, auth_provider, avatar_url, full_name, role, graduation_year, department_id, student_id, company, job_title, alumni_id, is_active)
+                VALUES (:username, :email, :password_hash, :google_id, :auth_provider, :avatar_url, :full_name, :role, :graduation_year, :department_id, :student_id, :company, :job_title, :alumni_id, 1)
+                ON DUPLICATE KEY UPDATE full_name=VALUES(full_name), role=VALUES(role), company=VALUES(company), is_active=1;
+            ");
+
+            $baselineUsers = [
+                [
+                    'username' => $ownerUsername,
+                    'email' => $ownerEmail,
+                    'password_hash' => password_hash($ownerPassword, PASSWORD_DEFAULT),
+                    'google_id' => null,
+                    'auth_provider' => 'local',
+                    'avatar_url' => null,
+                    'full_name' => $ownerName,
+                    'role' => 'admin',
+                    'graduation_year' => 2026,
+                    'department_id' => 1,
+                    'student_id' => null,
+                    'company' => 'Istanbul University MIS (YBS)',
+                    'job_title' => 'Lead Platform Administrator',
+                    'alumni_id' => null,
+                ],
+                [
+                    'username' => 'admin.ybs',
+                    'email' => 'admin@alumni.iu.edu.tr',
+                    'password_hash' => password_hash('AdminPass2026!', PASSWORD_DEFAULT),
+                    'google_id' => null,
+                    'auth_provider' => 'local',
+                    'avatar_url' => null,
+                    'full_name' => 'Istanbul University MIS Admin',
+                    'role' => 'admin',
+                    'graduation_year' => null,
+                    'department_id' => 1,
+                    'student_id' => null,
+                    'company' => 'Istanbul University Faculty of Economics',
+                    'job_title' => 'Platform Administrator',
+                    'alumni_id' => null,
+                ],
+                [
+                    'username' => 'emre.arslan',
+                    'email' => 'emre.arslan@ogr.iu.edu.tr',
+                    'password_hash' => password_hash('AlumniPass2026!', PASSWORD_DEFAULT),
+                    'google_id' => null,
+                    'auth_provider' => 'local',
+                    'avatar_url' => null,
+                    'full_name' => 'Emre Arslan',
+                    'role' => 'alumni',
+                    'graduation_year' => 2023,
+                    'department_id' => 1,
+                    'student_id' => '130120001',
+                    'company' => 'Turkcell Tech',
+                    'job_title' => 'Lead Data Engineer',
+                    'alumni_id' => 1,
+                ],
+                [
+                    'username' => 'deniz.kaya',
+                    'email' => 'deniz.kaya@ogr.iu.edu.tr',
+                    'password_hash' => password_hash('StudentPass2026!', PASSWORD_DEFAULT),
+                    'google_id' => null,
+                    'auth_provider' => 'local',
+                    'avatar_url' => null,
+                    'full_name' => 'Deniz Kaya',
+                    'role' => 'student',
+                    'graduation_year' => 2027,
+                    'department_id' => 1,
+                    'student_id' => '130124088',
+                    'company' => null,
+                    'job_title' => 'MIS Undergraduate',
+                    'alumni_id' => null,
+                ],
+                [
+                    'username' => 'trendyol.talent',
+                    'email' => 'talent@trendyol.com',
+                    'password_hash' => password_hash('EmployerPass2026!', PASSWORD_DEFAULT),
+                    'google_id' => null,
+                    'auth_provider' => 'local',
+                    'avatar_url' => null,
+                    'full_name' => 'Trendyol Talent Acquisition',
+                    'role' => 'employer',
+                    'graduation_year' => null,
+                    'department_id' => null,
+                    'student_id' => null,
+                    'company' => 'Trendyol Group',
+                    'job_title' => 'Technical Recruiter',
+                    'alumni_id' => null,
+                ],
+            ];
+
+            foreach ($baselineUsers as $u) {
+                $userStmt->execute($u);
+            }
+            echo "  \033[32m✔ Baseline authenticated users seeded (including owner admin: {$ownerEmail}).\033[0m\n";
+        } catch (\Throwable $e) {
+            echo "  \033[33m[Notice] Skipping user seeding (run migrations first): {$e->getMessage()}\033[0m\n";
+        }
+
+        // 7. Seed Baseline Department Announcements
+        echo "\033[1;34m[Seeder]\033[0m Seeding baseline department announcements...\n";
+        try {
+            $annStmt = $pdo->prepare("
+                INSERT INTO announcements (id, title, body, category, status, is_pinned, author_name) VALUES
+                (1, 'Welcome to AlumniIstü 2026 Career & Mentorship Cycle', 'Applications for Spring 2026 alumni-student mentorship pairings are now open for Istanbul University MIS (YBS) cohorts.', 'general', 'published', 1, 'Kamasya Atha Frari'),
+                (2, 'YÖKAK & AACSB Graduate Outcome Survey', 'Graduates from cohorts 2021–2025 are invited to update their current role and employer profile to support departmental accreditation telemetry.', 'accreditation', 'published', 0, 'Istanbul University MIS Admin')
+                ON DUPLICATE KEY UPDATE title=VALUES(title), body=VALUES(body);
+            ");
+            $annStmt->execute();
+            echo "  \033[32m✔ Baseline department announcements seeded.\033[0m\n";
+        } catch (\Throwable $e) {
+            echo "  \033[33m[Notice] Skipping announcements seeding: {$e->getMessage()}\033[0m\n";
+        }
     }
 }

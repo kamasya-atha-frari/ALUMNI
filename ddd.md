@@ -18,12 +18,48 @@ This Data Design Document specifies the storage architecture, entity-relationshi
 ```mermaid
 erDiagram
     DEPARTMENTS ||--o{ ALUMNI : "graduates from"
+    DEPARTMENTS ||--o{ USERS : "belongs to"
+    ALUMNI ||--o| USERS : "linked account"
     ALUMNI ||--o{ MENTORSHIP_REQUESTS : "receives"
     COMPANIES ||--o{ JOB_POSTINGS : "publishes"
     ALUMNI ||--o{ JOB_POSTINGS : "posts"
     JOB_POSTINGS ||--o{ APPLICATIONS : "receives"
     ALUMNI ||--o{ APPLICATIONS : "submits"
     
+    USERS {
+        int id PK "Auto Increment"
+        string username UK "Unique Login Handle (3-50)"
+        string email UK "Unique Account Email (150)"
+        string password_hash "Nullable Bcrypt/Argon2 Hash (NULL for Google-only OAuth)"
+        string google_id UK "Nullable Google OpenID Subject ID (255)"
+        enum auth_provider "local, google"
+        string avatar_url "Optional Profile Picture URL (512)"
+        string full_name "Account Holder Full Name (150)"
+        enum role "alumni, student, faculty, employer, moderator, admin"
+        int graduation_year "Graduation / Expected Cohort Year"
+        int department_id FK "References departments(id)"
+        string student_id UK "Optional University Student ID (50)"
+        string company "Optional Company / Organization (150)"
+        string job_title "Optional Job Title (150)"
+        int alumni_id FK "Optional link to alumni(id)"
+        boolean is_active "Account active status flag"
+        timestamp created_at "Registration timestamp"
+        timestamp updated_at "Last profile update timestamp"
+    }
+
+    CAPTCHA_CHALLENGES {
+        int id PK "Auto Increment"
+        string captcha_id UK "Opaque Challenge Token (64)"
+        string answer_hash "HMAC-SHA256 Hash of Normalized Answer (64)"
+        string challenge_type "alphanumeric or math (30)"
+        int attempts "Failed verification attempts counter"
+        int max_attempts "Maximum allowed attempts (default 5)"
+        string ip_address "Requesting client IP (45)"
+        datetime expires_at "Short-lived challenge expiration UTC"
+        datetime used_at "Single-use consumption timestamp"
+        timestamp created_at "Challenge generation timestamp"
+    }
+
     DEPARTMENTS {
         int id PK "Auto Increment"
         string name "Department Name (150)"
@@ -267,6 +303,50 @@ Candidate job applications submitted by students and alumni for published job op
 | `status` | `ENUM` | `('submitted', 'under_review', 'interview', 'accepted', 'rejected')` | No | `'submitted'` | Application review workflow state |
 | `created_at` | `TIMESTAMP` | `INDEX (idx_app_created)` | No | `CURRENT_TIMESTAMP` | Application submission timestamp |
 | `updated_at` | `TIMESTAMP` | - | No | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | Last review status update timestamp |
+
+---
+
+### 3.8 Table: `users`
+Stores authenticated platform accounts, credentials, assigned RBAC roles, and academic/organizational profile links.
+
+| Column | Type | Constraints | Nullable | Default | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `id` | `INT` | `PRIMARY KEY AUTO_INCREMENT` | No | - | Unique user account identifier |
+| `username` | `VARCHAR(50)` | `UNIQUE` | No | - | Login handle (`3–50` chars: letters, digits, `.`, `_`, `-`) |
+| `email` | `VARCHAR(150)` | `UNIQUE` | No | - | Unique validated contact/login email address |
+| `password_hash` | `VARCHAR(255)` | - | Yes | `NULL` | Salted hash via `password_hash(..., PASSWORD_DEFAULT)`; `NULL` for Google-OAuth-only accounts |
+| `google_id` | `VARCHAR(255)` | `UNIQUE` | Yes | `NULL` | Verified Google OpenID Connect `sub` identifier for OAuth sign-in & account linking |
+| `auth_provider` | `ENUM` | `('local','google')`, `INDEX (idx_users_auth_provider)` | No | `'local'` | Primary identity provider (`local` password or `google` OAuth 2.0) |
+| `avatar_url` | `VARCHAR(512)` | - | Yes | `NULL` | Optional avatar image URL (populated from Google profile picture when available) |
+| `full_name` | `VARCHAR(150)` | - | No | - | Account holder full legal name |
+| `role` | `ENUM` | `('alumni','student','faculty','employer','moderator','admin')`, `INDEX (idx_users_role)` | No | `'alumni'` | Assigned RBAC authorization role |
+| `graduation_year` | `INT` | `INDEX (idx_users_graduation_year)` | Yes | `NULL` | Graduation or expected graduation cohort year (`1950–2035`) |
+| `department_id` | `INT` | `FOREIGN KEY REFERENCES departments(id) ON DELETE SET NULL` | Yes | `NULL` | Affiliated academic department |
+| `student_id` | `VARCHAR(50)` | `UNIQUE` | Yes | `NULL` | Optional university matriculation number |
+| `company` | `VARCHAR(150)` | - | Yes | `NULL` | Current employer or recruiting organization |
+| `job_title` | `VARCHAR(150)` | - | Yes | `NULL` | Professional job title or role designation |
+| `alumni_id` | `INT` | `FOREIGN KEY REFERENCES alumni(id) ON DELETE SET NULL` | Yes | `NULL` | Optional link to the public `alumni` directory profile |
+| `is_active` | `BOOLEAN` | - | No | `TRUE` | Whether the account is active and allowed to authenticate |
+| `created_at` | `TIMESTAMP` | - | No | `CURRENT_TIMESTAMP` | Registration timestamp |
+| `updated_at` | `TIMESTAMP` | - | No | `CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | Last account modification timestamp |
+
+---
+
+### 3.9 Table: `captcha_challenges`
+Stores short-lived, single-use server-side CAPTCHA challenges used to block automated bot registrations.
+
+| Column | Type | Constraints | Nullable | Default | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `id` | `INT` | `PRIMARY KEY AUTO_INCREMENT` | No | - | Internal surrogate primary key |
+| `captcha_id` | `VARCHAR(64)` | `UNIQUE` | No | - | Opaque challenge identifier issued to the client (`cap_...`) |
+| `answer_hash` | `VARCHAR(64)` | - | No | - | Server-side HMAC-SHA256 digest of the normalized expected answer (plaintext is never persisted) |
+| `challenge_type` | `VARCHAR(30)` | - | No | `'alphanumeric'` | Challenge format (`alphanumeric` distorted SVG or `math` arithmetic SVG) |
+| `attempts` | `INT` | - | No | `0` | Count of failed verification attempts against this challenge |
+| `max_attempts` | `INT` | - | No | `5` | Maximum permitted attempts before automatic challenge invalidation |
+| `ip_address` | `VARCHAR(45)` | - | Yes | `NULL` | Client IPv4/IPv6 address recorded at issuance |
+| `expires_at` | `DATETIME` | `INDEX (idx_captcha_expires)` | No | - | Short-TTL expiration timestamp (default: `300` seconds) |
+| `used_at` | `DATETIME` | `INDEX (idx_captcha_used)` | Yes | `NULL` | Populated on consumption to strictly forbid replay/reuse |
+| `created_at` | `TIMESTAMP` | - | No | `CURRENT_TIMESTAMP` | Challenge creation timestamp |
 
 ---
 
@@ -525,6 +605,195 @@ HTTP Request
 │  Shutdown Hook fires — Logger emits terminal line   │  ← [time] [method] [route] [status] [duration]
 └─────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 8. Users, Roles, Authentication & Authorization Architecture
+
+This section defines the domain identity model, Role-Based Access Control (RBAC) policies, token-based Client–Server authentication and authorization protocol, and anti-bot CAPTCHA registration verification rules for **AlumniIstü**.
+
+### 8.1 User Entities & Role Taxonomy
+
+Every actor interacting with AlumniIstü maps either to the unauthenticated `guest` state or to an authenticated `users` record backed by the [`UserRole`](./src/Domain/Enums/UserRole.php) PHP 8.2 enum:
+
+| Role Identifier | Display Label | Self-Registrable? | Domain Profile & Responsibilities |
+| :--- | :--- | :---: | :--- |
+| `guest` *(unauthenticated)* | Guest / Public Visitor | — | Unauthenticated browser or API client. May view public pages (`/`, `/jobs`, `/about`, `/analytics`, `/swagger`, `/register`), request CAPTCHA challenges, register a new account, and log in. Cannot mutate protected resources or access private account endpoints. |
+| `student` | Current Undergraduate | **Yes** | Active Istanbul University student (e.g., YBS/MIS undergraduate). Can browse the alumni directory, view job/internship postings, submit job applications, request mentorship from available alumni mentors, and manage their own account profile. |
+| `alumni` *(default / registered `user`)* | Graduate / Alumni | **Yes** | Verified university graduate (standard registered `user` entity). Inherits student capabilities plus can maintain a public alumni directory profile, opt in as a mentor (`is_mentor`, `mentor_capacity`), accept/reject incoming mentorship requests, and publish career referrals/job postings on behalf of their organization. |
+| `employer` | Corporate Employer / Recruiter | **Yes** | External hiring partner or corporate talent representative. Can register/manage their company profile, publish and update job postings for their organization, and review/transition candidate applications (`submitted → under_review → interview → accepted/rejected`). |
+| `faculty` | Academic Staff / Faculty | **No** *(admin-provisioned)* | Istanbul University faculty members and accreditation reviewers. Read access to institutional career-graph analytics, cohort placement telemetry, and accreditation export metrics (YÖKAK / AACSB); can verify academic department metadata. |
+| `moderator` | Network Moderator | **No** *(admin-provisioned)* | Department or community moderator. Can moderate, edit, or close inappropriate job postings, review mentorship conduct, and deactivate abusive accounts without full system-administration privileges. |
+| `admin` | System Administrator | **No** *(admin-provisioned)* | Full platform governance across all resources: manage users and role assignments (including promoting accounts to `faculty`, `moderator`, or `admin`), manage departments/companies, override any directory/job/application record, and inspect system telemetry & error logs. |
+
+> **Privilege Escalation Prevention Rule**: Public registration (`POST /api/v1/auth/register`) strictly permits only `alumni`, `student`, and `employer` roles. Any registration payload attempting to self-assign `faculty`, `moderator`, or `admin` is immediately rejected with `HTTP 422 Unprocessable Entity` before account creation.
+
+---
+
+### 8.2 Role-Based Access Control (RBAC) & Authorization Matrix
+
+| Resource / Action | `guest` | `student` | `alumni` | `employer` | `faculty` | `moderator` | `admin` | Authorization Rule |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| **Public Pages & OpenAPI** (`/`, `/about`, `/swagger`, `/register`) | Allow | Allow | Allow | Allow | Allow | Allow | Allow | Public |
+| **CAPTCHA & Auth** (`GET /auth/captcha`, `POST /auth/register`, `POST /auth/login`) | Allow | Allow | Allow | Allow | Allow | Allow | Allow | Public (CAPTCHA required on register) |
+| **Own Session Profile** (`GET /api/v1/auth/me`) | Deny (`401`) | Allow | Allow | Allow | Allow | Allow | Allow | Authenticated (valid Bearer token) |
+| **Alumni Directory Read** (`GET /api/v1/alumni`, `GET /api/v1/alumni/{id}`) | Read | Read | Read | Read | Read | Read | Read | Public read; private contact controls respected |
+| **Alumni Profile Create / Update / Delete** | Deny (`401`) | Own only | Own only | Deny (`403`) | Read | Moderate | Full | Owner-only (`sub === owner_id`) or `admin` |
+| **Job Postings Read** (`GET /api/v1/job-postings`) | Read | Read | Read | Read | Read | Read | Read | Public read |
+| **Job Postings Create / Update / Close** | Deny (`401`) | Deny (`403`) | Own posts | Own company | Deny (`403`) | Moderate | Full | Role-restricted (`alumni`, `employer`, `moderator`, `admin`) + ownership check |
+| **Applications Submit** (`POST /api/v1/applications`) | Deny (`401`) | Allow | Allow | Deny (`403`) | Deny (`403`) | Deny (`403`) | Full | Role-restricted (`student`, `alumni`, `admin`) |
+| **Applications Review / Status Transition** (`PATCH /api/v1/applications/{id}`) | Deny (`401`) | Own withdraw | Own job posts | Own company posts | Read | Moderate | Full | Posting owner (`employer`/`alumni`) or `moderator`/`admin` |
+| **Mentorship Request Submit / Respond** | Deny (`401`) | Submit | Submit & Respond | Deny (`403`) | Read | Moderate | Full | `student`/`alumni` submit; target mentor `alumni` responds |
+| **Accreditation & Career Graph Analytics** (`GET /api/v1/analytics`) | Summary | Summary | Summary | Summary | Full | Full | Full | Summary public; detailed cohort/accreditation exports for `faculty`/`admin` |
+| **User Role Management & System Config** | Deny (`401`) | Deny (`403`) | Deny (`403`) | Deny (`403`) | Deny (`403`) | Suspend only | Full | Strictly `admin` (`403 Forbidden` for all other roles) |
+
+---
+
+### 8.3 Token-Based Authentication & Authorization Flow (Client ↔ Server)
+
+AlumniIstü implements stateless **Bearer Token Authentication** (HMAC-SHA256 signed JWTs via [`TokenService`](./src/Services/TokenService.php)) enforced by [`AuthMiddleware`](./src/Middleware/AuthMiddleware.php). Both local credential login and Google OAuth 2.0 issue the **exact same application Bearer token**, keeping downstream authorization uniform:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as Client (Browser / Postman / SPA)
+    participant Server as AlumniIstü Server (API + AuthMiddleware)
+    participant Google as Google OAuth 2.0 / OIDC
+    participant DB as MySQL (users table)
+
+    Note over Client,Server: Phase 1A — Local Credentials Exchange
+    Client->>Server: (a) POST /api/v1/auth/login { username, password }
+    Server->>DB: SELECT * FROM users WHERE username = :id OR email = :id
+    DB-->>Server: User record (id, username, role, password_hash, auth_provider, is_active)
+    Server->>Server: Verify password_verify(password, password_hash) & is_active
+    alt Invalid credentials or OAuth-only account
+        Server-->>Client: HTTP 401 Unauthorized { error_code: INVALID_CREDENTIALS | OAUTH_ACCOUNT_ONLY }
+    else Valid credentials
+        Server->>Server: Sign HS256 Bearer access_token (sub, username, role, iat, exp)
+        Server-->>Client: (b) HTTP 200 OK { access_token, token_type: "Bearer", expires_in, user }
+    end
+
+    Note over Client,Google: Phase 1B — Google OAuth 2.0 Exchange (Redirect Callback or ID Token)
+    Client->>Server: (a') GET /api/v1/auth/google/callback?code=...&state=... OR POST /api/v1/auth/google/token { id_token }
+    Server->>Google: Exchange authorization code / verify ID token (aud, iss, exp, email_verified)
+    Google-->>Server: Verified identity { sub (google_id), email, email_verified: true, name, picture }
+    Server->>DB: Lookup by google_id or email -> login, link, or create (auth_provider='google', password_hash=NULL)
+    DB-->>Server: User record
+    Server->>Server: Sign HS256 Bearer access_token (sub, username, role, iat, exp)
+    Server-->>Client: (b') HTTP 200/201 (or Redirect #oauth_token=...) { access_token, token_type: "Bearer", user }
+
+    Note over Client,Server: Phase 2 — Authorized Resource Access (req + token)
+    Client->>Server: (c) GET /api/v1/auth/me (or protected req) + Header: Authorization: Bearer <token>
+    Server->>Server: Validate token structure, HMAC-SHA256 signature & exp timestamp
+    alt Missing, malformed, tampered, or expired token
+        Server-->>Client: HTTP 401 Unauthorized { status: "error", error_code: "TOKEN_INVALID_OR_EXPIRED" }
+    else Token valid — check Role Authorization (RBAC)
+        Server->>Server: Verify claims.role against route policy & resource ownership
+        alt Insufficient role / unauthorized resource
+            Server-->>Client: HTTP 403 Forbidden { status: "error", error_code: "FORBIDDEN_ROLE" }
+        else Authorized
+            Server-->>Client: (d) HTTP 200 OK { resp }
+        end
+    end
+```
+
+**Step-by-Step Protocol Specification:**
+
+1. **(a) Client Sends Credentials or Google OAuth Credential**:
+   - **Local Login**: Client submits `username` (or `email`) and `password` to `POST /api/v1/auth/login`.
+   - **Google OAuth**: Client either completes the OAuth 2.0 redirect flow (`GET /api/v1/auth/google` → Google consent → `GET /api/v1/auth/google/callback?code=...&state=...`) or submits a Google ID token directly to `POST /api/v1/auth/google/token`.
+2. **(b) Server Authenticates & Returns Response with Access Token (`response + token`)**:
+   - For local credentials, the server verifies `password_verify()` against `users.password_hash` and checks `is_active = TRUE`.
+   - For Google OAuth, the server verifies the CSRF `state` (for redirects), exchanges the authorization code / validates the ID token with Google (`aud === GOOGLE_CLIENT_ID`, `email_verified === true`), finds or creates the `users` row, and mints the application's HS256 Bearer token embedding `{ sub, username, email, role, iat, exp }`.
+   - Returns `response + token`: `access_token`, `token_type: "Bearer"`, `expires_in` (default `3600` seconds), and the sanitized user profile (never returning `password_hash`).
+3. **(c) Client Attaches Token on Subsequent Requests (`req + token`)**:
+   - The client attaches the token to every protected request using the standard HTTP header:
+     ```http
+     Authorization: Bearer <access_token>
+     ```
+4. **(d) Server Validates Token, Checks Role Authorization & Returns Response (`resp`)**:
+   - `AuthMiddleware` parses the Bearer token, validates its HMAC-SHA256 signature with constant-time `hash_equals()`, and verifies `exp > time()`.
+   - Missing, invalid, or expired tokens are rejected with `HTTP 401 Unauthorized`.
+   - For role-restricted endpoints, `AuthMiddleware::requireRole(...)` validates `claims['role']` against the endpoint's RBAC policy and rejects unauthorized roles with `HTTP 403 Forbidden`.
+   - Authorized requests proceed to the controller and return the domain response (`resp`).
+
+---
+
+### 8.4 Dual Registration Methods & Security Rules (Standard + CAPTCHA & Google OAuth)
+
+AlumniIstü supports two registration pathways, each enforcing strict anti-abuse and identity verification invariants before creating an account:
+
+| Registration Method | Endpoint(s) | Anti-Bot / Identity Verification Rule | Stored Account State | Output |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Standard Form Registration** | `GET /api/v1/auth/captcha` → `POST /api/v1/auth/register` | **Mandatory server-side CAPTCHA verification** (short TTL, single-use, HMAC-hashed answer) before account creation + password strength & duplicate checks | `auth_provider = 'local'`, salted `password_hash`, `google_id = NULL`, role in `{alumni, student, employer}` | `HTTP 201` + sanitized user + HS256 Bearer token |
+| **2. Google OAuth 2.0 Registration ("Continue with Google")** | `GET /api/v1/auth/google` → `GET /api/v1/auth/google/callback` *(browser)* or `POST /api/v1/auth/google/token` *(API/SPA)* | **Google OAuth 2.0 / OIDC verification**: signed CSRF `state`, valid Google code/token, `aud === GOOGLE_CLIENT_ID`, and `email_verified === true` (CAPTCHA bypassed because Google performs identity attestation) | New account: `auth_provider = 'google'`, `google_id = sub`, `password_hash = NULL`, default role `alumni` (or validated public role). Existing email: links `google_id` safely without overwriting local password/role. | `HTTP 201` (created) / `HTTP 200` (existing/linked) or browser redirect to `/register#oauth_token=...` |
+
+#### 8.4.1 Standard Registration + CAPTCHA Verification Flow
+
+To prevent automated spam accounts and credential-stuffing bots, **every standard registration request MUST pass server-side CAPTCHA verification before any user record is created**.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Client (/register UI or API)
+    participant API as AuthApiController
+    participant Captcha as CaptchaService
+    participant Auth as AuthService
+    participant DB as MySQL (captcha_challenges & users)
+
+    User->>API: 1. GET /api/v1/auth/captcha
+    API->>Captcha: generate(mode: alphanumeric | math)
+    Captcha->>DB: INSERT captcha_id, HMAC(answer), expires_at (TTL 300s)
+    Captcha-->>User: 200 OK { captcha_id, svg, image_data_uri, expires_in }
+    User->>API: 2. POST /api/v1/auth/register { username, email, password, full_name, ..., captcha_id, captcha_answer }
+    API->>Auth: Validate registration fields (format, password strength, allowed role)
+    API->>Captcha: 3. Verify CAPTCHA (existence, not used, not expired, attempts < max, hash match)
+    alt CAPTCHA missing, expired, reused, or incorrect
+        Captcha-->>User: HTTP 422 Unprocessable Entity { error_code: CAPTCHA_MISSING | CAPTCHA_EXPIRED | CAPTCHA_REUSED | CAPTCHA_INCORRECT }
+    else CAPTCHA valid (single-use marked used_at = NOW())
+        API->>Auth: 4. Check duplicate username / email / student_id
+        alt Duplicate exists
+            Auth-->>User: HTTP 409 Conflict { error_code: DUPLICATE_USERNAME | DUPLICATE_EMAIL }
+        else Unique account
+            Auth->>Auth: Hash password via password_hash(..., PASSWORD_DEFAULT)
+            Auth->>DB: INSERT INTO users (...)
+            Auth-->>User: HTTP 201 Created { user (sanitized), access_token, token_type: "Bearer" }
+        end
+    end
+```
+
+#### 8.4.2 Registration & CAPTCHA Validation Rules
+
+| Field | Status | Constraint | HTTP Error | Error Code / Behavior |
+| :--- | :--- | :--- | :---: | :--- |
+| `username` | **Required** | `3–50` chars, regex `/^[a-zA-Z0-9._-]{3,50}$/`, unique | `422` / `409` | Format invalid (`422`) or already taken (`409 DUPLICATE_USERNAME`) |
+| `email` | **Required** | Valid RFC email (`FILTER_VALIDATE_EMAIL`), max `150` chars, unique | `422` / `409` | Format invalid (`422`) or already registered (`409 DUPLICATE_EMAIL`) |
+| `password` | **Required** | `8–128` chars, at least 1 letter and 1 digit; stored via `password_hash()` | `422` | Weak or too short password rejected before hashing |
+| `password_confirmation` | **Optional** *(recommended in UI)* | When provided, must strictly equal `password` | `422` | Mismatch error |
+| `full_name` (`name`) | **Required** | `2–150` chars trimmed non-empty string | `422` | Missing or too short |
+| `role` | **Optional** *(default: `alumni`)* | Must be in public self-registration set: `alumni`, `student`, `employer` | `422` | Privileged roles (`faculty`, `moderator`, `admin`) rejected |
+| `graduation_year` (`cohort`) | **Optional** | Integer between `1950` and `2035` | `422` | Out-of-range year rejected |
+| `department_id` | **Optional** *(default: `1`)* | Positive integer matching a department ID | `422` | Invalid department ID |
+| `student_id` | **Optional** | Max `50` chars, unique when provided | `422` / `409` | Duplicate student ID (`409 DUPLICATE_STUDENT_ID`) |
+| `captcha_id` | **Required** | Non-empty opaque ID returned by `GET /api/v1/auth/captcha` | `422` | `CAPTCHA_MISSING` / `CAPTCHA_INVALID` |
+| `captcha_answer` | **Required** | Must match server-stored `answer_hash` (case-insensitive, trimmed), unconsumed (`used_at IS NULL`), unexpired (`expires_at > NOW()`), and `< max_attempts` | `422` | `CAPTCHA_MISSING`, `CAPTCHA_EXPIRED`, `CAPTCHA_REUSED`, `CAPTCHA_INCORRECT`, or `CAPTCHA_MAX_ATTEMPTS` |
+
+#### 8.4.3 Local Docker Out-of-the-Box CAPTCHA & Provider Configuration (`.env`)
+
+- **Default Local Mode (`CAPTCHA_DRIVER=local_svg`)**: Generates distorted SVG text or arithmetic challenges natively in PHP 8.2 without requiring GD, Imagick, or external third-party API keys—working immediately with `docker compose up`.
+- **Single-Use & Short TTL**: Challenges expire after `CAPTCHA_TTL_SECONDS` (default `300` seconds) and are immediately burned (`used_at` stamped) upon consumption to prevent replay attacks.
+- **Pluggable External Provider Ready**: Switching to an external provider in production requires only updating `.env` (`CAPTCHA_DRIVER=turnstile` or `recaptcha`, `CAPTCHA_SITE_KEY`, `CAPTCHA_SECRET_KEY`) without changing client contracts.
+
+#### 8.4.4 Google OAuth 2.0 Registration & Account Linking Rules
+
+- **Environment Configuration**: Configured via `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REDIRECT_URI` in `.env` (documented in `.env.example`).
+- **CSRF State Protection**: `GET /api/v1/auth/google` generates a short-lived (`600s`) HMAC-SHA256 signed `state` token verified on callback to prevent CSRF/login-swap attacks.
+- **Verified Email Requirement**: Google identities where `email_verified !== true` are rejected with `HTTP 422 Unprocessable Entity` (`GOOGLE_EMAIL_UNVERIFIED`).
+- **Account Linking & Creation Precedence**:
+  1. Match by `users.google_id` → authenticate existing account (`HTTP 200`).
+  2. Match by verified `users.email` → attach `google_id` (preserving existing local `password_hash` and `role`), then authenticate (`HTTP 200`, `account_linked: true`).
+  3. No existing account → create a new `users` record with `auth_provider = 'google'`, `password_hash = NULL`, auto-generated unique `username`, and default role `alumni` (or validated public role from `{alumni, student, employer}`), then issue the application's HS256 Bearer token (`HTTP 201`).
+- **Graceful OAuth Error Handling**: Cancelled consent (`error=access_denied`), invalid/expired `state` (`OAUTH_INVALID_STATE`), failed code exchange (`OAUTH_TOKEN_EXCHANGE_FAILED`), invalid Google ID token (`GOOGLE_TOKEN_INVALID`), or missing OAuth `.env` credentials (`GOOGLE_OAUTH_NOT_CONFIGURED`) return structured JSON errors for API clients or clean error query redirects to `/register` for browser sessions.
 
 ---
 

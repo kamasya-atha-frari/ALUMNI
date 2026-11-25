@@ -12,31 +12,64 @@ class Router {
     private array $middlewares = [];
     private mixed $customNotFoundHandler = null;
 
-    public function get(string $path, callable|array $handler): self {
-        return $this->add('GET', $path, $handler);
+    /**
+     * @param array<int, MiddlewareInterface|callable> $middlewares
+     */
+    public function get(string $path, callable|array $handler, array $middlewares = []): self {
+        return $this->add('GET', $path, $handler, $middlewares);
     }
 
-    public function post(string $path, callable|array $handler): self {
-        return $this->add('POST', $path, $handler);
+    /**
+     * @param array<int, MiddlewareInterface|callable> $middlewares
+     */
+    public function post(string $path, callable|array $handler, array $middlewares = []): self {
+        return $this->add('POST', $path, $handler, $middlewares);
     }
 
-    public function put(string $path, callable|array $handler): self {
-        return $this->add('PUT', $path, $handler);
+    /**
+     * @param array<int, MiddlewareInterface|callable> $middlewares
+     */
+    public function put(string $path, callable|array $handler, array $middlewares = []): self {
+        return $this->add('PUT', $path, $handler, $middlewares);
     }
 
-    public function patch(string $path, callable|array $handler): self {
-        return $this->add('PATCH', $path, $handler);
+    /**
+     * @param array<int, MiddlewareInterface|callable> $middlewares
+     */
+    public function patch(string $path, callable|array $handler, array $middlewares = []): self {
+        return $this->add('PATCH', $path, $handler, $middlewares);
     }
 
-    public function delete(string $path, callable|array $handler): self {
-        return $this->add('DELETE', $path, $handler);
+    /**
+     * @param array<int, MiddlewareInterface|callable> $middlewares
+     */
+    public function delete(string $path, callable|array $handler, array $middlewares = []): self {
+        return $this->add('DELETE', $path, $handler, $middlewares);
     }
 
-    private function add(string $method, string $path, callable|array $handler): self {
+    /**
+     * Attach one or more route-specific middlewares fluently to the most recently registered route.
+     */
+    public function middleware(MiddlewareInterface|callable ...$middlewares): self {
+        $lastIdx = count($this->routes) - 1;
+        if ($lastIdx >= 0) {
+            $this->routes[$lastIdx]['middlewares'] = array_merge(
+                $this->routes[$lastIdx]['middlewares'],
+                $middlewares
+            );
+        }
+        return $this;
+    }
+
+    /**
+     * @param array<int, MiddlewareInterface|callable> $middlewares
+     */
+    private function add(string $method, string $path, callable|array $handler, array $middlewares = []): self {
         $this->routes[] = [
             'method' => strtoupper($method),
             'path' => $path,
-            'handler' => $handler
+            'handler' => $handler,
+            'middlewares' => $middlewares,
         ];
         return $this;
     }
@@ -82,23 +115,48 @@ class Router {
                 if (preg_match($pattern, $tryPath, $matches)) {
                     $params = array_values(array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY));
 
-                    if (is_callable($route['handler'])) {
-                        $result = call_user_func_array($route['handler'], $params);
-                        if ($exitOnResult && (is_string($result) || is_numeric($result))) {
-                            Response::text((string)$result);
+                    $invokeHandler = function () use ($route, $params, $exitOnResult): bool {
+                        if (is_callable($route['handler'])) {
+                            $result = call_user_func_array($route['handler'], $params);
+                            if ($exitOnResult && (is_string($result) || is_numeric($result))) {
+                                Response::text((string)$result);
+                            }
+                            return true;
                         }
+
+                        if (is_array($route['handler'])) {
+                            [$class, $action] = $route['handler'];
+                            $controller = new $class();
+                            $result = call_user_func_array([$controller, $action], $params);
+                            if ($exitOnResult && (is_string($result) || is_numeric($result))) {
+                                Response::text((string)$result);
+                            }
+                            return true;
+                        }
+
+                        return false;
+                    };
+
+                    $routeMiddlewares = $route['middlewares'] ?? [];
+                    if (!empty($routeMiddlewares)) {
+                        $runner = function (int $index) use (&$runner, $routeMiddlewares, $method, $uri, $invokeHandler) {
+                            if ($index >= count($routeMiddlewares)) {
+                                return $invokeHandler();
+                            }
+                            $mw = $routeMiddlewares[$index];
+                            if ($mw instanceof MiddlewareInterface) {
+                                return $mw->handle($method, $uri, fn() => $runner($index + 1));
+                            }
+                            if (is_callable($mw)) {
+                                return $mw($method, $uri, fn() => $runner($index + 1));
+                            }
+                            return $runner($index + 1);
+                        };
+                        $runner(0);
                         return true;
                     }
 
-                    if (is_array($route['handler'])) {
-                        [$class, $action] = $route['handler'];
-                        $controller = new $class();
-                        $result = call_user_func_array([$controller, $action], $params);
-                        if ($exitOnResult && (is_string($result) || is_numeric($result))) {
-                            Response::text((string)$result);
-                        }
-                        return true;
-                    }
+                    return $invokeHandler();
                 }
             }
         }
